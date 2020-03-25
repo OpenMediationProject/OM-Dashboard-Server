@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmPlacementSceneMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmPlacementScene">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="frequency_cap" jdbcType="INTEGER" property="frequencyCap" />
+    <result column="frequency_unit" jdbcType="INTEGER" property="frequencyUnit" />
+    <result column="frequency_interval" jdbcType="INTEGER" property="frequencyInterval" />
+    <result column="is_default" jdbcType="TINYINT" property="isDefault" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, placement_id, frequency_cap, frequency_unit, frequency_interval, is_default, 
+    status, create_time, lastmodify
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmPlacementSceneCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_placement_scene
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_placement_scene
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_placement_scene
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmPlacementScene">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement_scene (name, placement_id, frequency_cap, 
+      frequency_unit, frequency_interval, is_default, 
+      status, create_time, lastmodify
+      )
+    values (#{name,jdbcType=VARCHAR}, #{placementId,jdbcType=INTEGER}, #{frequencyCap,jdbcType=INTEGER}, 
+      #{frequencyUnit,jdbcType=INTEGER}, #{frequencyInterval,jdbcType=INTEGER}, #{isDefault,jdbcType=TINYINT}, 
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementScene">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement_scene
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap,
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit,
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval,
+      </if>
+      <if test="isDefault != null">
+        is_default,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyCap != null">
+        #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="isDefault != null">
+        #{isDefault,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPlacementScene">
+    update om_placement_scene
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="isDefault != null">
+        is_default = #{isDefault,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPlacementScene">
+    update om_placement_scene
+    set name = #{name,jdbcType=VARCHAR},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      is_default = #{isDefault,jdbcType=TINYINT},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmCountryMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmCountry">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="a2" jdbcType="CHAR" property="a2" />
+    <result column="a3" jdbcType="CHAR" property="a3" />
+    <result column="num" jdbcType="CHAR" property="num" />
+    <result column="tier" jdbcType="TINYINT" property="tier" />
+    <result column="continent" jdbcType="VARCHAR" property="continent" />
+    <result column="capital" jdbcType="VARCHAR" property="capital" />
+    <result column="dcenter" jdbcType="TINYINT" property="dcenter" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="name_cn" jdbcType="VARCHAR" property="nameCn" />
+    <result column="store_front_id" jdbcType="INTEGER" property="storeFrontId" />
+    <result column="area" jdbcType="INTEGER" property="area" />
+    <result column="population" jdbcType="INTEGER" property="population" />
+    <result column="main_lang" jdbcType="VARCHAR" property="mainLang" />
+    <result column="muti_lang" jdbcType="VARCHAR" property="mutiLang" />
+    <result column="tld" jdbcType="VARCHAR" property="tld" />
+    <result column="tz" jdbcType="TINYINT" property="tz" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.OmCountry">
+    <result column="time_zones" jdbcType="LONGVARCHAR" property="timeZones" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, a2, a3, num, tier, continent, capital, dcenter, name, name_cn, store_front_id, 
+    area, population, main_lang, muti_lang, tld, tz, create_time, lastmodify
+  </sql>
+  <sql id="Blob_Column_List">
+    time_zones
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.adtiming.om.ds.model.OmCountryCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_country
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmCountryCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_country
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_country
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_country
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmCountry">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_country (a2, a3, num, tier, 
+      continent, capital, dcenter, 
+      name, name_cn, store_front_id, 
+      area, population, main_lang, 
+      muti_lang, tld, tz, 
+      create_time, lastmodify, time_zones
+      )
+    values (#{a2,jdbcType=CHAR}, #{a3,jdbcType=CHAR}, #{num,jdbcType=CHAR}, #{tier,jdbcType=TINYINT}, 
+      #{continent,jdbcType=VARCHAR}, #{capital,jdbcType=VARCHAR}, #{dcenter,jdbcType=TINYINT}, 
+      #{name,jdbcType=VARCHAR}, #{nameCn,jdbcType=VARCHAR}, #{storeFrontId,jdbcType=INTEGER}, 
+      #{area,jdbcType=INTEGER}, #{population,jdbcType=INTEGER}, #{mainLang,jdbcType=VARCHAR}, 
+      #{mutiLang,jdbcType=VARCHAR}, #{tld,jdbcType=VARCHAR}, #{tz,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, #{timeZones,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmCountry">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_country
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="a2 != null">
+        a2,
+      </if>
+      <if test="a3 != null">
+        a3,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="tier != null">
+        tier,
+      </if>
+      <if test="continent != null">
+        continent,
+      </if>
+      <if test="capital != null">
+        capital,
+      </if>
+      <if test="dcenter != null">
+        dcenter,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nameCn != null">
+        name_cn,
+      </if>
+      <if test="storeFrontId != null">
+        store_front_id,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="population != null">
+        population,
+      </if>
+      <if test="mainLang != null">
+        main_lang,
+      </if>
+      <if test="mutiLang != null">
+        muti_lang,
+      </if>
+      <if test="tld != null">
+        tld,
+      </if>
+      <if test="tz != null">
+        tz,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="timeZones != null">
+        time_zones,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="a2 != null">
+        #{a2,jdbcType=CHAR},
+      </if>
+      <if test="a3 != null">
+        #{a3,jdbcType=CHAR},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=CHAR},
+      </if>
+      <if test="tier != null">
+        #{tier,jdbcType=TINYINT},
+      </if>
+      <if test="continent != null">
+        #{continent,jdbcType=VARCHAR},
+      </if>
+      <if test="capital != null">
+        #{capital,jdbcType=VARCHAR},
+      </if>
+      <if test="dcenter != null">
+        #{dcenter,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameCn != null">
+        #{nameCn,jdbcType=VARCHAR},
+      </if>
+      <if test="storeFrontId != null">
+        #{storeFrontId,jdbcType=INTEGER},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=INTEGER},
+      </if>
+      <if test="population != null">
+        #{population,jdbcType=INTEGER},
+      </if>
+      <if test="mainLang != null">
+        #{mainLang,jdbcType=VARCHAR},
+      </if>
+      <if test="mutiLang != null">
+        #{mutiLang,jdbcType=VARCHAR},
+      </if>
+      <if test="tld != null">
+        #{tld,jdbcType=VARCHAR},
+      </if>
+      <if test="tz != null">
+        #{tz,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeZones != null">
+        #{timeZones,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmCountry">
+    update om_country
+    <set>
+      <if test="a2 != null">
+        a2 = #{a2,jdbcType=CHAR},
+      </if>
+      <if test="a3 != null">
+        a3 = #{a3,jdbcType=CHAR},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=CHAR},
+      </if>
+      <if test="tier != null">
+        tier = #{tier,jdbcType=TINYINT},
+      </if>
+      <if test="continent != null">
+        continent = #{continent,jdbcType=VARCHAR},
+      </if>
+      <if test="capital != null">
+        capital = #{capital,jdbcType=VARCHAR},
+      </if>
+      <if test="dcenter != null">
+        dcenter = #{dcenter,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nameCn != null">
+        name_cn = #{nameCn,jdbcType=VARCHAR},
+      </if>
+      <if test="storeFrontId != null">
+        store_front_id = #{storeFrontId,jdbcType=INTEGER},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=INTEGER},
+      </if>
+      <if test="population != null">
+        population = #{population,jdbcType=INTEGER},
+      </if>
+      <if test="mainLang != null">
+        main_lang = #{mainLang,jdbcType=VARCHAR},
+      </if>
+      <if test="mutiLang != null">
+        muti_lang = #{mutiLang,jdbcType=VARCHAR},
+      </if>
+      <if test="tld != null">
+        tld = #{tld,jdbcType=VARCHAR},
+      </if>
+      <if test="tz != null">
+        tz = #{tz,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="timeZones != null">
+        time_zones = #{timeZones,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.OmCountry">
+    update om_country
+    set a2 = #{a2,jdbcType=CHAR},
+      a3 = #{a3,jdbcType=CHAR},
+      num = #{num,jdbcType=CHAR},
+      tier = #{tier,jdbcType=TINYINT},
+      continent = #{continent,jdbcType=VARCHAR},
+      capital = #{capital,jdbcType=VARCHAR},
+      dcenter = #{dcenter,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      name_cn = #{nameCn,jdbcType=VARCHAR},
+      store_front_id = #{storeFrontId,jdbcType=INTEGER},
+      area = #{area,jdbcType=INTEGER},
+      population = #{population,jdbcType=INTEGER},
+      main_lang = #{mainLang,jdbcType=VARCHAR},
+      muti_lang = #{mutiLang,jdbcType=VARCHAR},
+      tld = #{tld,jdbcType=VARCHAR},
+      tz = #{tz,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      time_zones = #{timeZones,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmCountry">
+    update om_country
+    set a2 = #{a2,jdbcType=CHAR},
+      a3 = #{a3,jdbcType=CHAR},
+      num = #{num,jdbcType=CHAR},
+      tier = #{tier,jdbcType=TINYINT},
+      continent = #{continent,jdbcType=VARCHAR},
+      capital = #{capital,jdbcType=VARCHAR},
+      dcenter = #{dcenter,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      name_cn = #{nameCn,jdbcType=VARCHAR},
+      store_front_id = #{storeFrontId,jdbcType=INTEGER},
+      area = #{area,jdbcType=INTEGER},
+      population = #{population,jdbcType=INTEGER},
+      main_lang = #{mainLang,jdbcType=VARCHAR},
+      muti_lang = #{mutiLang,jdbcType=VARCHAR},
+      tld = #{tld,jdbcType=VARCHAR},
+      tz = #{tz,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

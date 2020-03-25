@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="10" status="ERROR">
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout
+                    pattern="%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{magenta} [%style{%t}{blue}] %highlight{%-5level} %style{%logger{36}}{cyan} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="error">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="com.adtiming.om.ds" level="debug"/>
+        <Logger name="org.springframework.boot.web.embedded" level="info"/>
+        <Logger name="org.springframework.jdbc.core.JdbcTemplate" level="debug"/>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmAdnetworkAccountMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmAdnetworkAccount">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="adn_id" jdbcType="TINYINT" property="adnId" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="account_verify" jdbcType="VARCHAR" property="accountVerify" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="telnet_account" jdbcType="VARCHAR" property="telnetAccount" />
+    <result column="telnet_pwd" jdbcType="VARCHAR" property="telnetPwd" />
+    <result column="descn" jdbcType="VARCHAR" property="descn" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="operator" jdbcType="INTEGER" property="operator" />
+    <result column="operate_status" jdbcType="TINYINT" property="operateStatus" />
+    <result column="blacklist" jdbcType="TINYINT" property="blacklist" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, adn_id, account, pwd, account_verify, ip, telnet_account, telnet_pwd, descn, 
+    status, operator, operate_status, blacklist, create_time, lastmodify
+  </sql>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmAdnetworkAccountCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_adnetwork_account
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_adnetwork_account
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_adnetwork_account
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmAdnetworkAccount">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_adnetwork_account (adn_id, account, pwd, 
+      account_verify, ip, telnet_account, 
+      telnet_pwd, descn, status, 
+      operator, operate_status, blacklist, 
+      create_time, lastmodify)
+    values (#{adnId,jdbcType=TINYINT}, #{account,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
+      #{accountVerify,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{telnetAccount,jdbcType=VARCHAR}, 
+      #{telnetPwd,jdbcType=VARCHAR}, #{descn,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{operator,jdbcType=INTEGER}, #{operateStatus,jdbcType=TINYINT}, #{blacklist,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAccount">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_adnetwork_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="pwd != null">
+        pwd,
+      </if>
+      <if test="accountVerify != null">
+        account_verify,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="telnetAccount != null">
+        telnet_account,
+      </if>
+      <if test="telnetPwd != null">
+        telnet_pwd,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="operator != null">
+        operator,
+      </if>
+      <if test="operateStatus != null">
+        operate_status,
+      </if>
+      <if test="blacklist != null">
+        blacklist,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="adnId != null">
+        #{adnId,jdbcType=TINYINT},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="accountVerify != null">
+        #{accountVerify,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="telnetAccount != null">
+        #{telnetAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="telnetPwd != null">
+        #{telnetPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null">
+        #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateStatus != null">
+        #{operateStatus,jdbcType=TINYINT},
+      </if>
+      <if test="blacklist != null">
+        #{blacklist,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAccount">
+    update om_adnetwork_account
+    <set>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=TINYINT},
+      </if>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="accountVerify != null">
+        account_verify = #{accountVerify,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="telnetAccount != null">
+        telnet_account = #{telnetAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="telnetPwd != null">
+        telnet_pwd = #{telnetPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="operator != null">
+        operator = #{operator,jdbcType=INTEGER},
+      </if>
+      <if test="operateStatus != null">
+        operate_status = #{operateStatus,jdbcType=TINYINT},
+      </if>
+      <if test="blacklist != null">
+        blacklist = #{blacklist,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmAdnetworkAccount">
+    update om_adnetwork_account
+    set adn_id = #{adnId,jdbcType=TINYINT},
+      account = #{account,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      account_verify = #{accountVerify,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      telnet_account = #{telnetAccount,jdbcType=VARCHAR},
+      telnet_pwd = #{telnetPwd,jdbcType=VARCHAR},
+      descn = #{descn,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      operator = #{operator,jdbcType=INTEGER},
+      operate_status = #{operateStatus,jdbcType=TINYINT},
+      blacklist = #{blacklist,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

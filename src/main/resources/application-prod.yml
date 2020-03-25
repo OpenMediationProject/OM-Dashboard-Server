@@ -1,0 +1,22 @@
+app:
+  env: prod
+  redis:
+    server: redis_host:6379
+    timeout: 2000
+
+logging:
+  config: classpath:log4j2-prod.xml
+
+om.adc.domain: http://adc.xxx.com
+
+spring:
+  ## datasource
+  datasource:
+    mysql:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://mysql_host/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=false
+      username: user
+      password: pwd
+
+
+

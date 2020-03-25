@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.UmUserMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.UmUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="pwd_old" jdbcType="CHAR" property="pwdOld" />
+    <result column="pwd_lastmodify" jdbcType="TIMESTAMP" property="pwdLastmodify" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="secret_key_lastmodify" jdbcType="TIMESTAMP" property="secretKeyLastmodify" />
+    <result column="secret_key_done" jdbcType="TINYINT" property="secretKeyDone" />
+    <result column="last_login_ip" jdbcType="VARCHAR" property="lastLoginIp" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="descn" jdbcType="VARCHAR" property="descn" />
+    <result column="creator_id" jdbcType="INTEGER" property="creatorId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="publisher_name" jdbcType="VARCHAR" property="publisherName" />
+      <result column="role_id" jdbcType="INTEGER" property="roleId" />
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, username, email, phone, avatar, password, salt, pwd_old, pwd_lastmodify, 
+    secret_key, secret_key_lastmodify, secret_key_done, last_login_ip, last_login_time, 
+    status, descn, creator_id, create_time, lastmodify
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.UmUserCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from um_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from um_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from um_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.UmUser">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into um_user (name, username, email, 
+      phone, avatar, password, 
+      salt, pwd_old, pwd_lastmodify, 
+      secret_key, secret_key_lastmodify, secret_key_done, 
+      last_login_ip, last_login_time, status, 
+      descn, creator_id, create_time, 
+      lastmodify)
+    values (#{name,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{salt,jdbcType=VARCHAR}, #{pwdOld,jdbcType=CHAR}, #{pwdLastmodify,jdbcType=TIMESTAMP}, 
+      #{secretKey,jdbcType=VARCHAR}, #{secretKeyLastmodify,jdbcType=TIMESTAMP}, #{secretKeyDone,jdbcType=TINYINT}, 
+      #{lastLoginIp,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{descn,jdbcType=VARCHAR}, #{creatorId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.UmUser">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into um_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="salt != null">
+        salt,
+      </if>
+      <if test="pwdOld != null">
+        pwd_old,
+      </if>
+      <if test="pwdLastmodify != null">
+        pwd_lastmodify,
+      </if>
+      <if test="secretKey != null">
+        secret_key,
+      </if>
+      <if test="secretKeyLastmodify != null">
+        secret_key_lastmodify,
+      </if>
+      <if test="secretKeyDone != null">
+        secret_key_done,
+      </if>
+      <if test="lastLoginIp != null">
+        last_login_ip,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="creatorId != null">
+        creator_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdOld != null">
+        #{pwdOld,jdbcType=CHAR},
+      </if>
+      <if test="pwdLastmodify != null">
+        #{pwdLastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="secretKey != null">
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKeyLastmodify != null">
+        #{secretKeyLastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="secretKeyDone != null">
+        #{secretKeyDone,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginIp != null">
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null">
+        #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.UmUser">
+    update um_user
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdOld != null">
+        pwd_old = #{pwdOld,jdbcType=CHAR},
+      </if>
+      <if test="pwdLastmodify != null">
+        pwd_lastmodify = #{pwdLastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="secretKey != null">
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKeyLastmodify != null">
+        secret_key_lastmodify = #{secretKeyLastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="secretKeyDone != null">
+        secret_key_done = #{secretKeyDone,jdbcType=TINYINT},
+      </if>
+      <if test="lastLoginIp != null">
+        last_login_ip = #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.UmUser">
+    update um_user
+    set name = #{name,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      pwd_old = #{pwdOld,jdbcType=CHAR},
+      pwd_lastmodify = #{pwdLastmodify,jdbcType=TIMESTAMP},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      secret_key_lastmodify = #{secretKeyLastmodify,jdbcType=TIMESTAMP},
+      secret_key_done = #{secretKeyDone,jdbcType=TINYINT},
+      last_login_ip = #{lastLoginIp,jdbcType=VARCHAR},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      descn = #{descn,jdbcType=VARCHAR},
+      creator_id = #{creatorId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from um_user
+    where username = #{username,jdbcType=VARCHAR} or email = #{username,jdbcType=VARCHAR}
+  </select>
+
+    <select id="getUsersByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT u.*, p.id as publisher_id, p.name as publisher_name, role.id as role_id, role.name as role_name  FROM um_user as u
+        left join um_user_role as urole on u.id = urole.user_id
+        left join om_publisher p on urole.pub_id = p.id
+        left join um_role as role on urole.role_id = role.id
+        where u.username = #{username,jdbcType=VARCHAR} or u.email = #{username,jdbcType=VARCHAR}
+    </select>
+
+  <select id="selectByPublisherId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  SELECT u.*, p.id as publisher_id, p.name as publisher_name, role.id as role_id, role.name as role_name  FROM um_user as u
+     left join um_user_role as urole on u.id = urole.user_id
+     left join om_publisher p on urole.pub_id = p.id
+     left join um_role as role on urole.role_id = role.id
+     where pub_id = #{publisherId,jdbcType=INTEGER};
+  </select>
+
+<select id="selectUsers" parameterType="com.adtiming.om.ds.model.UmUserCriteria" resultMap="BaseResultMap">
+    SELECT u.*, p.id as publisher_id, p.name as publisher_name, role.id as role_id, role.name as role_name  FROM um_user as u
+    left join um_user_role as urole on u.id = urole.user_id
+    left join om_publisher p on urole.pub_id = p.id
+    left join um_role as role on urole.role_id = role.id
+    <if test="_parameter != null">
+        <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+        order by ${orderByClause}
+    </if>
+</select>
+</mapper>

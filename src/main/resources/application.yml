@@ -1,0 +1,53 @@
+server:
+  port: 19013
+  compression:
+    enabled: true
+  http2:
+    enabled: true
+  servlet:
+    application-display-name: om-ds-server
+    session:
+      timeout: 1h
+    context-path: /api
+  tomcat:
+    basedir: .
+    accesslog:
+      directory: log
+      enabled: true
+      file-date-format: .yyyyMMdd
+      buffered: true
+      rename-on-rotate: true
+      prefix: access
+      pattern: '%h %t [%I] %{Host}i %{X-Real-IP}i "%r" %s %b %D %F "%{Referer}i" "%{User-Agent}i"'
+
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 5
+    scheduling:
+      pool:
+        size: 20
+  ## jackson
+  jackson:
+    parser:
+      ALLOW_SINGLE_QUOTES: true
+      ALLOW_UNQUOTED_FIELD_NAMES: true
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: true
+    default-property-inclusion: non_null
+    generator:
+      AUTO_CLOSE_TARGET: false
+      IGNORE_UNKNOWN: true
+
+
+  ## profiles
+  profiles:
+    active: dev
+
+shiro:
+  cipher-key: qu6lEAyVndjeCToTL3cMGg==
+  cookie-name: shiro-cookie
+

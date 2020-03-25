@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmInstanceChangeMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmInstanceChange">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="placement_key" jdbcType="VARCHAR" property="placementKey" />
+    <result column="instance_name" jdbcType="VARCHAR" property="instanceName" />
+    <result column="adn_app_id" jdbcType="INTEGER" property="adnAppId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="adn_id" jdbcType="TINYINT" property="adnId" />
+    <result column="app_key" jdbcType="VARCHAR" property="appKey" />
+    <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="account_owner" jdbcType="TINYINT" property="accountOwner" />
+    <result column="revenue_sharing" jdbcType="DECIMAL" property="revenueSharing" />
+    <result column="ab_test_mode" jdbcType="TINYINT" property="abTestMode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, placement_key, instance_name, adn_app_id, pub_app_id, placement_id, adn_id, app_key, 
+    account_id, account_owner, revenue_sharing, ab_test_mode, status, create_time, lastmodify
+  </sql>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmInstanceChangeCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_instance_change
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmInstanceChangeKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_instance_change
+    where id = #{id,jdbcType=INTEGER}
+      and placement_key = #{placementKey,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmInstanceChangeKey">
+    delete from om_instance_change
+    where id = #{id,jdbcType=INTEGER}
+      and placement_key = #{placementKey,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmInstanceChange">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_instance_change (placement_key, instance_name, adn_app_id, 
+      pub_app_id, placement_id, adn_id, 
+      app_key, account_id, account_owner, 
+      revenue_sharing, ab_test_mode, status, 
+      create_time, lastmodify)
+    values (#{placementKey,jdbcType=VARCHAR}, #{instanceName,jdbcType=VARCHAR}, #{adnAppId,jdbcType=INTEGER}, 
+      #{pubAppId,jdbcType=INTEGER}, #{placementId,jdbcType=INTEGER}, #{adnId,jdbcType=TINYINT}, 
+      #{appKey,jdbcType=VARCHAR}, #{accountId,jdbcType=INTEGER}, #{accountOwner,jdbcType=TINYINT}, 
+      #{revenueSharing,jdbcType=DECIMAL}, #{abTestMode,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmInstanceChange">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_instance_change
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="placementKey != null">
+        placement_key,
+      </if>
+      <if test="instanceName != null">
+        instance_name,
+      </if>
+      <if test="adnAppId != null">
+        adn_app_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="accountOwner != null">
+        account_owner,
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing,
+      </if>
+      <if test="abTestMode != null">
+        ab_test_mode,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="placementKey != null">
+        #{placementKey,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceName != null">
+        #{instanceName,jdbcType=VARCHAR},
+      </if>
+      <if test="adnAppId != null">
+        #{adnAppId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        #{adnId,jdbcType=TINYINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="accountOwner != null">
+        #{accountOwner,jdbcType=TINYINT},
+      </if>
+      <if test="revenueSharing != null">
+        #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="abTestMode != null">
+        #{abTestMode,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmInstanceChange">
+    update om_instance_change
+    <set>
+      <if test="instanceName != null">
+        instance_name = #{instanceName,jdbcType=VARCHAR},
+      </if>
+      <if test="adnAppId != null">
+        adn_app_id = #{adnAppId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=TINYINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="accountOwner != null">
+        account_owner = #{accountOwner,jdbcType=TINYINT},
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="abTestMode != null">
+        ab_test_mode = #{abTestMode,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and placement_key = #{placementKey,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmInstanceChange">
+    update om_instance_change
+    set instance_name = #{instanceName,jdbcType=VARCHAR},
+      adn_app_id = #{adnAppId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      adn_id = #{adnId,jdbcType=TINYINT},
+      app_key = #{appKey,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=INTEGER},
+      account_owner = #{accountOwner,jdbcType=TINYINT},
+      revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      ab_test_mode = #{abTestMode,jdbcType=TINYINT},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and placement_key = #{placementKey,jdbcType=VARCHAR}
+  </update>
+</mapper>

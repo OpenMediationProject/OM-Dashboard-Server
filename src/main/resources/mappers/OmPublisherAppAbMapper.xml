@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmPublisherAppAbMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmPublisherAppAb">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="company_id" jdbcType="INTEGER" property="companyId" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="goal" jdbcType="VARCHAR" property="goal" />
+    <result column="begin_date" jdbcType="TIMESTAMP" property="beginDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="a_status" jdbcType="TINYINT" property="aStatus" />
+    <result column="b_status" jdbcType="TINYINT" property="bStatus" />
+    <result column="a_per" jdbcType="INTEGER" property="aPer" />
+    <result column="b_per" jdbcType="INTEGER" property="bPer" />
+    <result column="comments" jdbcType="VARCHAR" property="comments" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, company_id, publisher_id, pub_app_id, name, goal, begin_date, end_date, status, 
+    a_status, b_status, a_per, b_per, comments, create_time, lastmodify
+  </sql>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmPublisherAppAbCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_publisher_app_ab
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_publisher_app_ab
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_publisher_app_ab
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmPublisherAppAb">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_publisher_app_ab (company_id, publisher_id, pub_app_id, 
+      name, goal, begin_date, 
+      end_date, status, a_status, 
+      b_status, a_per, b_per, 
+      comments, create_time, lastmodify
+      )
+    values (#{companyId,jdbcType=INTEGER}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{goal,jdbcType=VARCHAR}, #{beginDate,jdbcType=TIMESTAMP}, 
+      #{endDate,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, #{aStatus,jdbcType=TINYINT}, 
+      #{bStatus,jdbcType=TINYINT}, #{aPer,jdbcType=INTEGER}, #{bPer,jdbcType=INTEGER}, 
+      #{comments,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPublisherAppAb">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_publisher_app_ab
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="goal != null">
+        goal,
+      </if>
+      <if test="beginDate != null">
+        begin_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="aStatus != null">
+        a_status,
+      </if>
+      <if test="bStatus != null">
+        b_status,
+      </if>
+      <if test="aPer != null">
+        a_per,
+      </if>
+      <if test="bPer != null">
+        b_per,
+      </if>
+      <if test="comments != null">
+        comments,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="goal != null">
+        #{goal,jdbcType=VARCHAR},
+      </if>
+      <if test="beginDate != null">
+        #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="aStatus != null">
+        #{aStatus,jdbcType=TINYINT},
+      </if>
+      <if test="bStatus != null">
+        #{bStatus,jdbcType=TINYINT},
+      </if>
+      <if test="aPer != null">
+        #{aPer,jdbcType=INTEGER},
+      </if>
+      <if test="bPer != null">
+        #{bPer,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPublisherAppAb">
+    update om_publisher_app_ab
+    <set>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="goal != null">
+        goal = #{goal,jdbcType=VARCHAR},
+      </if>
+      <if test="beginDate != null">
+        begin_date = #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="aStatus != null">
+        a_status = #{aStatus,jdbcType=TINYINT},
+      </if>
+      <if test="bStatus != null">
+        b_status = #{bStatus,jdbcType=TINYINT},
+      </if>
+      <if test="aPer != null">
+        a_per = #{aPer,jdbcType=INTEGER},
+      </if>
+      <if test="bPer != null">
+        b_per = #{bPer,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null">
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPublisherAppAb">
+    update om_publisher_app_ab
+    set company_id = #{companyId,jdbcType=INTEGER},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      goal = #{goal,jdbcType=VARCHAR},
+      begin_date = #{beginDate,jdbcType=TIMESTAMP},
+      end_date = #{endDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      a_status = #{aStatus,jdbcType=TINYINT},
+      b_status = #{bStatus,jdbcType=TINYINT},
+      a_per = #{aPer,jdbcType=INTEGER},
+      b_per = #{bPer,jdbcType=INTEGER},
+      comments = #{comments,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
