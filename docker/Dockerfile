@@ -15,6 +15,7 @@ ADD docker-entrypoint.sh /
 ADD application-loc.yml /${SERVERNAME}/
 COPY --from=builder ${GET_BUILDER_DIR}/target/${SERVERNAME}.jar /${SERVERNAME}/
 WORKDIR /
+RUN chmod +x /docker-entrypoint.sh /${SERVERNAME}/${SERVERNAME}.jar
 HEALTHCHECK --interval=30s --timeout=3s \
   CMD curl -f http://localhost:19013/api/check || exit 1
 EXPOSE 19013
