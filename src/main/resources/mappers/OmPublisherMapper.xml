@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmPublisherMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmPublisher">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="verify_status" jdbcType="TINYINT" property="verifyStatus" />
+    <result column="domain" jdbcType="VARCHAR" property="domain" />
+    <result column="descn" jdbcType="VARCHAR" property="descn" />
+    <result column="contacts" jdbcType="VARCHAR" property="contacts" />
+    <result column="revenue_sharing" jdbcType="DECIMAL" property="revenueSharing" />
+    <result column="im_type" jdbcType="TINYINT" property="imType" />
+    <result column="publisher_manager" jdbcType="INTEGER" property="publisherManager" />
+    <result column="account_manager" jdbcType="INTEGER" property="accountManager" />
+    <result column="token" jdbcType="VARCHAR" property="token" />
+    <result column="token_create_time" jdbcType="TIMESTAMP" property="tokenCreateTime" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="skype" jdbcType="VARCHAR" property="skype" />
+    <result column="wechat_qq" jdbcType="VARCHAR" property="wechatQq" />
+    <result column="facebook_account" jdbcType="VARCHAR" property="facebookAccount" />
+    <result column="owner_user_id" jdbcType="INTEGER" property="ownerUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, nickname, status, verify_status, domain, descn, contacts, revenue_sharing, 
+    im_type, publisher_manager, account_manager, token, token_create_time, address, email, 
+    country, phone, skype, wechat_qq, facebook_account, owner_user_id, create_time, lastmodify
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmPublisherCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_publisher
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_publisher
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_publisher
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmPublisher">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_publisher (name, nickname, status, 
+      verify_status, domain, descn, 
+      contacts, revenue_sharing, im_type, 
+      publisher_manager, account_manager, token, 
+      token_create_time, address, email, 
+      country, phone, skype, 
+      wechat_qq, facebook_account, owner_user_id, 
+      create_time, lastmodify)
+    values (#{name,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{verifyStatus,jdbcType=TINYINT}, #{domain,jdbcType=VARCHAR}, #{descn,jdbcType=VARCHAR}, 
+      #{contacts,jdbcType=VARCHAR}, #{revenueSharing,jdbcType=DECIMAL}, #{imType,jdbcType=TINYINT}, 
+      #{publisherManager,jdbcType=INTEGER}, #{accountManager,jdbcType=INTEGER}, #{token,jdbcType=VARCHAR}, 
+      #{tokenCreateTime,jdbcType=TIMESTAMP}, #{address,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{country,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{skype,jdbcType=VARCHAR}, 
+      #{wechatQq,jdbcType=VARCHAR}, #{facebookAccount,jdbcType=VARCHAR}, #{ownerUserId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPublisher">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_publisher
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="verifyStatus != null">
+        verify_status,
+      </if>
+      <if test="domain != null">
+        domain,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="contacts != null">
+        contacts,
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing,
+      </if>
+      <if test="imType != null">
+        im_type,
+      </if>
+      <if test="publisherManager != null">
+        publisher_manager,
+      </if>
+      <if test="accountManager != null">
+        account_manager,
+      </if>
+      <if test="token != null">
+        token,
+      </if>
+      <if test="tokenCreateTime != null">
+        token_create_time,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="skype != null">
+        skype,
+      </if>
+      <if test="wechatQq != null">
+        wechat_qq,
+      </if>
+      <if test="facebookAccount != null">
+        facebook_account,
+      </if>
+      <if test="ownerUserId != null">
+        owner_user_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="verifyStatus != null">
+        #{verifyStatus,jdbcType=TINYINT},
+      </if>
+      <if test="domain != null">
+        #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null">
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="revenueSharing != null">
+        #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="imType != null">
+        #{imType,jdbcType=TINYINT},
+      </if>
+      <if test="publisherManager != null">
+        #{publisherManager,jdbcType=INTEGER},
+      </if>
+      <if test="accountManager != null">
+        #{accountManager,jdbcType=INTEGER},
+      </if>
+      <if test="token != null">
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenCreateTime != null">
+        #{tokenCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="skype != null">
+        #{skype,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatQq != null">
+        #{wechatQq,jdbcType=VARCHAR},
+      </if>
+      <if test="facebookAccount != null">
+        #{facebookAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerUserId != null">
+        #{ownerUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPublisher">
+    update om_publisher
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="verifyStatus != null">
+        verify_status = #{verifyStatus,jdbcType=TINYINT},
+      </if>
+      <if test="domain != null">
+        domain = #{domain,jdbcType=VARCHAR},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null">
+        contacts = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="imType != null">
+        im_type = #{imType,jdbcType=TINYINT},
+      </if>
+      <if test="publisherManager != null">
+        publisher_manager = #{publisherManager,jdbcType=INTEGER},
+      </if>
+      <if test="accountManager != null">
+        account_manager = #{accountManager,jdbcType=INTEGER},
+      </if>
+      <if test="token != null">
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenCreateTime != null">
+        token_create_time = #{tokenCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="skype != null">
+        skype = #{skype,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatQq != null">
+        wechat_qq = #{wechatQq,jdbcType=VARCHAR},
+      </if>
+      <if test="facebookAccount != null">
+        facebook_account = #{facebookAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerUserId != null">
+        owner_user_id = #{ownerUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPublisher">
+    update om_publisher
+    set name = #{name,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      verify_status = #{verifyStatus,jdbcType=TINYINT},
+      domain = #{domain,jdbcType=VARCHAR},
+      descn = #{descn,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      im_type = #{imType,jdbcType=TINYINT},
+      publisher_manager = #{publisherManager,jdbcType=INTEGER},
+      account_manager = #{accountManager,jdbcType=INTEGER},
+      token = #{token,jdbcType=VARCHAR},
+      token_create_time = #{tokenCreateTime,jdbcType=TIMESTAMP},
+      address = #{address,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      skype = #{skype,jdbcType=VARCHAR},
+      wechat_qq = #{wechatQq,jdbcType=VARCHAR},
+      facebook_account = #{facebookAccount,jdbcType=VARCHAR},
+      owner_user_id = #{ownerUserId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

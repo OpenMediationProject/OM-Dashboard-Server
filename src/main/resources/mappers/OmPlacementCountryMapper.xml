@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmPlacementCountryMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmPlacementCountry">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="country" jdbcType="CHAR" property="country" />
+    <result column="floor_price_switch" jdbcType="TINYINT" property="floorPriceSwitch" />
+    <result column="floor_price" jdbcType="DECIMAL" property="floorPrice" />
+    <result column="max_price" jdbcType="DECIMAL" property="maxPrice" />
+    <result column="billing_type" jdbcType="TINYINT" property="billingType" />
+    <result column="revenue_sharing" jdbcType="DECIMAL" property="revenueSharing" />
+    <result column="ecpm" jdbcType="DECIMAL" property="ecpm" />
+    <result column="hour0" jdbcType="INTEGER" property="hour0" />
+    <result column="hour1" jdbcType="INTEGER" property="hour1" />
+    <result column="hour2" jdbcType="INTEGER" property="hour2" />
+    <result column="hour3" jdbcType="INTEGER" property="hour3" />
+    <result column="hour4" jdbcType="INTEGER" property="hour4" />
+    <result column="hour5" jdbcType="INTEGER" property="hour5" />
+    <result column="hour6" jdbcType="INTEGER" property="hour6" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, placement_id, country, floor_price_switch, floor_price, max_price, billing_type, 
+    revenue_sharing, ecpm, hour0, hour1, hour2, hour3, hour4, hour5, hour6, create_time, 
+    lastmodify
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmPlacementCountryCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_placement_country
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from om_placement_country
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_placement_country
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmPlacementCountry">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement_country (placement_id, country, floor_price_switch, 
+      floor_price, max_price, billing_type, 
+      revenue_sharing, ecpm, hour0, 
+      hour1, hour2, hour3, 
+      hour4, hour5, hour6, 
+      create_time, lastmodify)
+    values (#{placementId,jdbcType=INTEGER}, #{country,jdbcType=CHAR}, #{floorPriceSwitch,jdbcType=TINYINT}, 
+      #{floorPrice,jdbcType=DECIMAL}, #{maxPrice,jdbcType=DECIMAL}, #{billingType,jdbcType=TINYINT}, 
+      #{revenueSharing,jdbcType=DECIMAL}, #{ecpm,jdbcType=DECIMAL}, #{hour0,jdbcType=INTEGER}, 
+      #{hour1,jdbcType=INTEGER}, #{hour2,jdbcType=INTEGER}, #{hour3,jdbcType=INTEGER}, 
+      #{hour4,jdbcType=INTEGER}, #{hour5,jdbcType=INTEGER}, #{hour6,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementCountry">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement_country
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="floorPriceSwitch != null">
+        floor_price_switch,
+      </if>
+      <if test="floorPrice != null">
+        floor_price,
+      </if>
+      <if test="maxPrice != null">
+        max_price,
+      </if>
+      <if test="billingType != null">
+        billing_type,
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing,
+      </if>
+      <if test="ecpm != null">
+        ecpm,
+      </if>
+      <if test="hour0 != null">
+        hour0,
+      </if>
+      <if test="hour1 != null">
+        hour1,
+      </if>
+      <if test="hour2 != null">
+        hour2,
+      </if>
+      <if test="hour3 != null">
+        hour3,
+      </if>
+      <if test="hour4 != null">
+        hour4,
+      </if>
+      <if test="hour5 != null">
+        hour5,
+      </if>
+      <if test="hour6 != null">
+        hour6,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=CHAR},
+      </if>
+      <if test="floorPriceSwitch != null">
+        #{floorPriceSwitch,jdbcType=TINYINT},
+      </if>
+      <if test="floorPrice != null">
+        #{floorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="maxPrice != null">
+        #{maxPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="billingType != null">
+        #{billingType,jdbcType=TINYINT},
+      </if>
+      <if test="revenueSharing != null">
+        #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="ecpm != null">
+        #{ecpm,jdbcType=DECIMAL},
+      </if>
+      <if test="hour0 != null">
+        #{hour0,jdbcType=INTEGER},
+      </if>
+      <if test="hour1 != null">
+        #{hour1,jdbcType=INTEGER},
+      </if>
+      <if test="hour2 != null">
+        #{hour2,jdbcType=INTEGER},
+      </if>
+      <if test="hour3 != null">
+        #{hour3,jdbcType=INTEGER},
+      </if>
+      <if test="hour4 != null">
+        #{hour4,jdbcType=INTEGER},
+      </if>
+      <if test="hour5 != null">
+        #{hour5,jdbcType=INTEGER},
+      </if>
+      <if test="hour6 != null">
+        #{hour6,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPlacementCountry">
+    update om_placement_country
+    <set>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=CHAR},
+      </if>
+      <if test="floorPriceSwitch != null">
+        floor_price_switch = #{floorPriceSwitch,jdbcType=TINYINT},
+      </if>
+      <if test="floorPrice != null">
+        floor_price = #{floorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="maxPrice != null">
+        max_price = #{maxPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="billingType != null">
+        billing_type = #{billingType,jdbcType=TINYINT},
+      </if>
+      <if test="revenueSharing != null">
+        revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      </if>
+      <if test="ecpm != null">
+        ecpm = #{ecpm,jdbcType=DECIMAL},
+      </if>
+      <if test="hour0 != null">
+        hour0 = #{hour0,jdbcType=INTEGER},
+      </if>
+      <if test="hour1 != null">
+        hour1 = #{hour1,jdbcType=INTEGER},
+      </if>
+      <if test="hour2 != null">
+        hour2 = #{hour2,jdbcType=INTEGER},
+      </if>
+      <if test="hour3 != null">
+        hour3 = #{hour3,jdbcType=INTEGER},
+      </if>
+      <if test="hour4 != null">
+        hour4 = #{hour4,jdbcType=INTEGER},
+      </if>
+      <if test="hour5 != null">
+        hour5 = #{hour5,jdbcType=INTEGER},
+      </if>
+      <if test="hour6 != null">
+        hour6 = #{hour6,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPlacementCountry">
+    update om_placement_country
+    set placement_id = #{placementId,jdbcType=INTEGER},
+      country = #{country,jdbcType=CHAR},
+      floor_price_switch = #{floorPriceSwitch,jdbcType=TINYINT},
+      floor_price = #{floorPrice,jdbcType=DECIMAL},
+      max_price = #{maxPrice,jdbcType=DECIMAL},
+      billing_type = #{billingType,jdbcType=TINYINT},
+      revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
+      ecpm = #{ecpm,jdbcType=DECIMAL},
+      hour0 = #{hour0,jdbcType=INTEGER},
+      hour1 = #{hour1,jdbcType=INTEGER},
+      hour2 = #{hour2,jdbcType=INTEGER},
+      hour3 = #{hour3,jdbcType=INTEGER},
+      hour4 = #{hour4,jdbcType=INTEGER},
+      hour5 = #{hour5,jdbcType=INTEGER},
+      hour6 = #{hour6,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

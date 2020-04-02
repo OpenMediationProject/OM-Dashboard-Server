@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.StatAdnetworkMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.StatAdnetwork">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="day" jdbcType="DATE" property="day" />
+    <result column="hour" jdbcType="TINYINT" property="hour" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="platform" jdbcType="TINYINT" property="platform" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="ad_type" jdbcType="TINYINT" property="adType" />
+    <result column="adn_id" jdbcType="INTEGER" property="adnId" />
+    <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="abt" jdbcType="TINYINT" property="abt" />
+    <result column="cost" jdbcType="DECIMAL" property="cost" />
+    <result column="revenue" jdbcType="DECIMAL" property="revenue" />
+    <result column="api_request" jdbcType="DECIMAL" property="apiRequest" />
+    <result column="api_filled" jdbcType="INTEGER" property="apiFilled" />
+    <result column="api_click" jdbcType="INTEGER" property="apiClick" />
+    <result column="api_impr" jdbcType="INTEGER" property="apiImpr" />
+    <result column="api_video_start" jdbcType="INTEGER" property="apiVideoStart" />
+    <result column="api_video_complete" jdbcType="INTEGER" property="apiVideoComplete" />
+    <result column="account_id" jdbcType="INTEGER" property="accountId" />
+    <result column="account_owner" jdbcType="TINYINT" property="accountOwner" />
+    <result column="category" jdbcType="TINYINT" property="category" />
+    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, ad_type, 
+    adn_id, instance_id, abt, cost, revenue, api_request, api_filled, api_click, api_impr, 
+    api_video_start, api_video_complete, account_id, account_owner, category, account_name, 
+    create_time, lastmodify
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.StatAdnetworkCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from stat_adnetwork
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatAdnetworkKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stat_adnetwork
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatAdnetworkKey">
+    delete from stat_adnetwork
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.StatAdnetwork">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_adnetwork (day, hour, country, 
+      platform, publisher_id, pub_app_id, 
+      placement_id, ad_type, adn_id, 
+      instance_id, abt, cost, 
+      revenue, api_request, api_filled, 
+      api_click, api_impr, api_video_start, 
+      api_video_complete, account_id, account_owner, 
+      category, account_name, create_time, 
+      lastmodify)
+    values (#{day,jdbcType=DATE}, #{hour,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, 
+      #{platform,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
+      #{placementId,jdbcType=INTEGER}, #{adType,jdbcType=TINYINT}, #{adnId,jdbcType=INTEGER}, 
+      #{instanceId,jdbcType=INTEGER}, #{abt,jdbcType=TINYINT}, #{cost,jdbcType=DECIMAL}, 
+      #{revenue,jdbcType=DECIMAL}, #{apiRequest,jdbcType=DECIMAL}, #{apiFilled,jdbcType=INTEGER}, 
+      #{apiClick,jdbcType=INTEGER}, #{apiImpr,jdbcType=INTEGER}, #{apiVideoStart,jdbcType=INTEGER}, 
+      #{apiVideoComplete,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, #{accountOwner,jdbcType=TINYINT}, 
+      #{category,jdbcType=TINYINT}, #{accountName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatAdnetwork">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_adnetwork
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        day,
+      </if>
+      <if test="hour != null">
+        hour,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="platform != null">
+        platform,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="adType != null">
+        ad_type,
+      </if>
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="instanceId != null">
+        instance_id,
+      </if>
+      <if test="abt != null">
+        abt,
+      </if>
+      <if test="cost != null">
+        cost,
+      </if>
+      <if test="revenue != null">
+        revenue,
+      </if>
+      <if test="apiRequest != null">
+        api_request,
+      </if>
+      <if test="apiFilled != null">
+        api_filled,
+      </if>
+      <if test="apiClick != null">
+        api_click,
+      </if>
+      <if test="apiImpr != null">
+        api_impr,
+      </if>
+      <if test="apiVideoStart != null">
+        api_video_start,
+      </if>
+      <if test="apiVideoComplete != null">
+        api_video_complete,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="accountOwner != null">
+        account_owner,
+      </if>
+      <if test="category != null">
+        category,
+      </if>
+      <if test="accountName != null">
+        account_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        #{day,jdbcType=DATE},
+      </if>
+      <if test="hour != null">
+        #{hour,jdbcType=TINYINT},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="adType != null">
+        #{adType,jdbcType=TINYINT},
+      </if>
+      <if test="adnId != null">
+        #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="abt != null">
+        #{abt,jdbcType=TINYINT},
+      </if>
+      <if test="cost != null">
+        #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="revenue != null">
+        #{revenue,jdbcType=DECIMAL},
+      </if>
+      <if test="apiRequest != null">
+        #{apiRequest,jdbcType=DECIMAL},
+      </if>
+      <if test="apiFilled != null">
+        #{apiFilled,jdbcType=INTEGER},
+      </if>
+      <if test="apiClick != null">
+        #{apiClick,jdbcType=INTEGER},
+      </if>
+      <if test="apiImpr != null">
+        #{apiImpr,jdbcType=INTEGER},
+      </if>
+      <if test="apiVideoStart != null">
+        #{apiVideoStart,jdbcType=INTEGER},
+      </if>
+      <if test="apiVideoComplete != null">
+        #{apiVideoComplete,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="accountOwner != null">
+        #{accountOwner,jdbcType=TINYINT},
+      </if>
+      <if test="category != null">
+        #{category,jdbcType=TINYINT},
+      </if>
+      <if test="accountName != null">
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.StatAdnetwork">
+    update stat_adnetwork
+    <set>
+      <if test="hour != null">
+        hour = #{hour,jdbcType=TINYINT},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        platform = #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="adType != null">
+        ad_type = #{adType,jdbcType=TINYINT},
+      </if>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        instance_id = #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="abt != null">
+        abt = #{abt,jdbcType=TINYINT},
+      </if>
+      <if test="cost != null">
+        cost = #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="revenue != null">
+        revenue = #{revenue,jdbcType=DECIMAL},
+      </if>
+      <if test="apiRequest != null">
+        api_request = #{apiRequest,jdbcType=DECIMAL},
+      </if>
+      <if test="apiFilled != null">
+        api_filled = #{apiFilled,jdbcType=INTEGER},
+      </if>
+      <if test="apiClick != null">
+        api_click = #{apiClick,jdbcType=INTEGER},
+      </if>
+      <if test="apiImpr != null">
+        api_impr = #{apiImpr,jdbcType=INTEGER},
+      </if>
+      <if test="apiVideoStart != null">
+        api_video_start = #{apiVideoStart,jdbcType=INTEGER},
+      </if>
+      <if test="apiVideoComplete != null">
+        api_video_complete = #{apiVideoComplete,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="accountOwner != null">
+        account_owner = #{accountOwner,jdbcType=TINYINT},
+      </if>
+      <if test="category != null">
+        category = #{category,jdbcType=TINYINT},
+      </if>
+      <if test="accountName != null">
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatAdnetwork">
+    update stat_adnetwork
+    set hour = #{hour,jdbcType=TINYINT},
+      country = #{country,jdbcType=VARCHAR},
+      platform = #{platform,jdbcType=TINYINT},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      ad_type = #{adType,jdbcType=TINYINT},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      instance_id = #{instanceId,jdbcType=INTEGER},
+      abt = #{abt,jdbcType=TINYINT},
+      cost = #{cost,jdbcType=DECIMAL},
+      revenue = #{revenue,jdbcType=DECIMAL},
+      api_request = #{apiRequest,jdbcType=DECIMAL},
+      api_filled = #{apiFilled,jdbcType=INTEGER},
+      api_click = #{apiClick,jdbcType=INTEGER},
+      api_impr = #{apiImpr,jdbcType=INTEGER},
+      api_video_start = #{apiVideoStart,jdbcType=INTEGER},
+      api_video_complete = #{apiVideoComplete,jdbcType=INTEGER},
+      account_id = #{accountId,jdbcType=INTEGER},
+      account_owner = #{accountOwner,jdbcType=TINYINT},
+      category = #{category,jdbcType=TINYINT},
+      account_name = #{accountName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </update>
+
+  <sql id="Summary_Where_Clause">
+    <where>
+      <foreach collection="_parameter.get('summaryWhereClause')" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+  <select id="selectSummary" parameterType="map" resultMap="BaseResultMap">
+    select
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisherId')">
+      publisher_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_pubAppId')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_platform')">
+      platform,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_placementId')">
+      placement_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_instanceId')">
+      instance_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_adnId')">
+      adn_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_abt')">
+      abt,
+    </if>
+    <if test="_parameter.containsKey('dimension_hour')">
+      hour,
+    </if>
+    <if test="_parameter.containsKey('dimension_category')">
+      category,
+    </if>
+    <if test="_parameter.containsKey('dimension_accountId')">
+      account_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_accountOwner')">
+      account_owner,
+    </if>
+    sum(api_request) as api_request,sum(api_filled) as api_filled,sum(api_click) as api_click, sum(api_impr) as api_impr,
+    sum(api_video_start) as api_video_start,sum(api_video_complete) as api_video_complete, sum(revenue) as revenue,
+    sum(cost) as cost
+    from stat_adnetwork
+    <if test="_parameter.containsKey('summaryWhereClause')">
+      <include refid="Summary_Where_Clause" />
+    </if>
+    group by
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisherId')">
+      publisher_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_pubAppId')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_platform')">
+      platform,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_placementId')">
+      placement_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_instanceId')">
+      instance_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_adnId')">
+      adn_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_abt')">
+      abt,
+    </if>
+    <if test="_parameter.containsKey('dimension_hour')">
+      hour,
+    </if>
+    <if test="_parameter.containsKey('dimension_category')">
+      category,
+    </if>
+    <if test="_parameter.containsKey('dimension_accountId')">
+      account_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_accountOwner')">
+      account_owner,
+    </if>
+    null
+    <if test="_parameter.containsKey('orderByClause')">
+      order by #{orderByClause}
+    </if>
+  </select>
+</mapper>

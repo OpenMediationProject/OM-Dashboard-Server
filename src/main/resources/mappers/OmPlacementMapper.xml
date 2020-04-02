@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmPlacementMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmPlacement">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="main_placement" jdbcType="TINYINT" property="mainPlacement" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ad_type" jdbcType="TINYINT" property="adType" />
+    <result column="descn" jdbcType="VARCHAR" property="descn" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="preload_timeout" jdbcType="TINYINT" property="preloadTimeout" />
+    <result column="ab_test_status" jdbcType="TINYINT" property="abTestStatus" />
+    <result column="preview_url" jdbcType="VARCHAR" property="previewUrl" />
+    <result column="ic_url" jdbcType="VARCHAR" property="icUrl" />
+    <result column="floor_price" jdbcType="DECIMAL" property="floorPrice" />
+    <result column="floor_price_switch" jdbcType="TINYINT" property="floorPriceSwitch" />
+    <result column="hb_status" jdbcType="TINYINT" property="hbStatus" />
+    <result column="fan_out" jdbcType="TINYINT" property="fanOut" />
+    <result column="batch_size" jdbcType="TINYINT" property="batchSize" />
+    <result column="inventory_count" jdbcType="TINYINT" property="inventoryCount" />
+    <result column="inventory_interval" jdbcType="INTEGER" property="inventoryInterval" />
+    <result column="reload_interval" jdbcType="INTEGER" property="reloadInterval" />
+    <result column="frequency_cap" jdbcType="INTEGER" property="frequencyCap" />
+    <result column="frequency_unit" jdbcType="INTEGER" property="frequencyUnit" />
+    <result column="frequency_interval" jdbcType="INTEGER" property="frequencyInterval" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="osv_max" jdbcType="VARCHAR" property="osvMax" />
+    <result column="osv_min" jdbcType="VARCHAR" property="osvMin" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
+    <result column="osv_whitelist" jdbcType="LONGVARCHAR" property="osvWhitelist" />
+    <result column="osv_blacklist" jdbcType="LONGVARCHAR" property="osvBlacklist" />
+    <result column="make_whitelist" jdbcType="LONGVARCHAR" property="makeWhitelist" />
+    <result column="make_blacklist" jdbcType="LONGVARCHAR" property="makeBlacklist" />
+    <result column="brand_whitelist" jdbcType="LONGVARCHAR" property="brandWhitelist" />
+    <result column="brand_blacklist" jdbcType="LONGVARCHAR" property="brandBlacklist" />
+    <result column="model_whitelist" jdbcType="LONGVARCHAR" property="modelWhitelist" />
+    <result column="model_blacklist" jdbcType="LONGVARCHAR" property="modelBlacklist" />
+    <result column="did_blacklist" jdbcType="LONGVARCHAR" property="didBlacklist" />
+    <result column="sdkv_blacklist" jdbcType="LONGVARCHAR" property="sdkvBlacklist" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, publisher_id, pub_app_id, main_placement, name, ad_type, descn, status, preload_timeout, 
+    ab_test_status, preview_url, ic_url, floor_price, floor_price_switch, hb_status, 
+    fan_out, batch_size, inventory_count, inventory_interval, reload_interval, frequency_cap, 
+    frequency_unit, frequency_interval, create_time, lastmodify, osv_max, osv_min
+  </sql>
+  <sql id="Blob_Column_List">
+    osv_whitelist, osv_blacklist, make_whitelist, make_blacklist, brand_whitelist, brand_blacklist, 
+    model_whitelist, model_blacklist, did_blacklist, sdkv_blacklist
+  </sql>
+  <select id="selectWithBLOBs" parameterType="com.adtiming.om.ds.model.OmPlacementCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_placement
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmPlacementCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_placement
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_placement
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_placement
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement (publisher_id, pub_app_id, main_placement, 
+      name, ad_type, descn, 
+      status, preload_timeout, ab_test_status, 
+      preview_url, ic_url, floor_price, 
+      floor_price_switch, hb_status, fan_out, 
+      batch_size, inventory_count, inventory_interval, 
+      reload_interval, frequency_cap, frequency_unit, 
+      frequency_interval, create_time, lastmodify, 
+      osv_max, osv_min, osv_whitelist, 
+      osv_blacklist, make_whitelist, make_blacklist, 
+      brand_whitelist, brand_blacklist, 
+      model_whitelist, model_blacklist, 
+      did_blacklist, sdkv_blacklist)
+    values (#{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, #{mainPlacement,jdbcType=TINYINT}, 
+      #{name,jdbcType=VARCHAR}, #{adType,jdbcType=TINYINT}, #{descn,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{preloadTimeout,jdbcType=TINYINT}, #{abTestStatus,jdbcType=TINYINT}, 
+      #{previewUrl,jdbcType=VARCHAR}, #{icUrl,jdbcType=VARCHAR}, #{floorPrice,jdbcType=DECIMAL}, 
+      #{floorPriceSwitch,jdbcType=TINYINT}, #{hbStatus,jdbcType=TINYINT}, #{fanOut,jdbcType=TINYINT}, 
+      #{batchSize,jdbcType=TINYINT}, #{inventoryCount,jdbcType=TINYINT}, #{inventoryInterval,jdbcType=INTEGER}, 
+      #{reloadInterval,jdbcType=INTEGER}, #{frequencyCap,jdbcType=INTEGER}, #{frequencyUnit,jdbcType=INTEGER}, 
+      #{frequencyInterval,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
+      #{osvMax,jdbcType=VARCHAR}, #{osvMin,jdbcType=VARCHAR}, #{osvWhitelist,jdbcType=LONGVARCHAR}, 
+      #{osvBlacklist,jdbcType=LONGVARCHAR}, #{makeWhitelist,jdbcType=LONGVARCHAR}, #{makeBlacklist,jdbcType=LONGVARCHAR}, 
+      #{brandWhitelist,jdbcType=LONGVARCHAR}, #{brandBlacklist,jdbcType=LONGVARCHAR}, 
+      #{modelWhitelist,jdbcType=LONGVARCHAR}, #{modelBlacklist,jdbcType=LONGVARCHAR}, 
+      #{didBlacklist,jdbcType=LONGVARCHAR}, #{sdkvBlacklist,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_placement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="mainPlacement != null">
+        main_placement,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="adType != null">
+        ad_type,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="preloadTimeout != null">
+        preload_timeout,
+      </if>
+      <if test="abTestStatus != null">
+        ab_test_status,
+      </if>
+      <if test="previewUrl != null">
+        preview_url,
+      </if>
+      <if test="icUrl != null">
+        ic_url,
+      </if>
+      <if test="floorPrice != null">
+        floor_price,
+      </if>
+      <if test="floorPriceSwitch != null">
+        floor_price_switch,
+      </if>
+      <if test="hbStatus != null">
+        hb_status,
+      </if>
+      <if test="fanOut != null">
+        fan_out,
+      </if>
+      <if test="batchSize != null">
+        batch_size,
+      </if>
+      <if test="inventoryCount != null">
+        inventory_count,
+      </if>
+      <if test="inventoryInterval != null">
+        inventory_interval,
+      </if>
+      <if test="reloadInterval != null">
+        reload_interval,
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap,
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit,
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="osvMax != null">
+        osv_max,
+      </if>
+      <if test="osvMin != null">
+        osv_min,
+      </if>
+      <if test="osvWhitelist != null">
+        osv_whitelist,
+      </if>
+      <if test="osvBlacklist != null">
+        osv_blacklist,
+      </if>
+      <if test="makeWhitelist != null">
+        make_whitelist,
+      </if>
+      <if test="makeBlacklist != null">
+        make_blacklist,
+      </if>
+      <if test="brandWhitelist != null">
+        brand_whitelist,
+      </if>
+      <if test="brandBlacklist != null">
+        brand_blacklist,
+      </if>
+      <if test="modelWhitelist != null">
+        model_whitelist,
+      </if>
+      <if test="modelBlacklist != null">
+        model_blacklist,
+      </if>
+      <if test="didBlacklist != null">
+        did_blacklist,
+      </if>
+      <if test="sdkvBlacklist != null">
+        sdkv_blacklist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="mainPlacement != null">
+        #{mainPlacement,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="adType != null">
+        #{adType,jdbcType=TINYINT},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="preloadTimeout != null">
+        #{preloadTimeout,jdbcType=TINYINT},
+      </if>
+      <if test="abTestStatus != null">
+        #{abTestStatus,jdbcType=TINYINT},
+      </if>
+      <if test="previewUrl != null">
+        #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="icUrl != null">
+        #{icUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="floorPrice != null">
+        #{floorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="floorPriceSwitch != null">
+        #{floorPriceSwitch,jdbcType=TINYINT},
+      </if>
+      <if test="hbStatus != null">
+        #{hbStatus,jdbcType=TINYINT},
+      </if>
+      <if test="fanOut != null">
+        #{fanOut,jdbcType=TINYINT},
+      </if>
+      <if test="batchSize != null">
+        #{batchSize,jdbcType=TINYINT},
+      </if>
+      <if test="inventoryCount != null">
+        #{inventoryCount,jdbcType=TINYINT},
+      </if>
+      <if test="inventoryInterval != null">
+        #{inventoryInterval,jdbcType=INTEGER},
+      </if>
+      <if test="reloadInterval != null">
+        #{reloadInterval,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyCap != null">
+        #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="osvMax != null">
+        #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="osvWhitelist != null">
+        #{osvWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="osvBlacklist != null">
+        #{osvBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeWhitelist != null">
+        #{makeWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeBlacklist != null">
+        #{makeBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandWhitelist != null">
+        #{brandWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandBlacklist != null">
+        #{brandBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelWhitelist != null">
+        #{modelWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBlacklist != null">
+        #{modelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="didBlacklist != null">
+        #{didBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sdkvBlacklist != null">
+        #{sdkvBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
+    update om_placement
+    <set>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="mainPlacement != null">
+        main_placement = #{mainPlacement,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="adType != null">
+        ad_type = #{adType,jdbcType=TINYINT},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="preloadTimeout != null">
+        preload_timeout = #{preloadTimeout,jdbcType=TINYINT},
+      </if>
+      <if test="abTestStatus != null">
+        ab_test_status = #{abTestStatus,jdbcType=TINYINT},
+      </if>
+      <if test="previewUrl != null">
+        preview_url = #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="icUrl != null">
+        ic_url = #{icUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="floorPrice != null">
+        floor_price = #{floorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="floorPriceSwitch != null">
+        floor_price_switch = #{floorPriceSwitch,jdbcType=TINYINT},
+      </if>
+      <if test="hbStatus != null">
+        hb_status = #{hbStatus,jdbcType=TINYINT},
+      </if>
+      <if test="fanOut != null">
+        fan_out = #{fanOut,jdbcType=TINYINT},
+      </if>
+      <if test="batchSize != null">
+        batch_size = #{batchSize,jdbcType=TINYINT},
+      </if>
+      <if test="inventoryCount != null">
+        inventory_count = #{inventoryCount,jdbcType=TINYINT},
+      </if>
+      <if test="inventoryInterval != null">
+        inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
+      </if>
+      <if test="reloadInterval != null">
+        reload_interval = #{reloadInterval,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="osvMax != null">
+        osv_max = #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        osv_min = #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="osvWhitelist != null">
+        osv_whitelist = #{osvWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="osvBlacklist != null">
+        osv_blacklist = #{osvBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeWhitelist != null">
+        make_whitelist = #{makeWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeBlacklist != null">
+        make_blacklist = #{makeBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandWhitelist != null">
+        brand_whitelist = #{brandWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandBlacklist != null">
+        brand_blacklist = #{brandBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelWhitelist != null">
+        model_whitelist = #{modelWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBlacklist != null">
+        model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="didBlacklist != null">
+        did_blacklist = #{didBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sdkvBlacklist != null">
+        sdkv_blacklist = #{sdkvBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
+    update om_placement
+    set publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      main_placement = #{mainPlacement,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      ad_type = #{adType,jdbcType=TINYINT},
+      descn = #{descn,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      preload_timeout = #{preloadTimeout,jdbcType=TINYINT},
+      ab_test_status = #{abTestStatus,jdbcType=TINYINT},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      ic_url = #{icUrl,jdbcType=VARCHAR},
+      floor_price = #{floorPrice,jdbcType=DECIMAL},
+      floor_price_switch = #{floorPriceSwitch,jdbcType=TINYINT},
+      hb_status = #{hbStatus,jdbcType=TINYINT},
+      fan_out = #{fanOut,jdbcType=TINYINT},
+      batch_size = #{batchSize,jdbcType=TINYINT},
+      inventory_count = #{inventoryCount,jdbcType=TINYINT},
+      inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
+      reload_interval = #{reloadInterval,jdbcType=INTEGER},
+      frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR},
+      osv_whitelist = #{osvWhitelist,jdbcType=LONGVARCHAR},
+      osv_blacklist = #{osvBlacklist,jdbcType=LONGVARCHAR},
+      make_whitelist = #{makeWhitelist,jdbcType=LONGVARCHAR},
+      make_blacklist = #{makeBlacklist,jdbcType=LONGVARCHAR},
+      brand_whitelist = #{brandWhitelist,jdbcType=LONGVARCHAR},
+      brand_blacklist = #{brandBlacklist,jdbcType=LONGVARCHAR},
+      model_whitelist = #{modelWhitelist,jdbcType=LONGVARCHAR},
+      model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR},
+      did_blacklist = #{didBlacklist,jdbcType=LONGVARCHAR},
+      sdkv_blacklist = #{sdkvBlacklist,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPlacement">
+    update om_placement
+    set publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      main_placement = #{mainPlacement,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      ad_type = #{adType,jdbcType=TINYINT},
+      descn = #{descn,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      preload_timeout = #{preloadTimeout,jdbcType=TINYINT},
+      ab_test_status = #{abTestStatus,jdbcType=TINYINT},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      ic_url = #{icUrl,jdbcType=VARCHAR},
+      floor_price = #{floorPrice,jdbcType=DECIMAL},
+      floor_price_switch = #{floorPriceSwitch,jdbcType=TINYINT},
+      hb_status = #{hbStatus,jdbcType=TINYINT},
+      fan_out = #{fanOut,jdbcType=TINYINT},
+      batch_size = #{batchSize,jdbcType=TINYINT},
+      inventory_count = #{inventoryCount,jdbcType=TINYINT},
+      inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
+      reload_interval = #{reloadInterval,jdbcType=INTEGER},
+      frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

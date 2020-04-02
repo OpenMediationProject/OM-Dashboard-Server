@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmInstanceMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmInstance">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="old_id" jdbcType="INTEGER" property="oldId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="adn_id" jdbcType="INTEGER" property="adnId" />
+    <result column="adn_app_id" jdbcType="INTEGER" property="adnAppId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="placement_key" jdbcType="VARCHAR" property="placementKey" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="descn" jdbcType="VARCHAR" property="descn" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="osv_max" jdbcType="VARCHAR" property="osvMax" />
+    <result column="osv_min" jdbcType="VARCHAR" property="osvMin" />
+    <result column="frequency_cap" jdbcType="INTEGER" property="frequencyCap" />
+    <result column="frequency_unit" jdbcType="INTEGER" property="frequencyUnit" />
+    <result column="frequency_interval" jdbcType="INTEGER" property="frequencyInterval" />
+    <result column="ab_test_mode" jdbcType="TINYINT" property="abTestMode" />
+    <result column="mediation_audience_segment" jdbcType="TINYINT" property="mediationAudienceSegment" />
+    <result column="mediation_audience_segment_day" jdbcType="DATE" property="mediationAudienceSegmentDay" />
+    <result column="audience_segment" jdbcType="TINYINT" property="audienceSegment" />
+    <result column="audience_segment_expected" jdbcType="INTEGER" property="audienceSegmentExpected" />
+    <result column="hb_status" jdbcType="TINYINT" property="hbStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
+    <result column="make_whitelist" jdbcType="LONGVARCHAR" property="makeWhitelist" />
+    <result column="make_blacklist" jdbcType="LONGVARCHAR" property="makeBlacklist" />
+    <result column="brand_whitelist" jdbcType="LONGVARCHAR" property="brandWhitelist" />
+    <result column="brand_blacklist" jdbcType="LONGVARCHAR" property="brandBlacklist" />
+    <result column="model_whitelist" jdbcType="LONGVARCHAR" property="modelWhitelist" />
+    <result column="model_blacklist" jdbcType="LONGVARCHAR" property="modelBlacklist" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, old_id, name, adn_id, adn_app_id, pub_app_id, placement_id, placement_key, weight, 
+    descn, status, osv_max, osv_min, frequency_cap, frequency_unit, frequency_interval, 
+    ab_test_mode, mediation_audience_segment, mediation_audience_segment_day, audience_segment, 
+    audience_segment_expected, hb_status, create_time, lastmodify
+  </sql>
+  <sql id="Blob_Column_List">
+    make_whitelist, make_blacklist, brand_whitelist, brand_blacklist, model_whitelist, 
+    model_blacklist
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmInstanceCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_instance
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmInstanceCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_instance
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_instance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_instance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_instance (old_id, name, adn_id, 
+      adn_app_id, pub_app_id, placement_id, 
+      placement_key, weight, descn, 
+      status, osv_max, osv_min, 
+      frequency_cap, frequency_unit, frequency_interval, 
+      ab_test_mode, mediation_audience_segment, mediation_audience_segment_day, 
+      audience_segment, audience_segment_expected, 
+      hb_status, create_time, lastmodify, 
+      make_whitelist, make_blacklist, brand_whitelist, 
+      brand_blacklist, model_whitelist, 
+      model_blacklist)
+    values (#{oldId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{adnId,jdbcType=INTEGER}, 
+      #{adnAppId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, #{placementId,jdbcType=INTEGER}, 
+      #{placementKey,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{descn,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{osvMax,jdbcType=VARCHAR}, #{osvMin,jdbcType=VARCHAR}, 
+      #{frequencyCap,jdbcType=INTEGER}, #{frequencyUnit,jdbcType=INTEGER}, #{frequencyInterval,jdbcType=INTEGER}, 
+      #{abTestMode,jdbcType=TINYINT}, #{mediationAudienceSegment,jdbcType=TINYINT}, #{mediationAudienceSegmentDay,jdbcType=DATE}, 
+      #{audienceSegment,jdbcType=TINYINT}, #{audienceSegmentExpected,jdbcType=INTEGER}, 
+      #{hbStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
+      #{makeWhitelist,jdbcType=LONGVARCHAR}, #{makeBlacklist,jdbcType=LONGVARCHAR}, #{brandWhitelist,jdbcType=LONGVARCHAR}, 
+      #{brandBlacklist,jdbcType=LONGVARCHAR}, #{modelWhitelist,jdbcType=LONGVARCHAR}, 
+      #{modelBlacklist,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="oldId != null">
+        old_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="adnAppId != null">
+        adn_app_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="placementKey != null">
+        placement_key,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="osvMax != null">
+        osv_max,
+      </if>
+      <if test="osvMin != null">
+        osv_min,
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap,
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit,
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval,
+      </if>
+      <if test="abTestMode != null">
+        ab_test_mode,
+      </if>
+      <if test="mediationAudienceSegment != null">
+        mediation_audience_segment,
+      </if>
+      <if test="mediationAudienceSegmentDay != null">
+        mediation_audience_segment_day,
+      </if>
+      <if test="audienceSegment != null">
+        audience_segment,
+      </if>
+      <if test="audienceSegmentExpected != null">
+        audience_segment_expected,
+      </if>
+      <if test="hbStatus != null">
+        hb_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="makeWhitelist != null">
+        make_whitelist,
+      </if>
+      <if test="makeBlacklist != null">
+        make_blacklist,
+      </if>
+      <if test="brandWhitelist != null">
+        brand_whitelist,
+      </if>
+      <if test="brandBlacklist != null">
+        brand_blacklist,
+      </if>
+      <if test="modelWhitelist != null">
+        model_whitelist,
+      </if>
+      <if test="modelBlacklist != null">
+        model_blacklist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="oldId != null">
+        #{oldId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="adnId != null">
+        #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="adnAppId != null">
+        #{adnAppId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="placementKey != null">
+        #{placementKey,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="osvMax != null">
+        #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="frequencyCap != null">
+        #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="abTestMode != null">
+        #{abTestMode,jdbcType=TINYINT},
+      </if>
+      <if test="mediationAudienceSegment != null">
+        #{mediationAudienceSegment,jdbcType=TINYINT},
+      </if>
+      <if test="mediationAudienceSegmentDay != null">
+        #{mediationAudienceSegmentDay,jdbcType=DATE},
+      </if>
+      <if test="audienceSegment != null">
+        #{audienceSegment,jdbcType=TINYINT},
+      </if>
+      <if test="audienceSegmentExpected != null">
+        #{audienceSegmentExpected,jdbcType=INTEGER},
+      </if>
+      <if test="hbStatus != null">
+        #{hbStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="makeWhitelist != null">
+        #{makeWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeBlacklist != null">
+        #{makeBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandWhitelist != null">
+        #{brandWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandBlacklist != null">
+        #{brandBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelWhitelist != null">
+        #{modelWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBlacklist != null">
+        #{modelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
+    update om_instance
+    <set>
+      <if test="oldId != null">
+        old_id = #{oldId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="adnAppId != null">
+        adn_app_id = #{adnAppId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="placementKey != null">
+        placement_key = #{placementKey,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="osvMax != null">
+        osv_max = #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        osv_min = #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="frequencyCap != null">
+        frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyUnit != null">
+        frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      </if>
+      <if test="frequencyInterval != null">
+        frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      </if>
+      <if test="abTestMode != null">
+        ab_test_mode = #{abTestMode,jdbcType=TINYINT},
+      </if>
+      <if test="mediationAudienceSegment != null">
+        mediation_audience_segment = #{mediationAudienceSegment,jdbcType=TINYINT},
+      </if>
+      <if test="mediationAudienceSegmentDay != null">
+        mediation_audience_segment_day = #{mediationAudienceSegmentDay,jdbcType=DATE},
+      </if>
+      <if test="audienceSegment != null">
+        audience_segment = #{audienceSegment,jdbcType=TINYINT},
+      </if>
+      <if test="audienceSegmentExpected != null">
+        audience_segment_expected = #{audienceSegmentExpected,jdbcType=INTEGER},
+      </if>
+      <if test="hbStatus != null">
+        hb_status = #{hbStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="makeWhitelist != null">
+        make_whitelist = #{makeWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="makeBlacklist != null">
+        make_blacklist = #{makeBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandWhitelist != null">
+        brand_whitelist = #{brandWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandBlacklist != null">
+        brand_blacklist = #{brandBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelWhitelist != null">
+        model_whitelist = #{modelWhitelist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="modelBlacklist != null">
+        model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
+    update om_instance
+    set old_id = #{oldId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      adn_app_id = #{adnAppId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      placement_key = #{placementKey,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      descn = #{descn,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR},
+      frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      ab_test_mode = #{abTestMode,jdbcType=TINYINT},
+      mediation_audience_segment = #{mediationAudienceSegment,jdbcType=TINYINT},
+      mediation_audience_segment_day = #{mediationAudienceSegmentDay,jdbcType=DATE},
+      audience_segment = #{audienceSegment,jdbcType=TINYINT},
+      audience_segment_expected = #{audienceSegmentExpected,jdbcType=INTEGER},
+      hb_status = #{hbStatus,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      make_whitelist = #{makeWhitelist,jdbcType=LONGVARCHAR},
+      make_blacklist = #{makeBlacklist,jdbcType=LONGVARCHAR},
+      brand_whitelist = #{brandWhitelist,jdbcType=LONGVARCHAR},
+      brand_blacklist = #{brandBlacklist,jdbcType=LONGVARCHAR},
+      model_whitelist = #{modelWhitelist,jdbcType=LONGVARCHAR},
+      model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmInstance">
+    update om_instance
+    set old_id = #{oldId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      adn_app_id = #{adnAppId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      placement_key = #{placementKey,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      descn = #{descn,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR},
+      frequency_cap = #{frequencyCap,jdbcType=INTEGER},
+      frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
+      frequency_interval = #{frequencyInterval,jdbcType=INTEGER},
+      ab_test_mode = #{abTestMode,jdbcType=TINYINT},
+      mediation_audience_segment = #{mediationAudienceSegment,jdbcType=TINYINT},
+      mediation_audience_segment_day = #{mediationAudienceSegmentDay,jdbcType=DATE},
+      audience_segment = #{audienceSegment,jdbcType=TINYINT},
+      audience_segment_expected = #{audienceSegmentExpected,jdbcType=INTEGER},
+      hb_status = #{hbStatus,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmAdnetworkAppBlockRuleMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmAdnetworkAppBlockRule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="adn_id" jdbcType="INTEGER" property="adnId" />
+    <result column="sdk_version" jdbcType="VARCHAR" property="sdkVersion" />
+    <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
+    <result column="osv_max" jdbcType="VARCHAR" property="osvMax" />
+    <result column="osv_min" jdbcType="VARCHAR" property="osvMin" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleWithBLOBs">
+    <result column="make_device_blacklist" jdbcType="LONGVARCHAR" property="makeDeviceBlacklist" />
+    <result column="brand_model_blacklist" jdbcType="LONGVARCHAR" property="brandModelBlacklist" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, pub_app_id, adn_id, sdk_version, app_version, osv_max, osv_min, status, 
+    create_time, lastmodify
+  </sql>
+  <sql id="Blob_Column_List">
+    make_device_blacklist, brand_model_blacklist
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_adnetwork_app_block_rule
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_adnetwork_app_block_rule
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_adnetwork_app_block_rule
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_adnetwork_app_block_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_adnetwork_app_block_rule (name, pub_app_id, adn_id, 
+      sdk_version, app_version, osv_max, 
+      osv_min, status, create_time, 
+      lastmodify, make_device_blacklist, 
+      brand_model_blacklist)
+    values (#{name,jdbcType=VARCHAR}, #{pubAppId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, 
+      #{sdkVersion,jdbcType=VARCHAR}, #{appVersion,jdbcType=VARCHAR}, #{osvMax,jdbcType=VARCHAR}, 
+      #{osvMin,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP}, #{makeDeviceBlacklist,jdbcType=LONGVARCHAR}, 
+      #{brandModelBlacklist,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_adnetwork_app_block_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version,
+      </if>
+      <if test="appVersion != null">
+        app_version,
+      </if>
+      <if test="osvMax != null">
+        osv_max,
+      </if>
+      <if test="osvMin != null">
+        osv_min,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="makeDeviceBlacklist != null">
+        make_device_blacklist,
+      </if>
+      <if test="brandModelBlacklist != null">
+        brand_model_blacklist,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="sdkVersion != null">
+        #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null">
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMax != null">
+        #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="makeDeviceBlacklist != null">
+        #{makeDeviceBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandModelBlacklist != null">
+        #{brandModelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleWithBLOBs">
+    update om_adnetwork_app_block_rule
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null">
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMax != null">
+        osv_max = #{osvMax,jdbcType=VARCHAR},
+      </if>
+      <if test="osvMin != null">
+        osv_min = #{osvMin,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="makeDeviceBlacklist != null">
+        make_device_blacklist = #{makeDeviceBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brandModelBlacklist != null">
+        brand_model_blacklist = #{brandModelBlacklist,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRuleWithBLOBs">
+    update om_adnetwork_app_block_rule
+    set name = #{name,jdbcType=VARCHAR},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      make_device_blacklist = #{makeDeviceBlacklist,jdbcType=LONGVARCHAR},
+      brand_model_blacklist = #{brandModelBlacklist,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppBlockRule">
+    update om_adnetwork_app_block_rule
+    set name = #{name,jdbcType=VARCHAR},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      osv_max = #{osvMax,jdbcType=VARCHAR},
+      osv_min = #{osvMin,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,21 @@
+app:
+  env: dev
+  redis:
+    server: 192.168.254.203:6379
+    timeout: 2000
+
+logging:
+  config: classpath:log4j2-dev.xml
+
+om.adc.domain: http://localhost:19014
+
+spring:
+  ## datasource
+  datasource:
+    mysql:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.254.204:330UserController6/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=false
+      username: diankou
+      password: Diankou@!123
+
+
