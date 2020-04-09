@@ -19,8 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.Filter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -33,6 +35,7 @@ public class OmShiroConfig {
     private static final Logger log = LogManager.getLogger();
     private final long sessionTimeout = 3600000 * 12;
     private String server;
+    private String password;
     private int timeout;
 
     @Value("${shiro.cipher-key}")
@@ -141,6 +144,9 @@ public class OmShiroConfig {
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
         redisManager.setHost(server);
+        if (StringUtils.hasText(password)) {
+            redisManager.setPassword(password);
+        }
         redisManager.setTimeout(timeout);
         return redisManager;
     }
