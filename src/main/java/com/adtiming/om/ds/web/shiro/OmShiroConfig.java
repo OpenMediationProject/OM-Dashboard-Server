@@ -35,7 +35,7 @@ public class OmShiroConfig {
     private static final Logger log = LogManager.getLogger();
     private final long sessionTimeout = 3600000 * 12;
     private String server;
-    private String password;
+    private String rpassword;
     private int timeout;
 
     @Value("${shiro.cipher-key}")
@@ -43,6 +43,10 @@ public class OmShiroConfig {
 
     public void setServer(String server) {
         this.server = server;
+    }
+
+    public void setRpassword(String rpassword) {
+        this.rpassword = rpassword;
     }
 
     public void setTimeout(int timeout) {
@@ -144,8 +148,8 @@ public class OmShiroConfig {
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
         redisManager.setHost(server);
-        if (StringUtils.hasText(password)) {
-            redisManager.setPassword(password);
+        if (StringUtils.hasText(rpassword)) {
+            redisManager.setPassword(rpassword);
         }
         redisManager.setTimeout(timeout);
         return redisManager;
