@@ -26,7 +26,7 @@ MODE=service
 APP_NAME=om-ds-server
 #JAVA_HOME=/usr/local/java/jdk
 JAVA_OPTS="-Dapp=$APP_NAME\
- -Duser.timezone=UTC+8\
+ -Duser.timezone=GMT+08\
  -Xmx3g\
  -Xms1g\
  -server"
