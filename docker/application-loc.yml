@@ -5,7 +5,6 @@ app:
     database: 8
     timeout: 2000
 
-app.redis.password: psd
 
 logging:
   config: classpath:log4j2-prod.xml
