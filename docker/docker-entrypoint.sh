@@ -50,7 +50,7 @@ function updateymlConfig() {
 
     # If config exists in file, replace it. Otherwise, append to file.
     if grep -E -q "^* $key: " "$file"; then
-        sed -r -i "s%^([\s]*$key:).*%\1 $value%g" "$file" #note that no config values may contain an '@' char
+        sed -r -i "s%^(\s+$key:).*%\1 $value%g" "$file" #note that no config values may contain an '@' char
     fi
 }
 
