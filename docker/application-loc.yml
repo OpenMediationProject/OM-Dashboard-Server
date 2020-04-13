@@ -2,7 +2,7 @@ app:
   env: prod
   redis:
     server: 127.0.0.1:6379
-    rpassword: psd
+    pass_word: psd
     database: 8
     timeout: 2000
 
