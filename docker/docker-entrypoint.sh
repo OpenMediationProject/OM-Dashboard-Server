@@ -36,7 +36,7 @@ function updateConfig() {
 
     # If config exists in file, replace it. Otherwise, append to file.
     if grep -E -q "^$key=" "$file"; then
-        sed -r -i "s@^([\s]*$key=).*@\1$value@g" "$file" #note that no config values may contain an '@' char
+        sed -r -i "s@^(.*$key=).*@\1$value@g" "$file" #note that no config values may contain an '@' char
     fi
 }
 
@@ -50,7 +50,7 @@ function updateymlConfig() {
 
     # If config exists in file, replace it. Otherwise, append to file.
     if grep -E -q "^* $key: " "$file"; then
-        sed -r -i "s@^([\s]*$key:).*@\1 $value@g" "$file" #note that no config values may contain an '@' char
+        sed -r -i "s@^(.*$key:).*@\1 $value@g" "$file" #note that no config values may contain an '@' char
     fi
 }
 
@@ -83,6 +83,11 @@ do
         if [[ ${item_name} = "omadcdomain" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFILE}/application-loc.yml"
             sed -i "/om.adc.domain/s@om.adc.domain.*@om.adc.domain: ${!env_var}@g" ${CONFILE}/application-loc.yml
+            continue
+        fi
+        if [[ ${item_name} = "redis-password" ]];then
+            loginfo_note "[Configuring] ${item_name} in ${CONFILE}/application-loc.yml"
+            sed -i "/app.redis.password/s|app.redis.password.*|app.redis.password: ${!env_var}@g" ${CONFILE}/application-loc.yml
             continue
         fi
     fi
