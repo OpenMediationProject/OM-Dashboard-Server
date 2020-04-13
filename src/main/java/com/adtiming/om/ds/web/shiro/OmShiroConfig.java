@@ -35,7 +35,7 @@ public class OmShiroConfig {
     private static final Logger log = LogManager.getLogger();
     private final long sessionTimeout = 3600000 * 12;
     private String server;
-    private String password;
+    private String rpassword;
     private int database;
     private int timeout;
 
@@ -46,8 +46,8 @@ public class OmShiroConfig {
         this.server = server;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRpassword(String rpassword) {
+        this.rpassword = rpassword;
     }
 
     public void setDatabase(int database) {
@@ -153,8 +153,8 @@ public class OmShiroConfig {
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
         redisManager.setHost(server);
-        if (StringUtils.hasText(password)) {
-            redisManager.setPassword(password);
+        if (StringUtils.hasText(rpassword)) {
+            redisManager.setPassword(rpassword);
         }
         redisManager.setDatabase(database);
         redisManager.setTimeout(timeout);

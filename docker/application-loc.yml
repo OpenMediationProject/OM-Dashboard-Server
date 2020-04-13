@@ -2,9 +2,9 @@ app:
   env: prod
   redis:
     server: 127.0.0.1:6379
+    rpassword: psd
     database: 8
     timeout: 2000
-
 
 logging:
   config: classpath:log4j2-prod.xml
