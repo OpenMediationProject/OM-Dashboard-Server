@@ -69,6 +69,7 @@ public class OmShiroConfig {
          * authc:all urls must be authenticated to be accessible
          * perms:user must have this permission
          * */
+        filterChainDefinitionMap.put("/check", "anon");
         filterChainDefinitionMap.put("/auth/login", "anon");
         filterChainDefinitionMap.put("/auth/un_auth", "anon");
         filterChainDefinitionMap.put("/auth/unauthorized", "anon");

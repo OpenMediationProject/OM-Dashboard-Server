@@ -1,0 +1,19 @@
+app:
+  env: prod
+  redis:
+    server: 127.0.0.1:6379
+    timeout: 2000
+
+logging:
+  config: classpath:log4j2-prod.xml
+
+om.adc.domain: http://adc.adtiming.com
+
+spring:
+  ## datasource
+  datasource:
+    mysql:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+      username: user
+      password: passwd
