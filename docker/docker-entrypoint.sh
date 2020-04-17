@@ -91,6 +91,24 @@ do
             continue
         fi
     fi
+
+    if [[ $env_var =~ ^OMDSSERVER_ ]]; then
+        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ - )
+        if [[ ${item_name} = "mountpath" ]]; then
+            loginfo_note "[Cloud Storage] Link ${!env_var}/${CONFFILE}/data to /${CONFFILE}/data"
+            if [[ -d /${CONFFILE}/data ]];then
+                rm -fr /${CONFFILE}/data
+            fi
+            ln -sf ${!env_var}/${CONFFILE}/data /${CONFFILE}/data
+            loginfo_note "[Cloud Storage] Link ${!env_var}/${CONFFILE}/log to /${CONFFILE}/log"
+            if [[ -d /${CONFFILE}/log ]];then
+                rm -fr /${CONFFILE}/log
+            fi
+            ln -sf ${!env_var}/${CONFFILE}/log  /${CONFFILE}/log
+            continue
+        fi
+    fi
+
     if [[ $env_var =~ ^OMCONF_ ]]; then
         item_name=$(echo "$env_var" | cut -d_ -f2-)
         if [[ ${item_name} = "JAVA_OPTS" ]]; then
@@ -99,7 +117,7 @@ do
 	    JAVA_OPTS="$(sed -n 's/JAVA_OPTS="\(.*\)"/\1/p' ${CONFFILE}/${CONFFILE}.conf) ${!env_var}"
             sed -i "s/JAVA_OPTS=.*/JAVA_OPTS=\"${JAVA_OPTS}\"/g" ${CONFILE}/${CONFILE}.conf
             continue
-        fi 
+        fi
         if [[ ${item_name} = "RUN_ARGS" ]]; then
             loginfo_note "[Configuring] ${item_name} in ${CONFILE}/${CONFILE}.conf"
             RUN_ARGS="${!env_var}"
