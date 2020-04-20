@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author huangqiang
  * @date 2020/2/13
  * PermissionService
@@ -74,7 +73,7 @@ public class PermissionService extends BaseService {
                 if (!CollectionUtils.isEmpty(pidSubPermissions)) {
                     JSONArray actionPermissions = new JSONArray();
                     for (UmPermission pidSubPermission : pidSubPermissions) {
-                        if ("query".equals(pidSubPermission.getName())) {
+                        if ("query" .equals(pidSubPermission.getName())) {
                             actionPermissions.add("view");
                         } else {
                             actionPermissions.add(pidSubPermission.getName());

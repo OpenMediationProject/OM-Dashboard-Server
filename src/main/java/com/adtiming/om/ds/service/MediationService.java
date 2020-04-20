@@ -308,7 +308,7 @@ public class MediationService extends BaseService {
             resultRuleSegment.remove("id");
             resultRule.putAll(resultRuleSegment);
             return Response.buildSuccess(resultRule);
-        }catch (Exception e){
+        } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Create segment error:", e);
         }
@@ -364,7 +364,7 @@ public class MediationService extends BaseService {
             resultRuleSegment.remove("id");
             resultRule.putAll(resultRuleSegment);
             return Response.buildSuccess(resultRule);
-        }catch (Exception e){
+        } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Update segment error:", e);
         }
@@ -465,7 +465,10 @@ public class MediationService extends BaseService {
             if (result > 0) {
                 List<OmPlacementRuleInstance> placementRuleInstances = this.getPlacementRuleInstances(ruleId, null);
                 for (OmPlacementRuleInstance ruleInstance : placementRuleInstances) {
-                    this.omPlacementRuleInstanceMapper.deleteByPrimaryKey(ruleInstance.getId());
+                    result = this.omPlacementRuleInstanceMapper.deleteByPrimaryKey(ruleInstance.getId());
+                    if (result <= 0) {
+                        throw new RuntimeException("Delete rule instance " + JSONObject.toJSON(ruleInstance) + " error");
+                    }
                 }
                 return this.resortRulePriority(omPlacementRule.getPlacementId());
             }
@@ -490,7 +493,7 @@ public class MediationService extends BaseService {
             if (result > 0) {
                 log.info("Update placement rule id {}", omPlacementRule.getId());
                 omPlacementRule = this.omPlacementRuleMapper.selectByPrimaryKey(omPlacementRule.getId());
-                if (omPlacementRule.getAbTest() != null && omPlacementRule.getAbTest() == 0) {
+                if (omPlacementRule.getAutoOpt() != null && omPlacementRule.getAutoOpt() == 0) {
                     OmPlacementRuleSegmentWithBLOBs ruleSegment = this.omPlacementRuleSegmentMapper.selectByPrimaryKey(omPlacementRule.getSegmentId());
                     if (ruleSegment == null) {
                         throw new RuntimeException("Rule id " + omPlacementRule.getId() + " does not have a segment");
@@ -739,7 +742,7 @@ public class MediationService extends BaseService {
                     throw new RuntimeException("Update placement pule instance error, id: " + ruleInstance.getId());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Delete placement rule instance error:", e);
         }

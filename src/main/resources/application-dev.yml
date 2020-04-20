@@ -2,6 +2,8 @@ app:
   env: dev
   redis:
     server: redis_host:6379
+    database: 0
+    password: your_password
     timeout: 2000
 
 logging:

@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.web.shiro;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.cache.CacheManager;
@@ -33,6 +34,8 @@ public class OmShiroConfig {
     private static final Logger log = LogManager.getLogger();
     private final long sessionTimeout = 3600000 * 12;
     private String server;
+    private int database;
+    private String password;
     private int timeout;
 
     @Value("${shiro.cipher-key}")
@@ -44,6 +47,14 @@ public class OmShiroConfig {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public void setDatabase(int database) {
+        this.database = database;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -141,6 +152,12 @@ public class OmShiroConfig {
     public RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
         redisManager.setHost(server);
+        if (database > 0) {
+            redisManager.setDatabase(database);
+        }
+        if (StringUtils.isNotBlank(password)) {
+            redisManager.setPassword(password);
+        }
         redisManager.setTimeout(timeout);
         return redisManager;
     }

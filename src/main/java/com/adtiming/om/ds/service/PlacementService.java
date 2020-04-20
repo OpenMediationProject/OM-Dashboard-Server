@@ -6,7 +6,10 @@ package com.adtiming.om.ds.service;
 import com.adtiming.om.ds.dao.OmPlacementCountryMapper;
 import com.adtiming.om.ds.dao.OmPlacementMapper;
 import com.adtiming.om.ds.dao.OmPlacementSceneMapper;
-import com.adtiming.om.ds.dto.*;
+import com.adtiming.om.ds.dto.AdvertisementType;
+import com.adtiming.om.ds.dto.NormalStatus;
+import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -14,10 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -256,15 +257,33 @@ public class PlacementService extends BaseService {
      * @param placementId
      * @return List<OmPlacementScene>
      */
-    public List<OmPlacementScene> getPlacementScenes(Integer placementId, SwitchStatus status) {
+    public List<OmPlacementScene> getPlacementScenes(Integer placementId) {
         OmPlacementSceneCriteria omPlacementSceneCriteria = new OmPlacementSceneCriteria();
         OmPlacementSceneCriteria.Criteria criteria = omPlacementSceneCriteria.createCriteria();
         criteria.andPlacementIdEqualTo(placementId);
-        if (status != null) {
-            criteria.andStatusEqualTo((byte) status.ordinal());
-        }
         List<OmPlacementScene> placementScenes = omPlacementSceneMapper.select(omPlacementSceneCriteria);
         return placementScenes;
+    }
+
+    /**
+     * Select apps placements map
+     *
+     * @param pubAppIds
+     */
+    public Map<Integer, List<OmPlacement>> getAppPlacementsMap(List<Integer> pubAppIds) {
+        if (CollectionUtils.isEmpty(pubAppIds)) {
+            return new HashMap<>();
+        }
+        OmPlacementCriteria omPlacementCriteria = new OmPlacementCriteria();
+        OmPlacementCriteria.Criteria criteria = omPlacementCriteria.createCriteria();
+        criteria.andPubAppIdIn(pubAppIds);
+        if (this.getCurrentUser().getRoleId() != RoleType.ADMINISTRATOR.getId()) {
+            criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+            criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        }
+        List<OmPlacement> publisherAppPlacements = omPlacementMapper.select(omPlacementCriteria);
+        return publisherAppPlacements.stream()
+                .collect(Collectors.groupingBy(OmPlacement::getPubAppId, Collectors.toList()));
     }
 
     /**

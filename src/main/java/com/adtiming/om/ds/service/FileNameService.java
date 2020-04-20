@@ -52,29 +52,33 @@ public class FileNameService {
     }
 
     public synchronized void initIdName() {
-        List<OmAdnetwork> adnetworks = this.omAdnetworkMapper.select(new OmAdnetworkCriteria());
-        adnetworks.forEach(adnetwork -> {
-            this.idNameMap.put("adnId" + adnetwork.getId(), adnetwork.getClassName());
-        });
-        log.info("Init adnetworks size: {}", adnetworks.size());
+        try {
+            List<OmAdnetwork> adnetworks = this.omAdnetworkMapper.select(new OmAdnetworkCriteria());
+            adnetworks.forEach(adnetwork -> {
+                this.idNameMap.put("adnId" + adnetwork.getId(), adnetwork.getClassName());
+            });
+            log.info("Init adnetworks size: {}", adnetworks.size());
 
-        List<OmPublisherApp> publisherApps = omPublisherAppMapper.select(new OmPublisherAppCriteria());
-        publisherApps.forEach(publisherApp -> {
-            this.idNameMap.put("pubAppId" + publisherApp.getId(), publisherApp.getAppName());
-        });
-        log.info("Init publisherApps size: {}", publisherApps.size());
+            List<OmPublisherApp> publisherApps = omPublisherAppMapper.select(new OmPublisherAppCriteria());
+            publisherApps.forEach(publisherApp -> {
+                this.idNameMap.put("pubAppId" + publisherApp.getId(), publisherApp.getAppName());
+            });
+            log.info("Init publisherApps size: {}", publisherApps.size());
 
-        List<OmPlacement> placements = omPlacementMapper.select(new OmPlacementCriteria());
-        placements.forEach(placement -> {
-            this.idNameMap.put("placementId" + placement.getId(), placement.getName());
-        });
-        log.info("Init placements size: {}", placements.size());
+            List<OmPlacement> placements = omPlacementMapper.select(new OmPlacementCriteria());
+            placements.forEach(placement -> {
+                this.idNameMap.put("placementId" + placement.getId(), placement.getName());
+            });
+            log.info("Init placements size: {}", placements.size());
 
-        List<OmInstanceWithBLOBs> instances = omInstanceMapper.select(new OmInstanceCriteria());
-        instances.forEach(instance -> {
-            this.idNameMap.put("instanceId" + instance.getId(), instance.getName());
-        });
-        log.info("Init instances size: {}", instances.size());
+            List<OmInstanceWithBLOBs> instances = omInstanceMapper.select(new OmInstanceCriteria());
+            instances.forEach(instance -> {
+                this.idNameMap.put("instanceId" + instance.getId(), instance.getName());
+            });
+            log.info("Init instances size: {}", instances.size());
+        } catch (Exception e) {
+            log.error("initIdName error:", e);
+        }
     }
 
     public void fillName(List<JSONObject> results) {

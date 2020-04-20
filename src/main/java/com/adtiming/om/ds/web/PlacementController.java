@@ -5,7 +5,6 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
-import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.OmPlacementCountry;
 import com.adtiming.om.ds.model.OmPlacementScene;
 import com.adtiming.om.ds.model.OmPlacementWithBLOBs;
@@ -66,8 +65,16 @@ public class PlacementController extends BaseController {
     @RequestMapping(value = "/placement/select/list", method = RequestMethod.GET)
     public Response getSelectPlacements(Integer pubAppId) {
         try {
+            JSONArray results = new JSONArray();
             List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(pubAppId, NormalStatus.ACTIVE);
-            return Response.buildSuccess(placements);
+            placements.forEach(placement -> {
+                JSONObject result = new JSONObject();
+                result.put("id", placement.getId());
+                result.put("name", placement.getName());
+                result.put("adType", placement.getAdType());
+                results.add(result);
+            });
+            return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("get select placements error:", e);
         }
@@ -105,7 +112,7 @@ public class PlacementController extends BaseController {
      * @return resultPlacement
      */
     private JSONObject addScenes(OmPlacementWithBLOBs placement) {
-        List<OmPlacementScene> placementScenes = this.placementService.getPlacementScenes(placement.getId(), SwitchStatus.ON);
+        List<OmPlacementScene> placementScenes = this.placementService.getPlacementScenes(placement.getId());
         JSONObject resultPlacement = (JSONObject) JSONObject.toJSON(placement);
         if (!placementScenes.isEmpty()) {
             resultPlacement.put("sceneSize", placementScenes.size());
@@ -145,7 +152,7 @@ public class PlacementController extends BaseController {
             if (placementId == null) {
                 return Response.RES_PARAMETER_ERROR;
             }
-            List<OmPlacementScene> placementScenes = this.placementService.getPlacementScenes(placementId, null);
+            List<OmPlacementScene> placementScenes = this.placementService.getPlacementScenes(placementId);
             return Response.buildSuccess(placementScenes);
         } catch (Exception e) {
             log.error("get placement scenes error:", e);

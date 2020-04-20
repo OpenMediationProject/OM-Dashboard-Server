@@ -87,6 +87,7 @@ public class BaseService {
 
     /**
      * Get all user app relations
+     *
      * @param userId
      * @param pubAppId
      */

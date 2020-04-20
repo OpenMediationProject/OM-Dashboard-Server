@@ -5,13 +5,11 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.AdNetworkAppStatus;
 import com.adtiming.om.ds.dto.Response;
-import com.adtiming.om.ds.model.OmAdnetwork;
-import com.adtiming.om.ds.model.OmAdnetworkApp;
-import com.adtiming.om.ds.model.OmInstanceWithBLOBs;
-import com.adtiming.om.ds.model.OmPlacementWithBLOBs;
+import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.service.AdNetworkService;
 import com.adtiming.om.ds.service.InstanceService;
 import com.adtiming.om.ds.service.PlacementService;
+import com.adtiming.om.ds.service.PublisherAppService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,27 +34,45 @@ import java.util.stream.Collectors;
 public class AdNetworkController extends BaseController {
 
     @Autowired
-    private AdNetworkService adNetworkService;
+    protected AdNetworkService adNetworkService;
 
     @Autowired
-    private PlacementService placementService;
+    protected PlacementService placementService;
 
     @Autowired
-    private InstanceService instanceService;
+    protected InstanceService instanceService;
+
+    @Autowired
+    protected PublisherAppService publisherAppService;
 
     /**
      * Get all AdNetworks of publisher app
      */
     @RequestMapping(value = "/adnetwork/select/list", method = RequestMethod.GET)
-    public Response getAdNetWorkSelectList() {
+    public Response getAdNetWorkSelectList(Integer pubAppId) {
         try {
             List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
+            Map<Integer, OmAdnetworkApp> adNetworkAppMap = new HashMap<>();
+            Map<Integer, OmPublisherApp> publisherAppMap = new HashMap<>();
+            if (pubAppId != null) {
+                adNetworkAppMap = this.adNetworkService.getAdNetworkIdAppMap(pubAppId);
+                List<Integer> publisherAppIds = adNetworkAppMap.values().stream().map(OmAdnetworkApp::getPubAppId).collect(Collectors.toList());
+                publisherAppMap = publisherAppService.getPublisherAppMap(publisherAppIds);
+            }
             JSONArray results = new JSONArray();
             for (OmAdnetwork omAdnetwork : adNetworks) {
                 JSONObject result = new JSONObject();
                 result.put("name", omAdnetwork.getName());
                 result.put("className", omAdnetwork.getClassName());
                 result.put("id", omAdnetwork.getId());
+                OmAdnetworkApp adNetworkApp = adNetworkAppMap.get(omAdnetwork.getId());
+                if (adNetworkApp != null) {
+                    result.put("adNetworkAppId", adNetworkApp.getId());
+                    OmPublisherApp publisherApp = publisherAppMap.get(adNetworkApp.getPubAppId());
+                    if (publisherApp != null && !this.adNetworkService.doesPlatMatch(publisherApp, omAdnetwork)){
+                        continue;
+                    }
+                }
                 results.add(result);
             }
             return Response.buildSuccess(results);
@@ -92,8 +109,8 @@ public class AdNetworkController extends BaseController {
             List<OmPlacementWithBLOBs> placements = placementService.getPlacements(pubAppId, placementId);
             List<OmInstanceWithBLOBs> publisherInstances = instanceService.getInstances(pubAppId, adNetworkId, instanceId, placementId);
             Map<Integer, List<OmInstanceWithBLOBs>> publisherInstanceMap = publisherInstances.stream()
-                    .collect(Collectors.groupingBy(instance -> instance.getPlacementId(), Collectors.toList()));
-
+                    .collect(Collectors.groupingBy(OmInstance::getPlacementId, Collectors.toList()));
+            Map<Integer, OmAdnetwork> adNetworkMap = adNetworkService.getAdNetworkMap();
             JSONArray resultPlacements = new JSONArray();
             for (OmPlacementWithBLOBs placementWithBLOBs : placements) {
                 JSONObject resultPlacement = (JSONObject) JSONObject.toJSON(placementWithBLOBs);
@@ -102,6 +119,12 @@ public class AdNetworkController extends BaseController {
                     JSONArray resultInstances = new JSONArray();
                     for (OmInstanceWithBLOBs instanceWithBLOBs : placementInstances) {
                         JSONObject resultInstance = (JSONObject) JSONObject.toJSON(instanceWithBLOBs);
+                        OmAdnetwork adNetwork = adNetworkMap.get(instanceWithBLOBs.getAdnId());
+                        if (adNetwork != null) {
+                            resultInstance.put("className", adNetworkMap.get(instanceWithBLOBs.getAdnId()).getClassName());
+                        } else {
+                            log.error("Adn id {} is not existed!", instanceWithBLOBs.getAdnId());
+                        }
                         buildBrandBlackWhiteType(resultInstance, instanceWithBLOBs.getBrandBlacklist(), instanceWithBLOBs.getBrandWhitelist());
                         buildModelBlackWhiteType(resultInstance, instanceWithBLOBs.getModelBlacklist(), instanceWithBLOBs.getModelWhitelist());
                         resultInstances.add(resultInstance);
@@ -159,7 +182,7 @@ public class AdNetworkController extends BaseController {
      * @see OmAdnetworkApp
      */
     @RequestMapping(value = "/adnetwork/app/update", method = RequestMethod.POST)
-    public Response updateAdNetworkApp(@RequestBody OmAdnetworkApp omAdnetworkApp) throws Exception {
+    public Response updateAdNetworkApp(@RequestBody OmAdnetworkApp omAdnetworkApp) {
         return this.adNetworkService.updateAppAdNetworks(omAdnetworkApp);
     }
 

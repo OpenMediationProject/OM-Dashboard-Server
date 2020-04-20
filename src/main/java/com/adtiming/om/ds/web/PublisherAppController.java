@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Publisher app manage interface
@@ -47,17 +48,21 @@ public class PublisherAppController extends BaseController {
                 return Response.buildSuccess(Collections.EMPTY_LIST);
             }
             List<JSONObject> publisherAppsWithPlacementsSummary = new ArrayList<>();
+            List<Integer> publisherAppIds = publisherApps.stream().map(OmPublisherApp::getId).collect(Collectors.toList());
+            Map<Integer, List<OmPlacement>> appPlacementsMap = this.placementService.getAppPlacementsMap(publisherAppIds);
             publisherApps.forEach(publisherApp -> {
-                List<OmPlacement> placements = this.placementService.getPlacementsByPublisherAppId(publisherApp.getId(), null);
+                List<OmPlacement> placements = appPlacementsMap.get(publisherApp.getId());
                 JSONObject publisherAppJson = (JSONObject) JSONObject.toJSON(publisherApp);
                 Map<String, Integer> advertisementTypeSummaryMap = new HashMap<>();
-                for (OmPlacement omPlacement : placements) {
-                    String advertisementTypeName = AdvertisementType.getAdvertisementType(omPlacement.getAdType()).name();
-                    Integer typeCount = advertisementTypeSummaryMap.get(advertisementTypeName);
-                    if (typeCount == null) {
-                        typeCount = 0;
+                if (!CollectionUtils.isEmpty(placements)) {
+                    for (OmPlacement omPlacement : placements) {
+                        String advertisementTypeName = AdvertisementType.getAdvertisementType(omPlacement.getAdType()).name();
+                        Integer typeCount = advertisementTypeSummaryMap.get(advertisementTypeName);
+                        if (typeCount == null) {
+                            typeCount = 0;
+                        }
+                        advertisementTypeSummaryMap.put(advertisementTypeName, typeCount + 1);
                     }
-                    advertisementTypeSummaryMap.put(advertisementTypeName, typeCount + 1);
                 }
                 publisherAppJson.put("placementSummary", JSONArray.toJSON(advertisementTypeSummaryMap));
                 publisherAppsWithPlacementsSummary.add(publisherAppJson);
@@ -73,20 +78,13 @@ public class PublisherAppController extends BaseController {
      * Get all valid publisher apps sort by revenue
      */
     @RequestMapping(value = "/publisher/app/sort_list", method = RequestMethod.GET)
-    public Response getPublisherAppsSortByRevenue(Integer userId, Integer status) {
+    public Response getPublisherAppsSortByRevenue(Integer status) {
         try {
-            List<Integer> userPublisherIds = null;
-//            if (userId != null){
-//                userPublisherIds = this.publisherAppService.getUserPublisherIds(userId);
-//                if (CollectionUtils.isEmpty(userPublisherIds)){
-//                    userPublisherIds = null;
-//                }
-//            }
             NormalStatus normalStatus = null;
             if (status != null) {
                 normalStatus = NormalStatus.getStatus(status);
             }
-            List<OmPublisherApp> sortedPublisherApps = this.publisherAppService.getPublisherAppsSortByRevenue(userPublisherIds, normalStatus);
+            List<OmPublisherApp> sortedPublisherApps = this.publisherAppService.getPublisherAppsSortByRevenue(normalStatus);
             if (CollectionUtils.isEmpty(sortedPublisherApps)) {
                 return Response.buildSuccess(Collections.EMPTY_LIST);
             }
@@ -131,7 +129,7 @@ public class PublisherAppController extends BaseController {
         OmPublisherApp omPublisherApp = new OmPublisherApp();
         omPublisherApp.setAppId(appId);
         boolean result = this.publisherAppService.updatePublisherAppInfo(omPublisherApp);
-        if (result){
+        if (result) {
             return Response.buildSuccess(omPublisherApp);
         }
         return Response.RES_FAILED;

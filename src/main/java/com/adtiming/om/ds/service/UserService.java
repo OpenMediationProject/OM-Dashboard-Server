@@ -34,9 +34,9 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author ruandianbo
  * @date 20-2-4
  */
@@ -102,6 +102,24 @@ public class UserService extends BaseService {
     }
 
     /**
+     * Get user app map by user ids
+     *
+     * @param userIds
+     */
+    public Map<Integer, List<UmUserApp>> getUserAppsMap(List<Integer> userIds, Integer pubAppId) {
+        UmUserAppCriteria umUserAppCriteria = new UmUserAppCriteria();
+        UmUserAppCriteria.Criteria criteria = umUserAppCriteria.createCriteria();
+        criteria.andUserIdIn(userIds);
+        if (pubAppId != null) {
+            criteria.andPubAppIdEqualTo(pubAppId);
+        }
+        umUserAppCriteria.setOrderByClause(" create_time desc ");
+        List<UmUserApp> umUserApps = this.umUserAppMapper.select(umUserAppCriteria);
+        return umUserApps.stream()
+                .collect(Collectors.groupingBy(UmUserApp::getUserId, Collectors.toList()));
+    }
+
+    /**
      * Get users
      */
     public List<UmUser> getUsers(String email) {
@@ -122,7 +140,7 @@ public class UserService extends BaseService {
         UmUserCriteria umUserCriteria = new UmUserCriteria();
         UmUserCriteria.Criteria criteria = umUserCriteria.createCriteria();
         criteria.andIdIn(userIds);
-        if (StringUtils.isNotBlank(email)){
+        if (StringUtils.isNotBlank(email)) {
             criteria.andEmailEqualTo(email);
         }
         return umUserMapper.select(umUserCriteria);
@@ -144,7 +162,7 @@ public class UserService extends BaseService {
                 if (StringUtils.isNotBlank(userDTO.getEmail())) {
                     dbUser.setEmail(userDTO.getEmail());
                 }
-                dbUser.setStatus((byte)SwitchStatus.ON.ordinal());
+                dbUser.setStatus((byte) SwitchStatus.ON.ordinal());
                 return this.updateUser(dbUser);
             }
             Date currentTime = new Date();
@@ -267,7 +285,7 @@ public class UserService extends BaseService {
             int result = this.umUserMapper.updateByPrimaryKeySelective(umUser);
             if (result > 0) {
                 if (umUser.getRoleId() != null && !umUser.getRoleId().equals(dbUser.getRoleId())) {
-                    if (umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()){
+                    if (umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
                         this.roleService.deleteUserRoles(dbUser.getId());
                         umUser.setPublisherId(0);
                     } else {
@@ -323,7 +341,7 @@ public class UserService extends BaseService {
                 this.deleteSession(deleteUser);
             }
             List<UmUserApp> umUserApps = this.getUserApps(userId, null);
-            for (UmUserApp umUserApp : umUserApps){
+            for (UmUserApp umUserApp : umUserApps) {
                 this.umUserAppMapper.deleteByPrimaryKey(umUserApp);
             }
             log.info("Delete user {} role {} success!", userId, roleId);
