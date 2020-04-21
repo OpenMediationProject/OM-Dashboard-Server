@@ -2,6 +2,8 @@ app:
   env: prod
   redis:
     server: 127.0.0.1:6379
+    database: 0
+    password: 
     timeout: 2000
 
 logging:
