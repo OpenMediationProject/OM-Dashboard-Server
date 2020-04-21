@@ -50,6 +50,10 @@ function updateymlConfig() {
 
     # If config exists in file, replace it. Otherwise, append to file.
     if grep -E -q "^* $key: " "$file"; then
+        if [[ ${key} = "password" ]];then
+            sed -i "/mysql/,+4s/password:.*/password: ${!env_var}/g" "$file"
+            return $?
+        fi
         sed -r -i "s@^(.*$key:).*@\1 $value@g" "$file" #note that no config values may contain an '@' char
     fi
 }
@@ -69,6 +73,16 @@ do
     fi
     if [[ $env_var =~ ^OMYML_ ]]; then
         item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ -)
+	if [[ ${item_name} = "redisdb" ]];then
+            loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
+            sed -i "/redis/,+4s/database:.*/database: ${!env_var}/g" ${CONFFILE}/application-loc.yml
+            continue
+        fi
+        if [[ ${item_name} = "redispwd" ]];then
+            loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
+            sed -i "/redis/,+4s/password:.*/password: ${!env_var}/g" ${CONFFILE}/application-loc.yml
+            continue
+        fi
         if [[ ${item_name} = "dbaddress" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
             sed -i "/url/s/127.0.0.1/${!env_var}/g" ${CONFFILE}/application-loc.yml
