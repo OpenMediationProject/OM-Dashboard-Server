@@ -54,6 +54,10 @@ function updateymlConfig() {
             sed -i "/mysql/,+4s/password:.*/password: ${!env_var}/g" "$file"
             return $?
         fi
+	if [[ ${key} = "username" ]];then
+            sed -i "/mysql/,+4s/username:.*/username: ${!env_var}/g" "$file"
+            return $?
+        fi
         sed -r -i "s@^(.*$key:).*@\1 $value@g" "$file" #note that no config values may contain an '@' char
     fi
 }
