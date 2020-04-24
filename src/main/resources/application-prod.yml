@@ -2,12 +2,14 @@ app:
   env: prod
   redis:
     server: redis_host:6379
+    database: 0
+    password: your_password
     timeout: 2000
 
 logging:
   config: classpath:log4j2-prod.xml
 
-om.adc.domain: http://adc.xxx.com
+om.adc.domain: http://adc.adtiming.com
 
 spring:
   ## datasource

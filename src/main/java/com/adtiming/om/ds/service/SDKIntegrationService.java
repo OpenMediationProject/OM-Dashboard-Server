@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * SDK integration service
@@ -53,23 +50,18 @@ public class SDKIntegrationService extends BaseService {
     public Response getAdNetWorks(Integer pubAppId) {
         try {
             JSONArray results = new JSONArray();
-            OmDevApp devApp = null;
-            List<OmDevApp> devApps = this.getDevApps(pubAppId, SwitchStatus.ON);
-            if (!CollectionUtils.isEmpty(devApps)) {
-                devApp = devApps.get(0);
-            }
-
+            Map<Integer, OmDevApp> devAppMap = this.getDevAppMap(pubAppId, SwitchStatus.ON);
             Set<Integer> adNetworkIds = this.instanceService.getAdnIdsWithInstance(pubAppId);
-            Map<Integer, OmAdnetwork> adNetworkMap = this.adNetworkService.getAdNetworkMap();
-            for (Map.Entry<Integer, OmAdnetwork> entry : adNetworkMap.entrySet()) {
-                Integer adNetworkId = entry.getKey();
+            List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
+            for (OmAdnetwork omAdnetwork : adNetworks) {
+                Integer adNetworkId = omAdnetwork.getId();
                 if (!adNetworkIds.contains(adNetworkId)) {
                     continue;
                 }
                 JSONObject result = new JSONObject();
-                OmAdnetwork omAdnetwork = entry.getValue();
                 result.put("adnId", omAdnetwork.getId());
                 result.put("className", omAdnetwork.getClassName());
+                OmDevApp devApp = devAppMap.get(adNetworkId);
                 if (devApp != null && devApp.getAdnId().equals(adNetworkId)) {
                     result.put("lastTesting", Util.getDateString(devApp.getActiveTime()));
                     result.put("devResult", DevAppTestResult.getDevAppTestResult(devApp.getDevResult().intValue()).name());
@@ -101,11 +93,7 @@ public class SDKIntegrationService extends BaseService {
             JSONArray results = new JSONArray();
             Set<Integer> placementIdSet = this.instanceService.getPlacementIds(adnId, pubAppId);
             List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(pubAppId);
-            List<OmDevApp> devApps = this.getDevApps(pubAppId, SwitchStatus.ON);
-            OmDevApp devApp = null;
-            if (!CollectionUtils.isEmpty(devApps)) {
-                devApp = devApps.get(0);
-            }
+            Map<Integer, OmDevApp> devAppMap = this.getDevAppMap(pubAppId, SwitchStatus.ON);
             for (OmPlacementWithBLOBs placement : placements) {
                 if (placementIdSet.contains(placement.getId())) {
                     continue;
@@ -114,6 +102,7 @@ public class SDKIntegrationService extends BaseService {
                 result.put("placementId", placement.getId());
                 result.put("placementName", placement.getName());
                 result.put("adType", placement.getAdType());
+                OmDevApp devApp = devAppMap.get(adnId);
                 if (devApp != null) {
                     result.put("devAppId", devApp.getId());
                     result.put("status", devApp.getStatus());
@@ -216,8 +205,13 @@ public class SDKIntegrationService extends BaseService {
      *
      * @param pubAppId
      */
-    private List<OmDevApp> getDevApps(Integer pubAppId, SwitchStatus devAppStatus) {
-        return this.getDevApps(null, pubAppId, devAppStatus);
+    private Map<Integer, OmDevApp> getDevAppMap(Integer pubAppId, SwitchStatus devAppStatus) {
+        List<OmDevApp> omDevApps = this.getDevApps(null, pubAppId, devAppStatus);
+        Map<Integer, OmDevApp> devAppMap = new HashMap<>();
+        omDevApps.forEach(omDevApp -> {
+            devAppMap.put(omDevApp.getAdnId(), omDevApp);
+        });
+        return devAppMap;
     }
 
     /**

@@ -79,7 +79,7 @@ public class LoginController extends BaseController {
 
         boolean allPublisherValid = false;
         List<UmUser> publisherRoleUsers = this.userService.getUsers(umUser.getEmail());
-        if (CollectionUtils.isEmpty(publisherRoleUsers)){
+        if (CollectionUtils.isEmpty(publisherRoleUsers)) {
             log.error("User {} does not belong to any organization", umUser.getEmail());
             return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User does not belong to any organization!");
         }
@@ -121,11 +121,9 @@ public class LoginController extends BaseController {
                 SimplePrincipalCollection spc = (SimplePrincipalCollection) session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
                 UmUser sessionUser = (UmUser) spc.getPrimaryPrincipal();
                 String sessionId = req.getSession().getId();
-                if (sessionId.equals(session.getId())) {
+                if (sessionId.equals(session.getId()) && pubId != null) {
                     sessionUser.setPublisherId(pubId);
-                    if (sessionUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
-                        sessionUser.setRoleId(RoleType.ADMINISTRATOR.getId());
-                    } else if (roleId != null) {
+                    if (roleId != null) {
                         sessionUser.setRoleId(roleId);
                     }
                     redisSessionDAO.update(session);

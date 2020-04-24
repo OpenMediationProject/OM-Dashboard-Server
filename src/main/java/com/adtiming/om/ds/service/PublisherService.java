@@ -118,6 +118,14 @@ public class PublisherService extends BaseService {
         return userPublishers;
     }
 
+    public List<OmPublisher> selectPublisherByName(String name) {
+        OmPublisherCriteria omPublisherCriteria = new OmPublisherCriteria();
+        OmPublisherCriteria.Criteria criteria = omPublisherCriteria.createCriteria();
+        criteria.andNameEqualTo(name);
+        List<OmPublisher> userPublishers = this.omPublisherMapper.select(omPublisherCriteria);
+        return userPublishers;
+    }
+
     /**
      * Build publisher database object, and insert into database
      * If email does not existed in user table ,add one
@@ -127,6 +135,10 @@ public class PublisherService extends BaseService {
     @Transactional
     public Response createPublisher(OmPublisher omPublisher) {
         try {
+            List<OmPublisher> publishers = this.selectPublisherByName(omPublisher.getName());
+            if (!CollectionUtils.isEmpty(publishers)) {
+                return Response.build(Response.CODE_PARAMETER_ERROR, Response.STATUS_DISABLE, "Name already existed!");
+            }
             Date currentTime = new Date();
             if (omPublisher.getOwnerUserId() == null || omPublisher.getOwnerUserId() <= 0) {
                 omPublisher.setOwnerUserId(this.getCurrentUser().getId());
@@ -187,14 +199,14 @@ public class PublisherService extends BaseService {
             omPublisher.setLastmodify(new Date());
             int result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);
             if (result > 0) {
-                log.info("Update publisher {} success", omPublisher.getCountry());
+                log.info("Update publisher {} success", omPublisher.getName());
                 return Response.build();
             }
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Update publisher error {}", JSONObject.toJSONString(omPublisher), e);
         }
-        log.error("Update publisher {} failed", omPublisher.getCountry());
+        log.error("Update publisher {} failed", omPublisher.getName());
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update publisher failed!");
     }
 

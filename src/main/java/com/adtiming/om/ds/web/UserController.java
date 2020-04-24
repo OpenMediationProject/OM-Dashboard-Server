@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by ruandianbo on 20-2-4.
@@ -122,7 +123,8 @@ public class UserController extends BaseController {
                 email = currentUser.getEmail();
             }
             List<UmUser> umUserList = this.userService.getUsers(this.userService.getCurrentUser().getPublisherId(), email);
-
+            List<Integer> userIdList = umUserList.stream().map(UmUser::getId).collect(Collectors.toList());
+            Map<Integer, List<UmUserApp>> userAppsMap = this.userService.getUserAppsMap(userIdList, pubAppId);
             for (UmUser umUser : umUserList) {
                 if (roleId != null && !roleId.equals(umUser.getRoleId())) {
                     continue;
@@ -142,16 +144,10 @@ public class UserController extends BaseController {
                     resultUser.put("isPublisherOwner", false);
                 }
 
-                List<UmUserApp> umUserApps = this.userService.getUserApps(umUser.getId(), pubAppId);
+                List<UmUserApp> umUserApps = userAppsMap.get(umUser.getId());
                 if (!CollectionUtils.isEmpty(umUserApps)) {
-                    List<Integer> appIdList = new ArrayList<>();
-                    umUserApps.forEach(umUserApp -> {
-                        appIdList.add(umUserApp.getPubAppId());
-                    });
+                    List<Integer> appIdList = umUserApps.stream().map(UmUserApp::getPubAppId).collect(Collectors.toList());
                     List<OmPublisherApp> userPublisherApps = this.publisherAppService.getPublisherApps(appIdList);
-                    userPublisherApps.forEach(publisherApp -> {
-                        publisherApp.setDescn(null);
-                    });
                     resultUser.put("publisherApps", userPublisherApps);
                 } else if (pubAppId != null && pubAppId > 0) {
                     continue;
@@ -273,7 +269,7 @@ public class UserController extends BaseController {
                         userIds.add(umUserApp.getUserId());
                     });
                     List<UmUser> umUsers = this.userService.getUsers(userIds, email);
-                    if (!StringUtils.isEmpty(email) && CollectionUtils.isEmpty(umUsers)){
+                    if (!StringUtils.isEmpty(email) && CollectionUtils.isEmpty(umUsers)) {
                         continue;
                     }
                     if (!CollectionUtils.isEmpty(umUsers)) {
