@@ -5,8 +5,10 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.model.OmAdnetwork;
 import com.adtiming.om.ds.model.OmInstanceCountry;
 import com.adtiming.om.ds.model.OmInstanceWithBLOBs;
+import com.adtiming.om.ds.service.AdNetworkService;
 import com.adtiming.om.ds.service.InstanceService;
 import com.adtiming.om.ds.service.MediationService;
 import com.alibaba.fastjson.JSONArray;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Instance manage interface
@@ -29,10 +32,13 @@ import java.util.List;
 public class InstanceController extends BaseController {
 
     @Autowired
-    private InstanceService instanceService;
+    protected InstanceService instanceService;
 
     @Autowired
-    private MediationService mediationService;
+    protected MediationService mediationService;
+
+    @Autowired
+    protected AdNetworkService adNetworkService;
 
     /**
      * Get all placement instances
@@ -41,7 +47,19 @@ public class InstanceController extends BaseController {
     public Response getInstances(Integer adNetworkId, Integer pubAppId, Integer placementId, Integer instanceId) {
         try {
             List<OmInstanceWithBLOBs> instances = this.instanceService.getInstances(pubAppId, adNetworkId, instanceId, placementId);
-            return Response.buildSuccess(instances);
+            Map<Integer, OmAdnetwork> adNetworkMap = adNetworkService.getAdNetworkMap();
+            JSONArray results = new JSONArray();
+            instances.forEach(instance -> {
+                JSONObject result = (JSONObject) JSONObject.toJSON(instance);
+                OmAdnetwork adNetwork = adNetworkMap.get(instance.getAdnId());
+                if (adNetwork != null) {
+                    result.put("className", adNetworkMap.get(instance.getAdnId()).getClassName());
+                } else {
+                    result.put("className", "");
+                }
+                results.add(result);
+            });
+            return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("get placement instances error:", e);
         }

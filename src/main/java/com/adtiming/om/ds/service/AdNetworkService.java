@@ -3,7 +3,10 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.*;
+import com.adtiming.om.ds.dao.OmAdnetworkAppMapper;
+import com.adtiming.om.ds.dao.OmAdnetworkMapper;
+import com.adtiming.om.ds.dao.OmPublisherAppMapper;
+import com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper;
 import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.ReportApiStatus;
@@ -54,11 +57,18 @@ public class AdNetworkService extends BaseService {
     @Resource
     private InstanceService instanceService;
 
-    //@Resource
-    //private OmAdnetworkAppChangeMapper adnetworkAppChangeMapper;
-
     @Resource
     private SqlSessionFactory sqlSessionFactory;
+
+    public boolean doesPlatMatch(OmPublisherApp publisherApp, OmAdnetwork adNetwork){
+        if (publisherApp != null && publisherApp.getPlat() == 0 && adNetwork.getIosAdtype() == 0) {
+            return false;
+        }
+        if (publisherApp != null && publisherApp.getPlat() == 1 && adNetwork.getAndroidAdtype() == 0) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Select all AdNetwork
@@ -69,7 +79,7 @@ public class AdNetworkService extends BaseService {
         JSONArray resultAdNetWorks = new JSONArray();
         List<OmInstanceWithBLOBs> appInstances = instanceService.getInstancesByStatus(pubAppId, NormalStatus.ACTIVE);
         Map<Integer, List<OmInstanceWithBLOBs>> appAdnIdInstanceMap = appInstances.stream()
-                .collect(Collectors.groupingBy(m -> m.getAdnId(), Collectors.toList()));
+                .collect(Collectors.groupingBy(OmInstance::getAdnId, Collectors.toList()));
 
         OmPublisherApp publisherApp = omPublisherAppMapper.selectByPrimaryKey(pubAppId);
         List<OmAdnetworkApp> adNetworkApps = this.getAdNetWorkApps(pubAppId);
@@ -80,6 +90,9 @@ public class AdNetworkService extends BaseService {
 
         List<OmAdnetwork> adNetworks = this.getAllAdNetworks();
         for (OmAdnetwork adNetwork : adNetworks) {
+            if (!this.doesPlatMatch(publisherApp, adNetwork)){
+                continue;
+            }
             JSONObject resultAdNetwork = (JSONObject) JSONObject.toJSON(adNetwork);
             resultAdNetwork.put("status", 0);
             resultAdNetwork.put("adTypes", this.buildAdTypes(adNetwork, publisherApp));
@@ -101,6 +114,7 @@ public class AdNetworkService extends BaseService {
                     resultAdNetwork.put("reportapiStatus", reportApiStatus.name());
                 }
                 resultAdNetwork.put("status", omAdnetworkApp.getStatus());
+                resultAdNetwork.put("adNetworkApp", omAdnetworkApp);
             } else {
                 resultAdNetwork.put("reportapiStatus", ReportApiStatus.OFF.name());
             }
@@ -122,7 +136,7 @@ public class AdNetworkService extends BaseService {
         JSONArray adTypes = new JSONArray();
         for (int type = 0; type < typeStr.length() && type < 4; type++) {
             char hourChar = typeStr.charAt(type);
-            if ("1".equals(hourChar + "")) {
+            if ("1" .equals(hourChar + "")) {
                 AdvertisementType advertisementType = AdvertisementType.getAdvertisementType(type);
                 adTypes.add(advertisementType.name());
             }
@@ -149,7 +163,7 @@ public class AdNetworkService extends BaseService {
      * @return resultAdnetWorks
      */
     public Map<Integer, OmAdnetwork> getAdNetworkMap() {
-        List<OmAdnetwork> adNetworks = this.getAllAdNetworks();
+        List<OmAdnetwork> adNetworks = omAdnetworkMapper.select(new OmAdnetworkCriteria());
         Map<Integer, OmAdnetwork> adNetworkMap = new HashMap<>();
         for (OmAdnetwork omAdnetwork : adNetworks) {
             adNetworkMap.put(omAdnetwork.getId(), omAdnetwork);
@@ -166,6 +180,18 @@ public class AdNetworkService extends BaseService {
         OmAdnetworkApp omAdNetworkApp = this.omAdnetworkAppMapper.selectByPrimaryKey(adNetworkAppId);
         log.info("Select app's adNetWork: {}", JSONObject.toJSONString(omAdNetworkApp));
         return omAdNetworkApp;
+    }
+
+    /**
+     * Get a map which key is adnid, the value is OmAdnetworkApp for a pubAppId
+     *
+     * @return adNetworkAppMap
+     */
+    public Map<Integer, OmAdnetworkApp> getAdNetworkIdAppMap(Integer pubAppId) {
+        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId);
+        Map<Integer, OmAdnetworkApp> adNetworkAppMap = new HashMap<>();
+        omAdNetworkApps.forEach(omAdNetworkApp -> adNetworkAppMap.put(omAdNetworkApp.getAdnId(), omAdNetworkApp));
+        return adNetworkAppMap;
     }
 
     /**
@@ -216,10 +242,8 @@ public class AdNetworkService extends BaseService {
      * @param omAdnetworkApp
      */
     public Response updateAppAdNetworks(OmAdnetworkApp omAdnetworkApp) {
-        SqlSession sqlSession = null;
         Connection conn = null;
-        try {
-            sqlSession = sqlSessionFactory.openSession(false);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
             conn = sqlSession.getConnection();
             conn.setAutoCommit(false);
             //savepoint = conn.setSavepoint();
@@ -246,10 +270,6 @@ public class AdNetworkService extends BaseService {
                 }
             } catch (SQLException ignored) {
             }
-        } finally {
-            if (sqlSession != null) {
-                sqlSession.close();
-            }
         }
         log.error("Update AdNetworks {} failed", omAdnetworkApp.getId());
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update AdNetworks failed!");
@@ -258,7 +278,6 @@ public class AdNetworkService extends BaseService {
     /**
      * Update adNetwork app status
      *
-     * @param adNetworkAppId
      * @param status
      */
     public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status) {
@@ -269,7 +288,6 @@ public class AdNetworkService extends BaseService {
                 return Response.RES_DATA_DOES_NOT_EXISTED;
             }
             omAdnetworkApp.setStatus(status);
-            //omAdnetworkApp.setLastmodify(new Date());
             int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
             if (result > 0) {
                 log.info("Update AdNetworks {} success", omAdnetworkApp.getId());
@@ -278,7 +296,7 @@ public class AdNetworkService extends BaseService {
         } catch (Exception e) {
             log.error("Update AdNetworks error adNetworkAppId {}", adNetworkAppId, e);
         }
-        log.error("Update AdNetworks app status {} failed, status ", adNetworkAppId, status);
+        log.error("Update AdNetworks app status {} failed, status {}", adNetworkAppId, status);
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update adNetwork app status failed!");
     }
 
@@ -388,7 +406,7 @@ public class AdNetworkService extends BaseService {
     }
 
     private void updateReportAccountId(SqlSession sqlSession, OmAdnetworkApp oldAdnApp, ReportAdnetworkAccount account) {
-        if (oldAdnApp.getReportAccountId() != account.getId()) {
+        if (!oldAdnApp.getReportAccountId().equals(account.getId())) {
             OmAdnetworkApp updateAccountIdAdn = new OmAdnetworkApp();
             updateAccountIdAdn.setId(oldAdnApp.getId());
             updateAccountIdAdn.setReportAccountId(account.getId());
@@ -467,7 +485,7 @@ public class AdNetworkService extends BaseService {
                 && !ReflectUtil.equals(old, newAdnApp, keyField, keyField)
                 && Util.byteToInt(old.getStatus()) == 1) {
             //adnetworkAppChangeMapper.deleteByPrimaryKey(old.getId());
-            sqlSession.delete("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.deleteByPrimaryKey", old.getId());
+            //sqlSession.delete("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.deleteByPrimaryKey", old.getId());
             OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
             PropertyUtils.copyProperties(appChange, old);
             appChange.setNewAccountKey(keyValue.toString());

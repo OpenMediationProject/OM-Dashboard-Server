@@ -24,6 +24,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class PublisherAppService extends BaseService {
                 if (result) {
                     this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error("Update publisher app info {} error:", JSONObject.toJSON(omPublisherApp));
             }
         }
@@ -75,6 +76,21 @@ public class PublisherAppService extends BaseService {
      */
     public List<OmPublisherApp> getPublisherApps(List<Integer> pubAppIds) {
         return this.getPublisherApps(pubAppIds, null, null);
+    }
+
+    /**
+     * Select publisher app map
+     *
+     * @param pubAppIds
+     * @return publisherApps
+     */
+    public Map<Integer, OmPublisherApp> getPublisherAppMap(List<Integer> pubAppIds) {
+        List<OmPublisherApp> publisherApps = this.getPublisherApps(pubAppIds, null, null);
+        Map<Integer, OmPublisherApp> publisherAppMap = new HashMap<>();
+        publisherApps.forEach(publisherApp -> {
+            publisherAppMap.put(publisherApp.getId(), publisherApp);
+        });
+        return publisherAppMap;
     }
 
     /**
@@ -109,8 +125,8 @@ public class PublisherAppService extends BaseService {
      *
      * @return publisherApps
      */
-    public List<OmPublisherApp> getPublisherAppsSortByRevenue(List<Integer> userPublisherIds, NormalStatus status) {
-        List<OmPublisherApp> publisherApps = this.getPublisherApps(null, status, userPublisherIds);
+    public List<OmPublisherApp> getPublisherAppsSortByRevenue(NormalStatus status) {
+        List<OmPublisherApp> publisherApps = this.getPublisherApps(null, status, null);
         this.sortPublisherAppByRevenue(publisherApps);
         return publisherApps;
     }
@@ -208,7 +224,7 @@ public class PublisherAppService extends BaseService {
                 omPublisherApp.setDebugStatus(publisherAppDTO.getDebugStatus());
             }
             omPublisherApp.setLastmodify(new Date());
-            int result = this.omPublisherAppMapper.updateByPrimaryKey(omPublisherApp);
+            int result = this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
             if (result == 1) {
                 log.info("update publisher app {} successfully", JSONObject.toJSONString(publisherAppDTO));
                 return Response.build();

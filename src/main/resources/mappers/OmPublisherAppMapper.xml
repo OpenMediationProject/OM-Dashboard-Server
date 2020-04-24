@@ -57,7 +57,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, publisher_id, plat, app_id, app_name, app_key, status, debug_status, sdk_event_ids, 
-    coppa, bundle_id, icon, descn, category, category_id, sub_category_id, preview_url, 
+    coppa, bundle_id, icon, category, category_id, sub_category_id, preview_url,
     developer, os_require, country, available_countries, create_time, lastmodify
   </sql>
   <select id="select" parameterType="com.adtiming.om.ds.model.OmPublisherAppCriteria" resultMap="BaseResultMap">

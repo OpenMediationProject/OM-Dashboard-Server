@@ -5,6 +5,7 @@ package com.adtiming.om.ds.dto;
 
 /**
  * Advertisement Type enum
+ *
  * @author dianbo
  */
 public enum AdvertisementType {

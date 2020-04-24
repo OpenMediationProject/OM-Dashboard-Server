@@ -6,18 +6,21 @@ package com.adtiming.om.ds.service;
 import com.adtiming.om.ds.dao.OmPlacementCountryMapper;
 import com.adtiming.om.ds.dao.OmPlacementMapper;
 import com.adtiming.om.ds.dao.OmPlacementSceneMapper;
-import com.adtiming.om.ds.dto.*;
+import com.adtiming.om.ds.dto.AdvertisementType;
+import com.adtiming.om.ds.dto.NormalStatus;
+import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,7 +45,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements by publisher app id
      *
-     * @param pubAppId
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId) {
@@ -52,8 +54,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param pubAppId
-     * @param placementTypes
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Byte[] placementTypes) {
@@ -63,8 +63,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param pubAppId
-     * @param placementId
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Integer placementId) {
@@ -74,8 +72,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database by pubAppId and status
      *
-     * @param pubAppId
-     * @param status
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, NormalStatus status) {
@@ -85,10 +81,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param placementId
-     * @param status
-     * @param pubAppId
-     * @param placementTypes
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Byte[] placementTypes, Integer placementId, NormalStatus status) {
@@ -123,7 +115,6 @@ public class PlacementService extends BaseService {
     /**
      * Select placement by id
      *
-     * @param placementId
      * @return OmPlacement
      */
     public OmPlacementWithBLOBs getPlacement(Integer placementId) {
@@ -132,8 +123,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Sort placement by revenue
-     *
-     * @param placements
      */
     private void sortPlacementsByRevenue(List<OmPlacementWithBLOBs> placements) {
         try {
@@ -162,8 +151,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Build placement database object, and insert into database
-     *
-     * @param omPlacement
      */
     public Response createPlacement(OmPlacementWithBLOBs omPlacement) {
         try {
@@ -204,8 +191,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Build default placement database object for publisher app, and insert into database
-     *
-     * @param omPublisherApp
      */
     public void createDefaultPlacement(OmPublisherApp omPublisherApp) {
         Date currentTime = new Date();
@@ -232,8 +217,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Update placement database object, and insert into database
-     *
-     * @param omPlacement
      */
     public Response updatePlacement(OmPlacementWithBLOBs omPlacement) {
         try {
@@ -253,24 +236,37 @@ public class PlacementService extends BaseService {
     /**
      * Select placement scenes by placement id
      *
-     * @param placementId
      * @return List<OmPlacementScene>
      */
-    public List<OmPlacementScene> getPlacementScenes(Integer placementId, SwitchStatus status) {
+    public List<OmPlacementScene> getPlacementScenes(Integer placementId) {
         OmPlacementSceneCriteria omPlacementSceneCriteria = new OmPlacementSceneCriteria();
         OmPlacementSceneCriteria.Criteria criteria = omPlacementSceneCriteria.createCriteria();
         criteria.andPlacementIdEqualTo(placementId);
-        if (status != null) {
-            criteria.andStatusEqualTo((byte) status.ordinal());
-        }
         List<OmPlacementScene> placementScenes = omPlacementSceneMapper.select(omPlacementSceneCriteria);
         return placementScenes;
     }
 
     /**
+     * Select apps placements map
+     */
+    public Map<Integer, List<OmPlacement>> getAppPlacementsMap(List<Integer> pubAppIds) {
+        if (CollectionUtils.isEmpty(pubAppIds)) {
+            return new HashMap<>();
+        }
+        OmPlacementCriteria omPlacementCriteria = new OmPlacementCriteria();
+        OmPlacementCriteria.Criteria criteria = omPlacementCriteria.createCriteria();
+        criteria.andPubAppIdIn(pubAppIds);
+        if (this.getCurrentUser().getRoleId() != RoleType.ADMINISTRATOR.getId()) {
+            criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+            criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        }
+        List<OmPlacement> publisherAppPlacements = omPlacementMapper.select(omPlacementCriteria);
+        return publisherAppPlacements.stream()
+                .collect(Collectors.groupingBy(OmPlacement::getPubAppId, Collectors.toList()));
+    }
+
+    /**
      * Select placement by publisher app id
-     *
-     * @param pubAppId
      */
     public List<OmPlacement> getPlacementsByPublisherAppId(Integer pubAppId, NormalStatus status) {
         OmPlacementCriteria omPlacementCriteria = new OmPlacementCriteria();
@@ -290,7 +286,6 @@ public class PlacementService extends BaseService {
     /**
      * Build placement scene database object, and insert into database
      *
-     * @param omPlacementScene
      * @return Response
      */
     public Response createPlacementScene(OmPlacementScene omPlacementScene) {
@@ -313,7 +308,6 @@ public class PlacementService extends BaseService {
     /**
      * Update placement scene database object, and insert into database
      *
-     * @param omPlacementScene
      * @return Response
      */
     public Response updatePlacementScene(OmPlacementScene omPlacementScene) {
@@ -334,7 +328,6 @@ public class PlacementService extends BaseService {
     /**
      * Select placement countries
      *
-     * @param placementId
      * @return placementCountries
      */
     public List<OmPlacementCountry> getPlacementCountries(Integer placementId) {
@@ -348,8 +341,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Build placement country database object, and insert into database
-     *
-     * @param omPlacementCountry
      */
     public Response createPlacementCountry(OmPlacementCountry omPlacementCountry) {
         try {
@@ -370,8 +361,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Update placement country database object
-     *
-     * @param omPlacementCountry
      */
     public Response updatePlacementCountry(OmPlacementCountry omPlacementCountry) {
         try {
