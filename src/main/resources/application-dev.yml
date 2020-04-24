@@ -1,7 +1,9 @@
 app:
   env: dev
   redis:
-    server: 192.168.254.203:6379
+    server: redis_host:6379
+    database: 0
+    password: your_password
     timeout: 2000
 
 logging:
@@ -14,8 +16,8 @@ spring:
   datasource:
     mysql:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.254.204:3306/open_mediation?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
-      username: diankou
-      password: Diankou@!123
+      url: jdbc:mysql://mysql_host/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=true&requireSSL=false
+      username: user
+      password: pwd
 
 

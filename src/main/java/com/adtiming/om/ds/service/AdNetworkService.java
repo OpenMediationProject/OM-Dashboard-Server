@@ -3,10 +3,7 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.OmAdnetworkAppMapper;
-import com.adtiming.om.ds.dao.OmAdnetworkMapper;
-import com.adtiming.om.ds.dao.OmPublisherAppMapper;
-import com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper;
+import com.adtiming.om.ds.dao.*;
 import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.ReportApiStatus;
@@ -22,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -53,6 +52,9 @@ public class AdNetworkService extends BaseService {
 
     @Resource
     private ReportAdnetworkAccountMapper reportAdnAccountMapper;
+
+    @Resource
+    private OmAdnetworkAppChangeMapper adnAppChange;
 
     @Resource
     private InstanceService instanceService;
@@ -216,19 +218,21 @@ public class AdNetworkService extends BaseService {
      *
      * @param omAdnetworkApp
      */
+    @Transactional
     public Response createAppAdNetwork(OmAdnetworkApp omAdnetworkApp) {
         SqlSession sqlSession = sqlSessionFactory.openSession(false);
         try {
             int result = this.omAdnetworkAppMapper.insertSelective(omAdnetworkApp);
             if (result > 0) {
-                saveReportAccount(sqlSession, omAdnetworkApp);
+                saveReportAccount(omAdnetworkApp);
                 log.info("Create AppAdNetwork {} success", omAdnetworkApp.getId());
             }
             sqlSession.commit();
             return Response.buildSuccess(omAdnetworkApp);
         } catch (Exception e) {
             log.info("Create AdNetwork {} error", JSONObject.toJSONString(omAdnetworkApp), e);
-            sqlSession.rollback();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            //sqlSession.rollback();
         } finally {
             sqlSession.close();
         }
@@ -241,29 +245,29 @@ public class AdNetworkService extends BaseService {
      *
      * @param omAdnetworkApp
      */
+    @Transactional
     public Response updateAppAdNetworks(OmAdnetworkApp omAdnetworkApp) {
         Connection conn = null;
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
-            conn = sqlSession.getConnection();
-            conn.setAutoCommit(false);
+        try {
             //savepoint = conn.setSavepoint();
             OmAdnetworkApp oldAdnApp = this.omAdnetworkAppMapper.selectByPrimaryKey(omAdnetworkApp.getId());
             if (oldAdnApp == null) {
                 log.error("AdNetworkAppId {} does not existed", omAdnetworkApp.getId());
                 return Response.RES_DATA_DOES_NOT_EXISTED;
             }
-            int result = sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", omAdnetworkApp);
-            //int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
+            //int result = sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", omAdnetworkApp);
+            int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
             if (result > 0) {
                 // save adnetwork report account info
-                updateReportAccount(sqlSession, omAdnetworkApp, oldAdnApp);
-                accountMajorKeyChanged(sqlSession, oldAdnApp, omAdnetworkApp);
+                updateReportAccount(omAdnetworkApp, oldAdnApp);
+                accountMajorKeyChanged(oldAdnApp, omAdnetworkApp);
                 log.info("Update AdNetworks {} success", omAdnetworkApp.getId());
             }
             conn.commit();
             return Response.build();
         } catch (Exception e) {
             log.error("Update AdNetworks error {}", JSONObject.toJSONString(omAdnetworkApp), e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             try {
                 if (conn != null) {
                     conn.rollback();
@@ -300,7 +304,7 @@ public class AdNetworkService extends BaseService {
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update adNetwork app status failed!");
     }
 
-    private void saveReportAccount(SqlSession sqlSession, OmAdnetworkApp adnApp) {
+    private void saveReportAccount(OmAdnetworkApp adnApp) {
         Map<String, String> fieldMap = new HashMap<>();
         String primaryFiled = buildAccountInfo(adnApp.getAdnId(), fieldMap);
         if (StringUtils.isNotBlank(primaryFiled)) {
@@ -323,9 +327,9 @@ public class AdNetworkService extends BaseService {
                     }
                 });
                 if (needChanged[0]) {
-                    //reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
-                    sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
-                    updateReportAccountId(sqlSession, adnApp, oldAccount);
+                    reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
+                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
+                    updateReportAccountId(adnApp, oldAccount);
                 }
             } else {
                 ReportAdnetworkAccount account = new ReportAdnetworkAccount();
@@ -340,9 +344,9 @@ public class AdNetworkService extends BaseService {
                 });
                 if (needInsert[0]) {
                     fillInsertAccountField(account, adnApp);
-                    sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
-                    //reportAdnAccountMapper.insertSelective(account);
-                    updateReportAccountId(sqlSession, adnApp, account);
+                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
+                    reportAdnAccountMapper.insertSelective(account);
+                    updateReportAccountId(adnApp, account);
                 }
             }
         }
@@ -356,7 +360,7 @@ public class AdNetworkService extends BaseService {
         }
     }
 
-    private void updateReportAccount(SqlSession sqlSession, OmAdnetworkApp newAdnApp, OmAdnetworkApp oldAdnApp) {
+    private void updateReportAccount(OmAdnetworkApp newAdnApp, OmAdnetworkApp oldAdnApp) {
         Map<String, String> fieldMap = new HashMap<>();
         String primaryFiled = buildAccountInfo(oldAdnApp.getAdnId(), fieldMap);
         if (StringUtils.isNotBlank(primaryFiled)) {
@@ -381,9 +385,9 @@ public class AdNetworkService extends BaseService {
                     ReflectUtil.setValue(newAccount, fieldMap.get(filed), changedVal);
                 });
                 if (!hasNullValue[0]) {
-                    sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
-                    //reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
-                    updateReportAccountId(sqlSession, oldAdnApp, oldAccount);
+                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
+                    reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
+                    updateReportAccountId(oldAdnApp, oldAccount);
                 }
             } else {
                 ReportAdnetworkAccount account = new ReportAdnetworkAccount();
@@ -397,21 +401,21 @@ public class AdNetworkService extends BaseService {
                 });
                 if (needInsert[0]) {
                     fillInsertAccountField(account, oldAdnApp);
-                    sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
-                    //reportAdnAccountMapper.insertSelective(account);
-                    updateReportAccountId(sqlSession, oldAdnApp, account);
+                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
+                    reportAdnAccountMapper.insertSelective(account);
+                    updateReportAccountId(oldAdnApp, account);
                 }
             }
         }
     }
 
-    private void updateReportAccountId(SqlSession sqlSession, OmAdnetworkApp oldAdnApp, ReportAdnetworkAccount account) {
-        if (!oldAdnApp.getReportAccountId().equals(account.getId())) {
+    private void updateReportAccountId(OmAdnetworkApp oldAdnApp, ReportAdnetworkAccount account) {
+        if (!account.getId().equals(oldAdnApp.getReportAccountId())) {
             OmAdnetworkApp updateAccountIdAdn = new OmAdnetworkApp();
             updateAccountIdAdn.setId(oldAdnApp.getId());
             updateAccountIdAdn.setReportAccountId(account.getId());
-            sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", updateAccountIdAdn);
-            //omAdnetworkAppMapper.updateByPrimaryKeySelective(updateAccountIdAdn);
+            //sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", updateAccountIdAdn);
+            omAdnetworkAppMapper.updateByPrimaryKeySelective(updateAccountIdAdn);
         }
     }
 
@@ -471,13 +475,18 @@ public class AdNetworkService extends BaseService {
                 fieldMap.put("clientSecret", "userSignature");
                 primaryFiled = "apiKey";
                 break;
+            case 15: //IronSource
+                fieldMap.put("clientId", "userId");
+                fieldMap.put("clientSecret", "userSignature");
+                primaryFiled = "clientId";
+                break;
             default:
                 break;
         }
         return primaryFiled;
     }
 
-    private void accountMajorKeyChanged(SqlSession sqlSession, OmAdnetworkApp old, OmAdnetworkApp newAdnApp) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private void accountMajorKeyChanged(OmAdnetworkApp old, OmAdnetworkApp newAdnApp) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         String keyField = getAccountKeyField(old.getAdnId());
         Object keyValue = ReflectUtil.getValue(newAdnApp, keyField);
         //OmAdnetworkApp adnApp = omAdnetworkAppMapper.selectByPrimaryKey(newAdnApp.getId());
@@ -489,8 +498,8 @@ public class AdNetworkService extends BaseService {
             OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
             PropertyUtils.copyProperties(appChange, old);
             appChange.setNewAccountKey(keyValue.toString());
-            sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.insertSelective", appChange);
-            //adnetworkAppChangeMapper.insertSelective(appChange);
+            //sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.insertSelective", appChange);
+            adnAppChange.insertSelective(appChange);
         }
     }
 
@@ -502,7 +511,6 @@ public class AdNetworkService extends BaseService {
             case 2:
             case 7:
             case 8:
-            case 15:
                 return "adnAppKey";
             case 3:
             case 10:
@@ -512,6 +520,8 @@ public class AdNetworkService extends BaseService {
                 return "apiKey";
             case 6:
                 return "refreshToken";
+            case 15:
+                return "clientId";
         }
         return "";
     }
