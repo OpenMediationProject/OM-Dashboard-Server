@@ -7,8 +7,12 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.OmPublisher;
+import com.adtiming.om.ds.model.UmPermission;
+import com.adtiming.om.ds.model.UmRole;
 import com.adtiming.om.ds.model.UmUser;
+import com.adtiming.om.ds.service.PermissionService;
 import com.adtiming.om.ds.service.PublisherService;
+import com.adtiming.om.ds.service.RoleService;
 import com.adtiming.om.ds.service.UserService;
 import com.adtiming.om.ds.web.shiro.OmShiroRealm;
 import org.apache.commons.lang.StringUtils;
@@ -22,8 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by huangqiang on 2020/2/13.
@@ -41,6 +47,12 @@ public class LoginController extends BaseController {
 
     @Autowired
     private PublisherService publisherService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Resource
     private RedisSessionDAO redisSessionDAO;
@@ -125,6 +137,13 @@ public class LoginController extends BaseController {
                     sessionUser.setPublisherId(pubId);
                     if (roleId != null) {
                         sessionUser.setRoleId(roleId);
+                        UmRole role = roleService.getRole(roleId);
+                        List<UmRole> roles = new ArrayList<>();
+                        roles.add(role);
+                        sessionUser.setRoleName(role.getName());
+                        sessionUser.setRoles(roles);
+                        List<UmPermission> perms = permissionService.getPermissionsByUser(sessionUser.getId());
+                        sessionUser.setPerms(perms);
                     }
                     redisSessionDAO.update(session);
                     break;

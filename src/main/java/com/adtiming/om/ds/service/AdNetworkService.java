@@ -471,6 +471,11 @@ public class AdNetworkService extends BaseService {
                 fieldMap.put("clientSecret", "userSignature");
                 primaryFiled = "apiKey";
                 break;
+            case 15: //IronSource
+                fieldMap.put("clientId", "userId");
+                fieldMap.put("clientSecret", "adnAppToken");
+                primaryFiled = "clientId";
+                break;
             default:
                 break;
         }
@@ -502,7 +507,6 @@ public class AdNetworkService extends BaseService {
             case 2:
             case 7:
             case 8:
-            case 15:
                 return "adnAppKey";
             case 3:
             case 10:
@@ -512,6 +516,8 @@ public class AdNetworkService extends BaseService {
                 return "apiKey";
             case 6:
                 return "refreshToken";
+            case 15:
+                return "userId";
         }
         return "";
     }

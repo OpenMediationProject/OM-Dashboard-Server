@@ -16,7 +16,7 @@ spring:
   datasource:
     mysql:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://mysql_host/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=false
+      url: jdbc:mysql://mysql_host/open_mediation?useCursorFetch=true&characterEncoding=utf8&useSSL=true&requireSSL=false
       username: user
       password: pwd
 
