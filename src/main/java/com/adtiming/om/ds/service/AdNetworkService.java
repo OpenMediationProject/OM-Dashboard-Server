@@ -247,7 +247,7 @@ public class AdNetworkService extends BaseService {
      */
     @Transactional
     public Response updateAppAdNetworks(OmAdnetworkApp omAdnetworkApp) {
-        Connection conn = null;
+        // Connection conn = null;
         try {
             //savepoint = conn.setSavepoint();
             OmAdnetworkApp oldAdnApp = this.omAdnetworkAppMapper.selectByPrimaryKey(omAdnetworkApp.getId());
@@ -263,17 +263,17 @@ public class AdNetworkService extends BaseService {
                 accountMajorKeyChanged(oldAdnApp, omAdnetworkApp);
                 log.info("Update AdNetworks {} success", omAdnetworkApp.getId());
             }
-            conn.commit();
+            // conn.commit();
             return Response.build();
         } catch (Exception e) {
             log.error("Update AdNetworks error {}", JSONObject.toJSONString(omAdnetworkApp), e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ignored) {
-            }
+            // try {
+            //    if (conn != null) {
+            //        conn.rollback();
+            //    }
+            // } catch (SQLException ignored) {
+            // }
         }
         log.error("Update AdNetworks {} failed", omAdnetworkApp.getId());
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update AdNetworks failed!");
