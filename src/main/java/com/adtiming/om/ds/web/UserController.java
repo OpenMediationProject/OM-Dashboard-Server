@@ -12,6 +12,8 @@ import com.adtiming.om.ds.service.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 public class UserController extends BaseController {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     private UserService userService;

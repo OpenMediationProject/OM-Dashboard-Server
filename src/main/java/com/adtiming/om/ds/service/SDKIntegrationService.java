@@ -12,6 +12,8 @@ import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.util.Util;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +28,8 @@ import java.util.*;
  */
 @Service
 public class SDKIntegrationService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     private InstanceService instanceService;
@@ -42,6 +46,14 @@ public class SDKIntegrationService extends BaseService {
     @Resource
     private OmDevAppMapper omDevAppMapper;
 
+    public Response getDevApp(Integer pubAppId) {
+        List<OmDevApp> devApps = this.getDevApps(null, pubAppId, SwitchStatus.ON, DevAppTestResult.UnKnow);
+        if (!CollectionUtils.isEmpty(devApps)) {
+            return Response.buildSuccess(devApps.get(0));
+        }
+        return Response.buildSuccess(null);
+    }
+
     /**
      * Get test adnetwoks
      *
@@ -50,8 +62,11 @@ public class SDKIntegrationService extends BaseService {
     public Response getAdNetWorks(Integer pubAppId) {
         try {
             JSONArray results = new JSONArray();
-            Map<Integer, OmDevApp> devAppMap = this.getDevAppMap(pubAppId, SwitchStatus.ON);
+            Map<Integer, OmDevApp> devAppMap = this.getDevAppMap(pubAppId, null);
             Set<Integer> adNetworkIds = this.instanceService.getAdnIdsWithInstance(pubAppId);
+            if (CollectionUtils.isEmpty(adNetworkIds)) {
+                return Response.build(Response.CODE_RES_FAILED, Response.STATUS_DISABLE, "No active instances to be test");
+            }
             List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
             for (OmAdnetwork omAdnetwork : adNetworks) {
                 Integer adNetworkId = omAdnetwork.getId();
@@ -98,6 +113,11 @@ public class SDKIntegrationService extends BaseService {
                 if (placementIdSet.contains(placement.getId())) {
                     continue;
                 }
+                List<OmInstanceWithBLOBs> instances = this.instanceService.getAdnPlacementInstances(
+                        adnId, placement.getId(), SwitchStatus.ON);
+                if (CollectionUtils.isEmpty(instances)) {
+                    continue;
+                }
                 JSONObject result = new JSONObject();
                 result.put("placementId", placement.getId());
                 result.put("placementName", placement.getName());
@@ -133,6 +153,7 @@ public class SDKIntegrationService extends BaseService {
             devApp.setDevResult((byte) devAppTestResult.ordinal());
             devApp.setLastmodify(new Date());
             devApp.setActiveTime(new Date());
+            devApp.setStatus((byte) SwitchStatus.OFF.ordinal());
             int result = this.omDevAppMapper.updateByPrimaryKeySelective(devApp);
             if (result > 0) {
                 log.info("Update develop app's test result {} successfully", JSONObject.toJSONString(devApp));
@@ -220,6 +241,15 @@ public class SDKIntegrationService extends BaseService {
      * @param pubAppId
      */
     private List<OmDevApp> getDevApps(Integer adnId, Integer pubAppId, SwitchStatus devAppStatus) {
+        return this.getDevApps(adnId, pubAppId, devAppStatus, null);
+    }
+
+    /**
+     * Get develop app list
+     *
+     * @param pubAppId
+     */
+    private List<OmDevApp> getDevApps(Integer adnId, Integer pubAppId, SwitchStatus devAppStatus, DevAppTestResult result) {
         OmDevAppCriteria devAppCriteria = new OmDevAppCriteria();
         OmDevAppCriteria.Criteria criteria = devAppCriteria.createCriteria();
         criteria.andPubAppIdEqualTo(pubAppId);
@@ -229,9 +259,23 @@ public class SDKIntegrationService extends BaseService {
         if (adnId != null) {
             criteria.andAdnIdEqualTo(adnId);
         }
+        if (result != null) {
+            criteria.andDevResultEqualTo((byte) result.ordinal());
+        }
         criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+        devAppCriteria.setOrderByClause(" lastmodify desc ");
         List<OmDevApp> devApps = omDevAppMapper.select(devAppCriteria);
+
+        if (!CollectionUtils.isEmpty(devApps)) {
+            Map<Integer, OmAdnetwork> adNetworkMap = adNetworkService.getAdNetworkMap();
+            for (OmDevApp sdkDevApp : devApps) {
+                OmAdnetwork adNetwork = adNetworkMap.get(sdkDevApp.getAdnId());
+                if (adNetwork != null) {
+                    sdkDevApp.setClassName(adNetworkMap.get(sdkDevApp.getAdnId()).getClassName());
+                }
+            }
+        }
         return devApps;
     }
 

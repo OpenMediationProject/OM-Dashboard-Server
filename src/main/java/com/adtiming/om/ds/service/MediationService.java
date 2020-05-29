@@ -14,6 +14,8 @@ import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MediationService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     private AdNetworkService adNetworkService;
@@ -112,7 +116,7 @@ public class MediationService extends BaseService {
         }
 
         resultRule.putAll(resultRuleSegment);
-        if (placementRule.getAutoOpt() == 1) {
+        if (placementRule.getAutoOpt() != null && placementRule.getAutoOpt() == 1) {
             resultRule.put("strategy", "Auto");
         } else {
             resultRule.put("strategy", "Manual");
@@ -129,7 +133,7 @@ public class MediationService extends BaseService {
                 }
                 resultRuleInstances.add(resultRuleInstance);
             }
-            this.sortRuleInstance(resultRuleInstances);
+            this.sortByPriority(resultRuleInstances);
             resultRule.put("ruleInstanceSize", placementRuleInstances.size());
             resultRule.put("ruleInstances", resultRuleInstances);
         } else {
@@ -137,20 +141,6 @@ public class MediationService extends BaseService {
             resultRule.put("ruleInstances", new JSONArray());
         }
         return resultRule;
-    }
-
-    private void sortRuleInstance(JSONArray resultInstances) {
-        resultInstances.sort((instance1, instance2) -> {
-            Integer priority1 = ((JSONObject) instance1).getInteger("priority");
-            if (priority1 == null) {
-                return 1;
-            }
-            Integer priority2 = ((JSONObject) instance2).getInteger("priority");
-            if (priority2 == null) {
-                return -1;
-            }
-            return priority1 - priority2;
-        });
     }
 
     /**
@@ -163,7 +153,7 @@ public class MediationService extends BaseService {
      */
     public Response getSegmentInstances(Integer pubAppId, Integer ruleId, Integer instanceId, String[] adNetworkIds, Integer placementId) {
         try {
-            List<OmInstanceWithBLOBs> placementInstances = this.instanceService.getInstances(pubAppId, adNetworkIds, instanceId, placementId, NormalStatus.ACTIVE);
+            List<OmInstanceWithBLOBs> placementInstances = this.instanceService.getInstances(pubAppId, adNetworkIds, instanceId, placementId, NormalStatus.Active);
             if (CollectionUtils.isEmpty(placementInstances)) {
                 return Response.buildSuccess(Collections.EMPTY_LIST);
             }
@@ -190,7 +180,7 @@ public class MediationService extends BaseService {
                 }
                 resultInstances.add(resultInstance);
             }
-            this.sortRuleInstance(resultInstances);
+            this.sortByPriority(resultInstances);
             return Response.buildSuccess(resultInstances);
         } catch (Exception e) {
             log.error("get placement instances error:", e);
@@ -198,67 +188,82 @@ public class MediationService extends BaseService {
         return Response.RES_FAILED;
     }
 
-    @Transactional
-    public Response resortWaterFallPriority(Integer[] placementRuleInstanceIds) {
+    private void sortByPriority(JSONArray results) {
         try {
-            int priority = 1;
-            for (Integer instanceId : placementRuleInstanceIds) {
-                OmPlacementRuleInstance ruleInstance = this.omPlacementRuleInstanceMapper.selectByPrimaryKey(instanceId);
-                if (ruleInstance == null) {
-                    throw new RuntimeException("Placement rule instance does not existed, id: " + instanceId);
+            results.sort((instance1, instance2) -> {
+                Integer priority1 = ((JSONObject) instance1).getInteger("priority");
+                Integer priority2 = ((JSONObject) instance2).getInteger("priority");
+                if (priority1 == null && priority2 == null) {
+                    return 0;
                 }
-                ruleInstance.setPriority(priority++);
-                Response response = this.updatePlacementRuleInstance(ruleInstance);
-                if (response.getCode() != 0) {
-                    throw new RuntimeException("Update placement rule instance priority error:" + JSONObject.toJSON(ruleInstance));
+                if (priority1 == null) {
+                    return 1;
                 }
-            }
-            return Response.build();
+                if (priority2 == null) {
+                    return -1;
+                }
+                return priority1.compareTo(priority2);
+            });
         } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("Resort water fall priority error {}", placementRuleInstanceIds, e);
+            log.error("Sort instance error:", e);
         }
-        return Response.RES_FAILED;
     }
 
-    public Response resortRulePriority(Integer placementId) {
-        List<OmPlacementRule> placementRules = this.getPlacementRules(null, placementId, SwitchStatus.ON);
-        placementRules.sort(Comparator.comparingInt(OmPlacementRule::getPriority));
-        List<Integer> ruleIds = new ArrayList<>();
-        placementRules.forEach(rule -> {
-            ruleIds.add(rule.getId());
-        });
-        if (!CollectionUtils.isEmpty(ruleIds)) {
-            Integer[] ruleIdArray = new Integer[ruleIds.size()];
-            ruleIds.toArray(ruleIdArray);
-            return this.resortRulePriority(ruleIdArray);
+    @Transactional
+    public Response resortWaterFallPriority(Integer placementRuleInstanceId, Integer priority) {
+        OmPlacementRuleInstance dbRuleInstance = this.omPlacementRuleInstanceMapper.selectByPrimaryKey(placementRuleInstanceId);
+        List<OmPlacementRuleInstance> ruleInstanceList = this.getPlacementRuleInstances(dbRuleInstance.getRuleId(), null);
+        int oldPriority = dbRuleInstance.getPriority();
+        for (OmPlacementRuleInstance ruleInstance : ruleInstanceList) {
+            if (ruleInstance.getId().equals(placementRuleInstanceId)) {
+                if (priority > oldPriority) {
+                    ruleInstance.setPriority(priority * 10 + 1);
+                } else {
+                    ruleInstance.setPriority(priority * 10 - 1);
+                }
+            } else {
+                ruleInstance.setPriority(ruleInstance.getPriority() * 10);
+            }
+        }
+        ruleInstanceList.sort(Comparator.comparingInt(OmPlacementRuleInstance::getPriority));
+        int newPriority = 1;
+        for (OmPlacementRuleInstance ruleInstance : ruleInstanceList) {
+            ruleInstance.setPriority(newPriority++);
+            int result = this.omPlacementRuleInstanceMapper.updateByPrimaryKeySelective(ruleInstance);
+            if (result <= 0) {
+                throw new RuntimeException("Resort rule instance priority failed to update rule: " + JSONObject.toJSON(ruleInstance));
+            }
         }
         return Response.build();
     }
 
     @Transactional
-    public Response resortRulePriority(Integer[] placementRuleIds) {
-        try {
-            int priority = 1;
-            for (Integer ruleId : placementRuleIds) {
-                OmPlacementRule rule = this.omPlacementRuleMapper.selectByPrimaryKey(ruleId);
-                if (rule == null) {
-                    throw new RuntimeException("Placement rule does not existed, id: " + ruleId);
-                }
-                rule.setPriority(priority++);
-                int result = this.omPlacementRuleMapper.updateByPrimaryKeySelective(rule);
-                if (result > 0) {
-                    log.info("Update rule {} priority {} successfully", ruleId, priority);
+    public Response resortRulePriority(Integer ruleId, Integer priority) {
+        OmPlacementRule placementRule = this.getPlacementRule(ruleId);
+        List<OmPlacementRule> placementRules = this.getPlacementRules(placementRule.getPubAppId(),
+                placementRule.getPlacementId(), SwitchStatus.ON);
+        int oldPriority = placementRule.getPriority();
+        for (OmPlacementRule rule : placementRules) {
+            if (rule.getId().equals(ruleId)) {
+                if (priority > oldPriority) {
+                    rule.setPriority(priority * 10 + 1);
                 } else {
-                    throw new RuntimeException("Update placement rule priority error:" + JSONObject.toJSON(rule));
+                    rule.setPriority(priority * 10 - 1);
                 }
+            } else {
+                rule.setPriority(rule.getPriority() * 10);
             }
-            return Response.build();
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("Resort water fall priority error {}", placementRuleIds, e);
         }
-        return Response.RES_FAILED;
+        placementRules.sort(Comparator.comparingInt(OmPlacementRule::getPriority));
+        int newPriority = 1;
+        for (OmPlacementRule rule : placementRules) {
+            rule.setPriority(newPriority++);
+            int result = this.omPlacementRuleMapper.updateByPrimaryKeySelective(rule);
+            if (result <= 0) {
+                throw new RuntimeException("Resort rule priority failed to update rule: " + JSONObject.toJSON(rule));
+            }
+        }
+        return Response.build();
     }
 
     /**
@@ -284,6 +289,10 @@ public class MediationService extends BaseService {
             ruleSegment.setPlacementId(segmentDTO.getPlacementId());
             ruleSegment.setPriority(segmentDTO.getPriority());
             ruleSegment.setStatus(segmentDTO.getStatus());
+            ruleSegment.setChannel(segmentDTO.getChannel());
+            ruleSegment.setChannelBow(segmentDTO.getChannelBow());
+            ruleSegment.setModelType(segmentDTO.getDeviceModelType());
+
             OmPlacementRuleSegment omPlacementRuleSegment = this.createPlacementRuleSegment(ruleSegment);
             if (omPlacementRuleSegment == null) {
                 throw new RuntimeException("Create placement rule segment error " + JSONObject.toJSONString(segmentDTO));
@@ -339,6 +348,9 @@ public class MediationService extends BaseService {
             ruleSegment.setPlacementId(segmentDTO.getPlacementId());
             ruleSegment.setPriority(segmentDTO.getPriority());
             ruleSegment.setStatus(segmentDTO.getStatus());
+            ruleSegment.setChannel(segmentDTO.getChannel());
+            ruleSegment.setChannelBow(segmentDTO.getChannelBow());
+            ruleSegment.setModelType(segmentDTO.getDeviceModelType());
             OmPlacementRuleSegment omPlacementRuleSegment = this.updatePlacementRuleSegment(ruleSegment);
             if (omPlacementRuleSegment == null) {
                 throw new RuntimeException("Update placement rule segment error " + JSONObject.toJSONString(segmentDTO));
@@ -490,38 +502,48 @@ public class MediationService extends BaseService {
         try {
             omPlacementRule.setLastmodify(new Date());
             int result = this.omPlacementRuleMapper.updateByPrimaryKeySelective(omPlacementRule);
-            if (result > 0) {
-                log.info("Update placement rule id {}", omPlacementRule.getId());
-                omPlacementRule = this.omPlacementRuleMapper.selectByPrimaryKey(omPlacementRule.getId());
-                if (omPlacementRule.getAutoOpt() != null && omPlacementRule.getAutoOpt() == 0) {
-                    OmPlacementRuleSegmentWithBLOBs ruleSegment = this.omPlacementRuleSegmentMapper.selectByPrimaryKey(omPlacementRule.getSegmentId());
-                    if (ruleSegment == null) {
-                        throw new RuntimeException("Rule id " + omPlacementRule.getId() + " does not have a segment");
-                    }
-                    ruleSegment.setStatus(omPlacementRule.getStatus());
-                    result = this.omPlacementRuleSegmentMapper.updateByPrimaryKeySelective(ruleSegment);
-                    if (result > 0) {
-                        Response response = this.resortRulePriority(omPlacementRule.getPlacementId());
-                        if (response.getCode() == Response.SUCCESS_CODE) {
-                            log.info("Update rule segment id {} status {} successfully.", omPlacementRule.getSegmentId(), omPlacementRule.getStatus());
-                            return Response.buildSuccess(omPlacementRule);
-                        } else {
-                            throw new RuntimeException("Resort rule priority failed, placement id" + omPlacementRule.getPlacementId());
-                        }
-                    } else {
-                        throw new RuntimeException("Update rule segment id " + omPlacementRule.getSegmentId() + " status " + omPlacementRule.getStatus() + " error");
-                    }
-                }
-                return Response.buildSuccess(omPlacementRule);
-            } else {
+            if (result <= 0) {
                 throw new RuntimeException("Update rule error {}" + JSONObject.toJSONString(omPlacementRule));
             }
+            log.info("Update placement rule id {}", omPlacementRule.getId());
+            omPlacementRule = this.omPlacementRuleMapper.selectByPrimaryKey(omPlacementRule.getId());
+            OmPlacementRuleSegmentWithBLOBs ruleSegment = this.omPlacementRuleSegmentMapper.selectByPrimaryKey(omPlacementRule.getSegmentId());
+            if (ruleSegment == null) {
+                throw new RuntimeException("Rule id " + omPlacementRule.getId() + " does not have a segment");
+            }
+            ruleSegment.setStatus(omPlacementRule.getStatus());
+            result = this.omPlacementRuleSegmentMapper.updateByPrimaryKeySelective(ruleSegment);
+            if (result <= 0) {
+                throw new RuntimeException("Update rule segment id " + omPlacementRule.getSegmentId() + " status " + omPlacementRule.getStatus() + " error");
+            }
+            Response response = this.resortRulePriority(omPlacementRule.getPlacementId());
+            if (response.getCode() != Response.SUCCESS_CODE) {
+                throw new RuntimeException("Resort rule priority failed, placement id" + omPlacementRule.getPlacementId());
+            }
+            log.info("Update rule segment id {} status {} successfully.", omPlacementRule.getSegmentId(), omPlacementRule.getStatus());
+            return Response.buildSuccess(omPlacementRule);
         } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Update placement rule error {}", JSONObject.toJSONString(omPlacementRule), e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
         log.error("Update placement rule id {}", omPlacementRule.getId());
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update placement rule failed!");
+    }
+
+    public Response resortRulePriority(Integer placementId) {
+        try {
+            List<OmPlacementRule> placementRules = this.getPlacementRules(null, placementId, SwitchStatus.ON);
+            placementRules.sort(Comparator.comparingInt(OmPlacementRule::getPriority));
+            int priority = 1;
+            for (OmPlacementRule rule : placementRules) {
+                rule.setPriority(priority++);
+                this.omPlacementRuleMapper.updateByPrimaryKeySelective(rule);
+            }
+            return Response.build();
+        } catch (Exception e) {
+            log.error("Resort placement {} rule priority error:", placementId, e);
+        }
+        return Response.RES_FAILED;
     }
 
     /**
@@ -743,8 +765,8 @@ public class MediationService extends BaseService {
                 }
             }
         } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error("Delete placement rule instance error:", e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
     }
 
@@ -764,7 +786,7 @@ public class MediationService extends BaseService {
                     criteria.andCountriesLike("%" + country + "%");
                 }
             }
-            List<OmPlacementRuleSegmentWithBLOBs> ruleSegments = this.omPlacementRuleSegmentMapper.selectByExampleWithBLOBs(omPlacementRuleSegmentCriteria);
+            List<OmPlacementRuleSegmentWithBLOBs> ruleSegments = this.omPlacementRuleSegmentMapper.selectWithBLOBs(omPlacementRuleSegmentCriteria);
             if (!CollectionUtils.isEmpty(ruleSegments)) {
                 Map<Integer, OmPlacementRuleSegmentWithBLOBs> segmentMap = new HashMap<>();
                 for (OmPlacementRuleSegmentWithBLOBs segment : ruleSegments) {

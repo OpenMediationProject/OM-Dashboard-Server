@@ -8,10 +8,6 @@
                 <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="data" maxDepth="1">
-                    <IfFileName glob="*.log.gz"/>
-                    <IfLastModified age="7d"/>
-                </Delete>
                 <Delete basePath="log" maxDepth="1">
                     <IfFileName glob="*.log.gz"/>
                     <IfLastModified age="7d"/>

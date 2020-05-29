@@ -13,6 +13,8 @@ import com.adtiming.om.ds.service.PlacementService;
 import com.adtiming.om.ds.service.PublisherAppService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 public class PublisherAppController extends BaseController {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     private PublisherAppService publisherAppService;
@@ -102,6 +106,9 @@ public class PublisherAppController extends BaseController {
      */
     @RequestMapping(value = "/publisher/app/create", method = RequestMethod.POST)
     public Response createPublisherApp(@RequestBody OmPublisherApp omPublisherApp) {
+        if (omPublisherApp.getAppId() == null) {
+            return Response.RES_PARAMETER_ERROR;
+        }
         return this.publisherAppService.createPublisherApp(omPublisherApp);
     }
 
@@ -112,6 +119,9 @@ public class PublisherAppController extends BaseController {
      */
     @RequestMapping(value = "/publisher/app/update", method = RequestMethod.POST)
     public Response updatePublisherApp(@RequestBody PublisherAppDTO publisherAppDTO) {
+        if (publisherAppDTO.getId() == null) {
+            return Response.RES_PARAMETER_ERROR;
+        }
         return this.publisherAppService.updatePublisherApp(publisherAppDTO);
     }
 

@@ -11,6 +11,8 @@ import com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs;
 import com.adtiming.om.ds.service.MediationService;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,35 +29,39 @@ import java.util.List;
 @RestController
 public class MediationController extends BaseController {
 
+    protected static final Logger log = LogManager.getLogger();
+
     @Autowired
     private MediationService mediationService;
 
     /**
      * Resort segment priority
      *
-     * @param placementRuleInstanceIds
+     * @param placementRuleInstanceId
+     * @param priority
      */
     @RequestMapping(value = "/mediation/segment/resort/priority", method = RequestMethod.GET)
-    public Response resortInstancesPriority(Integer[] placementRuleInstanceIds) {
-        if (placementRuleInstanceIds == null || placementRuleInstanceIds.length <= 0) {
-            log.error("Instance ids must not empty");
+    public Response resortInstancesPriority(Integer placementRuleInstanceId, Integer priority) {
+        if (placementRuleInstanceId == null || priority == null) {
+            log.warn("PlacementId instance id and priority must not empty");
             return Response.RES_PARAMETER_ERROR;
         }
-        return this.mediationService.resortWaterFallPriority(placementRuleInstanceIds);
+        return this.mediationService.resortWaterFallPriority(placementRuleInstanceId, priority);
     }
 
     /**
      * Resort placement rule priority
      *
-     * @param placementRuleIds
+     * @param ruleId
+     * @param priority
      */
     @RequestMapping(value = "/mediation/rule/resort/priority", method = RequestMethod.GET)
-    public Response resortRulePriority(Integer[] placementRuleIds) {
-        if (placementRuleIds == null || placementRuleIds.length <= 0) {
-            log.error("Rule ids must not empty");
+    public Response resortRulePriority(Integer ruleId, Integer priority) {
+        if (ruleId == null || priority == null) {
+            log.warn("Rule id and priority must not empty");
             return Response.RES_PARAMETER_ERROR;
         }
-        return this.mediationService.resortRulePriority(placementRuleIds);
+        return this.mediationService.resortRulePriority(ruleId, priority);
     }
 
     /**

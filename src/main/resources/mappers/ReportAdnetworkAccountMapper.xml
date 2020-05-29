@@ -4,7 +4,9 @@
   <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.ReportAdnetworkAccount">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
     <result column="adn_account_id" jdbcType="INTEGER" property="adnAccountId" />
+    <result column="adn_account_name" jdbcType="VARCHAR" property="adnAccountName" />
     <result column="adn_account_owner" jdbcType="TINYINT" property="adnAccountOwner" />
     <result column="adn_app_id" jdbcType="VARCHAR" property="adnAppId" />
     <result column="adn_api_key" jdbcType="VARCHAR" property="adnApiKey" />
@@ -13,9 +15,13 @@
     <result column="user_signature" jdbcType="VARCHAR" property="userSignature" />
     <result column="credential_path" jdbcType="VARCHAR" property="credentialPath" />
     <result column="auth_key" jdbcType="VARCHAR" property="authKey" />
+    <result column="auth_type" jdbcType="TINYINT" property="authType" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
     <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -47,16 +53,18 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, adn_id, adn_account_id, adn_account_owner, adn_app_id, adn_api_key, adn_app_token, 
-    user_id, user_signature, credential_path, auth_key, status, create_time, lastmodify
+    id, adn_id, publisher_id, adn_account_id, adn_account_name, adn_account_owner, adn_app_id, 
+    adn_api_key, adn_app_token, user_id, user_signature, credential_path, auth_key, auth_type, 
+    currency, status, reason, create_time, lastmodify, class_name
   </sql>
-  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.ReportAdnetworkAccountCriteria" resultMap="BaseResultMap">
+  <select id="select" parameterType="com.adtiming.om.ds.model.ReportAdnetworkAccountCriteria" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from report_adnetwork_account
+    from report_adnetwork_account as a
+    left join (select id as adnetwork_id, class_name from om_adnetwork) d on (a.adn_id=d.adnetwork_id)
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -67,7 +75,8 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from report_adnetwork_account
+    from report_adnetwork_account as a
+    left join (select id as adnetwork_id, class_name from om_adnetwork) d on (a.adn_id=d.adnetwork_id)
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -78,16 +87,20 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into report_adnetwork_account (adn_id, adn_account_id, adn_account_owner, 
-      adn_app_id, adn_api_key, adn_app_token, 
-      user_id, user_signature, credential_path, 
-      auth_key, status, create_time, 
-      lastmodify)
-    values (#{adnId,jdbcType=INTEGER}, #{adnAccountId,jdbcType=INTEGER}, #{adnAccountOwner,jdbcType=TINYINT}, 
-      #{adnAppId,jdbcType=VARCHAR}, #{adnApiKey,jdbcType=VARCHAR}, #{adnAppToken,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=VARCHAR}, #{userSignature,jdbcType=VARCHAR}, #{credentialPath,jdbcType=VARCHAR}, 
-      #{authKey,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{lastmodify,jdbcType=TIMESTAMP})
+    insert into report_adnetwork_account (adn_id, publisher_id, adn_account_id, 
+      adn_account_name, adn_account_owner, adn_app_id, 
+      adn_api_key, adn_app_token, user_id, 
+      user_signature, credential_path, auth_key, 
+      auth_type, currency, status, 
+      reason, create_time, lastmodify
+      )
+    values (#{adnId,jdbcType=INTEGER}, #{publisherId,jdbcType=INTEGER}, #{adnAccountId,jdbcType=INTEGER}, 
+      #{adnAccountName,jdbcType=VARCHAR}, #{adnAccountOwner,jdbcType=TINYINT}, #{adnAppId,jdbcType=VARCHAR}, 
+      #{adnApiKey,jdbcType=VARCHAR}, #{adnAppToken,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{userSignature,jdbcType=VARCHAR}, #{credentialPath,jdbcType=VARCHAR}, #{authKey,jdbcType=VARCHAR}, 
+      #{authType,jdbcType=TINYINT}, #{currency,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{reason,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.ReportAdnetworkAccount">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -98,8 +111,14 @@
       <if test="adnId != null">
         adn_id,
       </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
       <if test="adnAccountId != null">
         adn_account_id,
+      </if>
+      <if test="adnAccountName != null">
+        adn_account_name,
       </if>
       <if test="adnAccountOwner != null">
         adn_account_owner,
@@ -125,8 +144,17 @@
       <if test="authKey != null">
         auth_key,
       </if>
+      <if test="authType != null">
+        auth_type,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
       <if test="status != null">
         status,
+      </if>
+      <if test="reason != null">
+        reason,
       </if>
       <if test="createTime != null">
         create_time,
@@ -139,8 +167,14 @@
       <if test="adnId != null">
         #{adnId,jdbcType=INTEGER},
       </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
       <if test="adnAccountId != null">
         #{adnAccountId,jdbcType=INTEGER},
+      </if>
+      <if test="adnAccountName != null">
+        #{adnAccountName,jdbcType=VARCHAR},
       </if>
       <if test="adnAccountOwner != null">
         #{adnAccountOwner,jdbcType=TINYINT},
@@ -166,8 +200,17 @@
       <if test="authKey != null">
         #{authKey,jdbcType=VARCHAR},
       </if>
+      <if test="authType != null">
+        #{authType,jdbcType=TINYINT},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -183,8 +226,14 @@
       <if test="adnId != null">
         adn_id = #{adnId,jdbcType=INTEGER},
       </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
       <if test="adnAccountId != null">
         adn_account_id = #{adnAccountId,jdbcType=INTEGER},
+      </if>
+      <if test="adnAccountName != null">
+        adn_account_name = #{adnAccountName,jdbcType=VARCHAR},
       </if>
       <if test="adnAccountOwner != null">
         adn_account_owner = #{adnAccountOwner,jdbcType=TINYINT},
@@ -210,8 +259,17 @@
       <if test="authKey != null">
         auth_key = #{authKey,jdbcType=VARCHAR},
       </if>
+      <if test="authType != null">
+        auth_type = #{authType,jdbcType=TINYINT},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -225,7 +283,9 @@
   <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.ReportAdnetworkAccount">
     update report_adnetwork_account
     set adn_id = #{adnId,jdbcType=INTEGER},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
       adn_account_id = #{adnAccountId,jdbcType=INTEGER},
+      adn_account_name = #{adnAccountName,jdbcType=VARCHAR},
       adn_account_owner = #{adnAccountOwner,jdbcType=TINYINT},
       adn_app_id = #{adnAppId,jdbcType=VARCHAR},
       adn_api_key = #{adnApiKey,jdbcType=VARCHAR},
@@ -234,14 +294,19 @@
       user_signature = #{userSignature,jdbcType=VARCHAR},
       credential_path = #{credentialPath,jdbcType=VARCHAR},
       auth_key = #{authKey,jdbcType=VARCHAR},
+      auth_type = #{authType,jdbcType=TINYINT},
+      currency = #{currency,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
+      reason = #{reason,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByDynamic" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    id, adn_id, publisher_id, adn_account_id, adn_account_owner, adn_account_name, adn_app_id,
+    adn_api_key, adn_app_token, user_id, user_signature, credential_path, auth_key, auth_type,
+    currency, status, reason, create_time, lastmodify
     from report_adnetwork_account
     where ${whereSql}
   </select>

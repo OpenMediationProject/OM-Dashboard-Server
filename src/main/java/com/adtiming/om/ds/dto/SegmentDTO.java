@@ -48,13 +48,19 @@ public class SegmentDTO {
 
     private String modelBlacklist;
 
-    private String gender;
+    private Byte gender;
 
     private String interest;
 
     private BigDecimal iapMin;
 
     private BigDecimal iapMax;
+
+    private String channel;
+
+    private Byte channelBow;
+
+    private Integer deviceModelType;
 
     public Integer getId() {
         return id;
@@ -208,12 +214,28 @@ public class SegmentDTO {
         this.modelBlacklist = modelBlacklist;
     }
 
-    public String getGender() {
+    public Byte getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Byte gender) {
         this.gender = gender;
+    }
+
+    public Byte getChannelBow() {
+        return channelBow;
+    }
+
+    public void setChannelBow(Byte channelBow) {
+        this.channelBow = channelBow;
+    }
+
+    public Integer getDeviceModelType() {
+        return deviceModelType;
+    }
+
+    public void setDeviceModelType(Integer deviceModelType) {
+        this.deviceModelType = deviceModelType;
     }
 
     public String getInterest() {
@@ -238,5 +260,13 @@ public class SegmentDTO {
 
     public void setIapMax(BigDecimal iapMax) {
         this.iapMax = iapMax;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 }

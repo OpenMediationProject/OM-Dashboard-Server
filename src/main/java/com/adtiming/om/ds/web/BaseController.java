@@ -6,15 +6,11 @@ package com.adtiming.om.ds.web;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Created by ruandianbo on 20-2-4.
  */
 public class BaseController {
-
-    protected static final Logger log = LogManager.getLogger();
 
     public static final String SPLIT_SYMBOL = "\n";
 
@@ -25,6 +21,10 @@ public class BaseController {
      * @param modelWhitelist
      */
     public static void buildModelBlackWhiteType(JSONObject result, String modelBlacklist, String modelWhitelist) {
+        if (result.containsKey("modelType")) {
+            result.put("deviceModelType", result.get("modelType"));
+        }
+
         if (StringUtils.isNotBlank(modelBlacklist)) {
             result.put("modelType", "exclude");
             result.put("modelList", JSONArray.toJSON(modelBlacklist.split(SPLIT_SYMBOL)));

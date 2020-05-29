@@ -14,6 +14,8 @@ public class OmDevApp {
 
     private Integer adnId;
 
+    private String className;
+
     private Byte status;
 
     private Byte devResult;
@@ -54,6 +56,14 @@ public class OmDevApp {
 
     public void setAdnId(Integer adnId) {
         this.adnId = adnId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public Byte getStatus() {

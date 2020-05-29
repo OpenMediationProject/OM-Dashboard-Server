@@ -10,6 +10,8 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PermissionService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Resource
     private UmPermissionMapper umPermissionMapper;
@@ -73,7 +77,7 @@ public class PermissionService extends BaseService {
                 if (!CollectionUtils.isEmpty(pidSubPermissions)) {
                     JSONArray actionPermissions = new JSONArray();
                     for (UmPermission pidSubPermission : pidSubPermissions) {
-                        if ("query" .equals(pidSubPermission.getName())) {
+                        if ("query".equals(pidSubPermission.getName())) {
                             actionPermissions.add("view");
                         } else {
                             actionPermissions.add(pidSubPermission.getName());

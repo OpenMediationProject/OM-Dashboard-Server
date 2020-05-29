@@ -16,6 +16,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Publisher Manager
@@ -35,6 +34,8 @@ import java.util.Map;
  */
 @Service
 public class PublisherAppService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     private static final String APP_UPDATE_URL = "http://adtimingapi.com/om/app?id=%s";
 
@@ -46,7 +47,7 @@ public class PublisherAppService extends BaseService {
      */
     @Scheduled(cron = "0 30 4 * * *")
     public void updatePublisherAppInfo() {
-        List<OmPublisherApp> omPublisherApps = this.getPublisherApps(null, NormalStatus.ACTIVE);
+        List<OmPublisherApp> omPublisherApps = this.getPublisherApps(null, NormalStatus.Active);
         for (OmPublisherApp omPublisherApp : omPublisherApps) {
             try {
                 boolean result = this.updatePublisherAppInfo(omPublisherApp);
@@ -147,15 +148,19 @@ public class PublisherAppService extends BaseService {
             }
             publisherApps.sort((publisherApp1, publisherApp2) -> {
                 Double revenue1 = publisherAppRevenueMap.get(publisherApp1.getId());
+                Double revenue2 = publisherAppRevenueMap.get(publisherApp2.getId());
+                if (revenue1 == null && revenue2 == null) {
+                    return 0;
+                }
                 if (revenue1 == null) {
                     revenue1 = 0D;
                 }
-                Double revenue2 = publisherAppRevenueMap.get(publisherApp2.getId());
                 if (revenue2 == null) {
                     revenue2 = 0D;
                 }
-                return (int) (revenue2 - revenue1);
+                return revenue1.compareTo(revenue2);
             });
+            Collections.reverse(publisherApps);
         } catch (Exception e) {
             log.error("Sort placement by revenue error:", e);
         }
@@ -169,7 +174,6 @@ public class PublisherAppService extends BaseService {
     @Transactional
     public Response createPublisherApp(OmPublisherApp omPublisherApp) {
         try {
-            omPublisherApp.setAppKey(Util.buildAppKey());
             if (omPublisherApp.getPublisherId() == null || omPublisherApp.getPublisherId() <= 0) {
                 Integer publisherId = this.getCurrentUser().getPublisherId();
                 if (publisherId == null) {
@@ -177,7 +181,15 @@ public class PublisherAppService extends BaseService {
                 }
                 omPublisherApp.setPublisherId(publisherId);
             }
-            omPublisherApp.setStatus((byte) NormalStatus.ACTIVE.ordinal());
+
+            OmPublisherApp sameAppIdOne = this.getPublisherApp(omPublisherApp.getPublisherId(), omPublisherApp.getAppId());
+            if (sameAppIdOne != null) {
+                log.warn("App id {} existed!", omPublisherApp.getAppId());
+                return Response.build(Response.CODE_RES_DATA_EXISTED, Response.STATUS_DISABLE, "App id existed!");
+            }
+
+            omPublisherApp.setAppKey(Util.buildAppKey());
+            omPublisherApp.setStatus((byte) NormalStatus.Active.ordinal());
             omPublisherApp.setCreateTime(new Date());
             omPublisherApp.setLastmodify(new Date());
             int id = this.omPublisherAppMapper.insertSelective(omPublisherApp);
@@ -205,6 +217,35 @@ public class PublisherAppService extends BaseService {
     }
 
     /**
+     * Select publisher app from database by app id
+     *
+     * @param pubAppId
+     * @return publisherApp
+     */
+    public OmPublisherApp getPublisherApp(Integer pubAppId) {
+        return this.omPublisherAppMapper.selectByPrimaryKey(pubAppId);
+    }
+
+    /**
+     * Select publisher app from database by app id
+     *
+     * @param publisherId
+     * @param appId
+     * @return publisherApp
+     */
+    public OmPublisherApp getPublisherApp(Integer publisherId, String appId) {
+        OmPublisherAppCriteria omPublisherAppCriteria = new OmPublisherAppCriteria();
+        OmPublisherAppCriteria.Criteria criteria = omPublisherAppCriteria.createCriteria();
+        criteria.andAppIdEqualTo(appId);
+        criteria.andPublisherIdEqualTo(publisherId);
+        List<OmPublisherApp> publisherApps = this.omPublisherAppMapper.select(omPublisherAppCriteria);
+        if (CollectionUtils.isEmpty(publisherApps)) {
+            return null;
+        }
+        return publisherApps.get(0);
+    }
+
+    /**
      * Update publisher app's info
      *
      * @param publisherAppDTO
@@ -213,6 +254,7 @@ public class PublisherAppService extends BaseService {
         try {
             OmPublisherApp omPublisherApp = this.omPublisherAppMapper.selectByPrimaryKey(publisherAppDTO.getId());
             if (omPublisherApp == null) {
+                log.warn("App id {} existed!", publisherAppDTO.getAppId());
                 return Response.RES_DATA_DOES_NOT_EXISTED;
             }
             omPublisherApp.setAppId(publisherAppDTO.getAppId());

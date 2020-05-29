@@ -4,11 +4,9 @@
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dao.OmCountryMapper;
+import com.adtiming.om.ds.dao.OmCurrencyExchangeMapper;
 import com.adtiming.om.ds.dao.OmSupportDeviceMapper;
-import com.adtiming.om.ds.model.OmCountry;
-import com.adtiming.om.ds.model.OmCountryCriteria;
-import com.adtiming.om.ds.model.OmSupportDevice;
-import com.adtiming.om.ds.model.OmSupportDeviceCriteria;
+import com.adtiming.om.ds.model.*;
 import com.github.pagehelper.PageHelper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +39,13 @@ public class UtilService {
 
     @Autowired
     private CacheService cacheService;
+
+    @Resource
+    private OmCurrencyExchangeMapper omCurrencyExchangeMapper;
+
+    public List<OmCurrencyExchange> getCurrencyList() {
+        return omCurrencyExchangeMapper.select(new OmCurrencyExchangeCriteria());
+    }
 
     /**
      * Select country by country 3 or english name
@@ -68,17 +75,16 @@ public class UtilService {
             if (CollectionUtils.isEmpty(countryRevenueMap)) {
                 return;
             }
-            countries.sort((country1, country2) -> {
-                Double revenue1 = countryRevenueMap.get(country1.getA2());
-                if (revenue1 == null) {
-                    revenue1 = 0D;
+            countries.forEach(country -> {
+                Double revenue = countryRevenueMap.get(country.getA3());
+                if (revenue == null) {
+                    country.setRevenue(0D);
+                } else {
+                    country.setRevenue(revenue);
                 }
-                Double revenue2 = countryRevenueMap.get(country2.getA2());
-                if (revenue2 == null) {
-                    revenue2 = 0D;
-                }
-                return (int) (revenue2 - revenue1);
             });
+            countries.sort(Comparator.comparing(OmCountry::getRevenue));
+            Collections.reverse(countries);
         } catch (Exception e) {
             log.error("Sort country by revenue error:", e);
         }

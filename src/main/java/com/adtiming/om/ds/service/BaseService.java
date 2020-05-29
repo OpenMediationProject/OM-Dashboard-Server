@@ -63,7 +63,7 @@ public class BaseService {
         if (umUser.getRoleId() == RoleType.ADMINISTRATOR.getId() || umUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId()) {
             List<Integer> userPublisherIds = new ArrayList<>();
             userPublisherIds.add(umUser.getPublisherId());
-            publisherAppIds = this.getPublisherAppIds(userPublisherIds, NormalStatus.ACTIVE);
+            publisherAppIds = this.getPublisherAppIds(userPublisherIds, NormalStatus.Active);
         } else {
             List<UmUserApp> umUserApps = this.getUserApps(umUser.getId(), null);
             if (!CollectionUtils.isEmpty(umUserApps)) {

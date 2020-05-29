@@ -16,6 +16,8 @@ import com.adtiming.om.ds.service.RoleService;
 import com.adtiming.om.ds.service.UserService;
 import com.adtiming.om.ds.web.shiro.OmShiroRealm;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
@@ -29,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by huangqiang on 2020/2/13.
@@ -38,6 +39,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class LoginController extends BaseController {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     OmShiroRealm omShiroRealm;

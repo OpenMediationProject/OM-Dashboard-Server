@@ -14,6 +14,8 @@ import com.adtiming.om.ds.service.MediationService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,8 @@ import java.util.Map;
  */
 @RestController
 public class InstanceController extends BaseController {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     protected InstanceService instanceService;
@@ -74,7 +78,7 @@ public class InstanceController extends BaseController {
         try {
             NormalStatus instanceStatus = null;
             if (headBid != null) {
-                instanceStatus = NormalStatus.ACTIVE;
+                instanceStatus = NormalStatus.Active;
             }
             List<OmInstanceWithBLOBs> instances = this.instanceService.getInstances(pubAppId, adNetworkId, instanceId, placementId, instanceStatus, headBid, adNetworkAppId);
             JSONArray selects = new JSONArray();
@@ -96,16 +100,18 @@ public class InstanceController extends BaseController {
     /**
      * Get all placement instance
      *
+     * @param adnId
+     * @param pubAppId
      * @param placementKey
      */
     @RequestMapping(value = "/instance/get", method = RequestMethod.GET)
-    public Response getInstances(String placementKey) {
+    public Response getInstances(Integer adnId, Integer pubAppId, String placementKey) {
         try {
-            if (StringUtils.isBlank(placementKey)) {
-                log.info("Get instances parameter placement key is null");
+            if (pubAppId != null && StringUtils.isBlank(placementKey)) {
+                log.info("Get instances parameter app id or placement key is null");
                 return Response.RES_PARAMETER_ERROR;
             }
-            List<OmInstanceWithBLOBs> instances = this.instanceService.getInstance(placementKey);
+            List<OmInstanceWithBLOBs> instances = this.instanceService.getInstance(adnId, pubAppId, placementKey);
             return Response.buildSuccess(instances);
         } catch (Exception e) {
             log.error("get placement instances error:", e);
@@ -135,13 +141,13 @@ public class InstanceController extends BaseController {
      */
     @RequestMapping(value = "/instance/update/status", method = RequestMethod.GET)
     public Response updateInstance(Integer instanceId, Byte status) {
-        if (instanceId == null || status == null || status > NormalStatus.ACTIVE.ordinal()) {
+        if (instanceId == null || status == null || status > NormalStatus.Active.ordinal()) {
             log.error("Update instance {} status parameter, status {}", instanceId, status);
             return Response.RES_PARAMETER_ERROR;
         }
-        NormalStatus instanceStatus = NormalStatus.getStatus(status);
+        NormalStatus instanceStatus = NormalStatus.getStatus(status.intValue());
         Response response = this.instanceService.updateInstanceStatus(instanceId, instanceStatus);
-        if (!NormalStatus.ACTIVE.equals(instanceStatus)) {
+        if (!NormalStatus.Active.equals(instanceStatus)) {
             this.mediationService.deleteRuleInstances(instanceId);
         }
         return response;

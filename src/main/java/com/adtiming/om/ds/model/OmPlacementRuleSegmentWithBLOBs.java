@@ -57,22 +57,25 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
         }
         OmPlacementRuleSegmentWithBLOBs other = (OmPlacementRuleSegmentWithBLOBs) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
-                && (this.getCountries() == null ? other.getCountries() == null : this.getCountries().equals(other.getCountries()))
-                && (this.getFrequency() == null ? other.getFrequency() == null : this.getFrequency().equals(other.getFrequency()))
-                && (this.getConType() == null ? other.getConType() == null : this.getConType().equals(other.getConType()))
-                && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
-                && (this.getInterest() == null ? other.getInterest() == null : this.getInterest().equals(other.getInterest()))
-                && (this.getIapMin() == null ? other.getIapMin() == null : this.getIapMin().equals(other.getIapMin()))
-                && (this.getIapMax() == null ? other.getIapMax() == null : this.getIapMax().equals(other.getIapMax()))
-                && (this.getPriority() == null ? other.getPriority() == null : this.getPriority().equals(other.getPriority()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
-                && (this.getBrandWhitelist() == null ? other.getBrandWhitelist() == null : this.getBrandWhitelist().equals(other.getBrandWhitelist()))
-                && (this.getBrandBlacklist() == null ? other.getBrandBlacklist() == null : this.getBrandBlacklist().equals(other.getBrandBlacklist()))
-                && (this.getModelWhitelist() == null ? other.getModelWhitelist() == null : this.getModelWhitelist().equals(other.getModelWhitelist()))
-                && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()));
+            && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
+            && (this.getCountries() == null ? other.getCountries() == null : this.getCountries().equals(other.getCountries()))
+            && (this.getFrequency() == null ? other.getFrequency() == null : this.getFrequency().equals(other.getFrequency()))
+            && (this.getConType() == null ? other.getConType() == null : this.getConType().equals(other.getConType()))
+            && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
+            && (this.getInterest() == null ? other.getInterest() == null : this.getInterest().equals(other.getInterest()))
+            && (this.getIapMin() == null ? other.getIapMin() == null : this.getIapMin().equals(other.getIapMin()))
+            && (this.getIapMax() == null ? other.getIapMax() == null : this.getIapMax().equals(other.getIapMax()))
+            && (this.getChannel() == null ? other.getChannel() == null : this.getChannel().equals(other.getChannel()))
+            && (this.getChannelBow() == null ? other.getChannelBow() == null : this.getChannelBow().equals(other.getChannelBow()))
+            && (this.getModelType() == null ? other.getModelType() == null : this.getModelType().equals(other.getModelType()))
+            && (this.getPriority() == null ? other.getPriority() == null : this.getPriority().equals(other.getPriority()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
+            && (this.getBrandWhitelist() == null ? other.getBrandWhitelist() == null : this.getBrandWhitelist().equals(other.getBrandWhitelist()))
+            && (this.getBrandBlacklist() == null ? other.getBrandBlacklist() == null : this.getBrandBlacklist().equals(other.getBrandBlacklist()))
+            && (this.getModelWhitelist() == null ? other.getModelWhitelist() == null : this.getModelWhitelist().equals(other.getModelWhitelist()))
+            && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()));
     }
 
     @Override
@@ -88,6 +91,9 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
         result = prime * result + ((getInterest() == null) ? 0 : getInterest().hashCode());
         result = prime * result + ((getIapMin() == null) ? 0 : getIapMin().hashCode());
         result = prime * result + ((getIapMax() == null) ? 0 : getIapMax().hashCode());
+        result = prime * result + ((getChannel() == null) ? 0 : getChannel().hashCode());
+        result = prime * result + ((getChannelBow() == null) ? 0 : getChannelBow().hashCode());
+        result = prime * result + ((getModelType() == null) ? 0 : getModelType().hashCode());
         result = prime * result + ((getPriority() == null) ? 0 : getPriority().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
