@@ -9,18 +9,32 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmAdnetworkApp;
 import com.adtiming.om.ds.model.ReportAdnetworkAccount;
 import com.adtiming.om.ds.util.HttpConnMgr;
+import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.adsense.AdSense;
+import com.google.api.services.adsense.model.Account;
+import com.google.api.services.adsense.model.Accounts;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 @Service
 public class AdmobService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Resource
     private OmAdnetworkAppMapper omAdnetworkAppMapper;
@@ -30,6 +44,12 @@ public class AdmobService extends BaseService {
 
     @Value("${om.adc.domain}")
     private String adcDomain;
+
+    @Value("${admob.adt.client_id}")
+    public String adtClientId;
+
+    @Value("${admob.adt.client_secret}")
+    public String adtClientSecret;
 
     /**
      * Get admob auth grant url
@@ -60,6 +80,72 @@ public class AdmobService extends BaseService {
             return new Response().code(500).msg("OAuth Access error," + e.getMessage());
         }
         return Response.buildSuccess(url);
+    }
+
+    public String getAdmobPublisherId(String clientId, String clientSecret, String refreshToken) throws IOException {
+        NetHttpTransport transport = new NetHttpTransport.Builder().build();
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setJsonFactory(JacksonFactory.getDefaultInstance())
+                .setTransport(transport)
+                .setClientSecrets(clientId, clientSecret)
+                .build()
+                .setRefreshToken(refreshToken);
+        boolean isRefreshed = credential.refreshToken();
+
+        if (!isRefreshed) {
+            throw new IOException("Refresh credential failed.");
+        }
+        AdSense adsense = new AdSense.Builder(transport,
+                JacksonFactory.getDefaultInstance(), credential)
+                .setApplicationName("google_api")
+                .build();
+        Accounts accounts = adsense.accounts().list()
+                .setMaxResults(1)
+                .execute();
+        if (accounts.getItems() != null && !accounts.getItems().isEmpty()) {
+            Account account = accounts.getItems().get(0);
+            return account.getId();
+        } else {
+            throw new IOException("No accounts found.");
+        }
+    }
+
+    public Response saveTokenByCode(Integer accountId, String authCode) throws Exception {
+        ReportAdnetworkAccount adnetworkAccount = this.reportAdnAccountMapper.selectByPrimaryKey(accountId);
+        if (adnetworkAccount == null) {
+            log.error("Admob ReportAdnetworkAccount {} does not existed", accountId);
+            return Response.RES_DATA_DOES_NOT_EXISTED;
+        }
+        // Exchange auth code for access token
+        //GoogleClientSecrets clientSecrets = getClientSecrets();
+        GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
+                new NetHttpTransport.Builder().build(),
+                JacksonFactory.getDefaultInstance(),
+                "https://oauth2.googleapis.com/token",//clientSecrets.getDetails().getTokenUri(),
+                adtClientId,//clientSecrets.getDetails().getClientId(),
+                adtClientSecret,//clientSecrets.getDetails().getClientSecret(),
+                authCode,
+                "postmessage")  // Specify the same redirect URI that you use with your web
+                // app. If you don't have a web version of your app, you can
+                // specify an empty string.
+                .execute();
+        //GoogleIdToken idToken = tokenResponse.parseIdToken();
+        String refreshToken = tokenResponse.getRefreshToken();
+        log.info("Account id {} get refresh token {}", accountId, refreshToken);
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new Exception("This Account is granted!");
+        }
+        String publisherId = getAdmobPublisherId(adtClientId, adtClientSecret, refreshToken);
+        adnetworkAccount.setUserId(publisherId);
+        adnetworkAccount.setAdnAppToken(refreshToken);
+        int dbResult = this.reportAdnAccountMapper.updateByPrimaryKeySelective(adnetworkAccount);
+        if (dbResult <= 0) {
+            log.error("Update adnetworkAccount {} failed", JSONObject.toJSON(adnetworkAccount));
+            return Response.RES_FAILED;
+        }
+        JSONObject result = new JSONObject();
+        result.put("pubId", publisherId);
+        return Response.buildSuccess(result);
     }
 
     /**

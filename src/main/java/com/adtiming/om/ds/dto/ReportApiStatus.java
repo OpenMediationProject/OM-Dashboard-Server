@@ -9,18 +9,17 @@ package com.adtiming.om.ds.dto;
 public enum ReportApiStatus {
     NotSet, Running, Delayed, OFF;
 
-    public static ReportApiStatus getReportApiStatus(int reportApiStatus) {
+    public static ReportApiStatus getReportApiStatus(Byte reportApiStatus) {
+        if (reportApiStatus == null) {
+            return OFF;
+        }
         switch (reportApiStatus) {
-            case 0:
-                return NotSet;
             case 1:
                 return Running;
             case 2:
                 return Delayed;
-            case 3:
-                return OFF;
             default:
-                return NotSet;
+                return OFF;
         }
     }
 }

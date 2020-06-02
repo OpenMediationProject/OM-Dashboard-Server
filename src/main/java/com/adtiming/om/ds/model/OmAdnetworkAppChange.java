@@ -33,6 +33,8 @@ public class OmAdnetworkAppChange {
 
     private Integer reportAccountId;
 
+    private Integer newReportAccountId;
+
     private Date createTime;
 
     private Date lastmodify;
@@ -157,6 +159,14 @@ public class OmAdnetworkAppChange {
         this.reportAccountId = reportAccountId;
     }
 
+    public Integer getNewReportAccountId() {
+        return newReportAccountId;
+    }
+
+    public void setNewReportAccountId(Integer newReportAccountId) {
+        this.newReportAccountId = newReportAccountId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -200,6 +210,7 @@ public class OmAdnetworkAppChange {
             && (this.getNewAccountKey() == null ? other.getNewAccountKey() == null : this.getNewAccountKey().equals(other.getNewAccountKey()))
             && (this.getAbTestMode() == null ? other.getAbTestMode() == null : this.getAbTestMode().equals(other.getAbTestMode()))
             && (this.getReportAccountId() == null ? other.getReportAccountId() == null : this.getReportAccountId().equals(other.getReportAccountId()))
+            && (this.getNewReportAccountId() == null ? other.getNewReportAccountId() == null : this.getNewReportAccountId().equals(other.getNewReportAccountId()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
@@ -223,6 +234,7 @@ public class OmAdnetworkAppChange {
         result = prime * result + ((getNewAccountKey() == null) ? 0 : getNewAccountKey().hashCode());
         result = prime * result + ((getAbTestMode() == null) ? 0 : getAbTestMode().hashCode());
         result = prime * result + ((getReportAccountId() == null) ? 0 : getReportAccountId().hashCode());
+        result = prime * result + ((getNewReportAccountId() == null) ? 0 : getNewReportAccountId().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastmodify() == null) ? 0 : getLastmodify().hashCode());
         return result;

@@ -8,6 +8,8 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +25,8 @@ import java.util.Set;
  */
 @Service
 public class RoleService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Resource
     private UmRoleMapper umRoleMapper;

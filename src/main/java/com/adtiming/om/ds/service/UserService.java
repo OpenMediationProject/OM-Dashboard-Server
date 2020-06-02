@@ -16,6 +16,8 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -44,7 +46,7 @@ import java.util.stream.Collectors;
 public class UserService extends BaseService {
 
     public static final String DEFAULT_PASSWORD = "666666";
-
+    protected static final Logger log = LogManager.getLogger();
     @Resource
     private RedisSessionDAO redisSessionDAO;
 
@@ -182,16 +184,18 @@ public class UserService extends BaseService {
             umUser.setCreateTime(currentTime);
             umUser.setLastmodify(currentTime);
             int result = this.umUserMapper.insertSelective(umUser);
-            if (result > 0) {
-                Response response = this.roleService.createUserRole(umUser.getId(), userDTO.getRoleId(), userDTO.getPublisherId());
-                if (response.getCode() != Response.SUCCESS_CODE) {
-                    throw new RuntimeException("Create user role relation error " + JSONObject.toJSONString(userDTO));
-                }
-                log.info("Create user {} success", umUser.getName());
-                return Response.buildSuccess(umUser);
-            } else {
+            if (result <= 0) {
                 throw new RuntimeException("Create user " + JSONObject.toJSONString(userDTO) + " failed");
             }
+            if (userDTO.getPublisherId() == null) {
+                userDTO.setPublisherId(this.getCurrentUser().getPublisherId());
+            }
+            Response response = this.roleService.createUserRole(umUser.getId(), userDTO.getRoleId(), userDTO.getPublisherId());
+            if (response.getCode() != Response.SUCCESS_CODE) {
+                throw new RuntimeException("Create user role relation error " + JSONObject.toJSONString(userDTO));
+            }
+            log.info("Create user {} success", umUser.getName());
+            return Response.buildSuccess(umUser);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.info("Create user {} error", JSONObject.toJSONString(userDTO), e);
@@ -398,6 +402,12 @@ public class UserService extends BaseService {
      */
     public Response createUserApp(UmUserApp umUserApp) {
         try {
+            List<Integer> appIds = this.getAppIdsOfCurrentUser();
+            if (!appIds.contains(umUserApp.getPubAppId())) {
+                log.error("User {} can not bind app {} to user {}", this.getCurrentUser().getName(),
+                        umUserApp.getUserId(), umUserApp.getPubAppId());
+                return Response.RES_UNAUTHORIZED;
+            }
             UmUserApp oldUserApp = this.umUserAppMapper.selectByPrimaryKey(umUserApp);
             if (oldUserApp != null) {
                 log.info("UmUserApp {} already existed", JSONObject.toJSONString(umUserApp));

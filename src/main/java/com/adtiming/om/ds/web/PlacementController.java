@@ -11,6 +11,8 @@ import com.adtiming.om.ds.model.OmPlacementWithBLOBs;
 import com.adtiming.om.ds.service.PlacementService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,8 @@ import java.util.List;
  */
 @RestController
 public class PlacementController extends BaseController {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Autowired
     private PlacementService placementService;
@@ -66,7 +70,7 @@ public class PlacementController extends BaseController {
     public Response getSelectPlacements(Integer pubAppId) {
         try {
             JSONArray results = new JSONArray();
-            List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(pubAppId, NormalStatus.ACTIVE);
+            List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(pubAppId, NormalStatus.Active);
             placements.forEach(placement -> {
                 JSONObject result = new JSONObject();
                 result.put("id", placement.getId());

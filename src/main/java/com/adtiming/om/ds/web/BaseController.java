@@ -6,15 +6,13 @@ package com.adtiming.om.ds.web;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Created by ruandianbo on 20-2-4.
  */
 public class BaseController {
 
-    protected static final Logger log = LogManager.getLogger();
+    public static final String SPLIT_SYMBOL = "\n";
 
     /**
      * Check to add include/exclude type for white/black list
@@ -23,12 +21,16 @@ public class BaseController {
      * @param modelWhitelist
      */
     public static void buildModelBlackWhiteType(JSONObject result, String modelBlacklist, String modelWhitelist) {
+        if (result.containsKey("modelType")) {
+            result.put("deviceModelType", result.get("modelType"));
+        }
+
         if (StringUtils.isNotBlank(modelBlacklist)) {
             result.put("modelType", "exclude");
-            result.put("modelList", JSONArray.toJSON(modelBlacklist.split(",")));
+            result.put("modelList", JSONArray.toJSON(modelBlacklist.split(SPLIT_SYMBOL)));
         } else if (StringUtils.isNotBlank(modelWhitelist)) {
             result.put("modelType", "include");
-            result.put("modelList", JSONArray.toJSON(modelWhitelist.split(",")));
+            result.put("modelList", JSONArray.toJSON(modelWhitelist.split(SPLIT_SYMBOL)));
         } else {
             result.put("modelType", "include");
             result.put("modelList", new JSONArray());
@@ -44,10 +46,10 @@ public class BaseController {
     public static void buildBrandBlackWhiteType(JSONObject resultInstance, String brandBlacklist, String brandWhitelist) {
         if (StringUtils.isNotBlank(brandBlacklist)) {
             resultInstance.put("brandType", "exclude");
-            resultInstance.put("brandList", JSONArray.toJSON(brandBlacklist.split(",")));
+            resultInstance.put("brandList", JSONArray.toJSON(brandBlacklist.split(SPLIT_SYMBOL)));
         } else if (StringUtils.isNotBlank(brandWhitelist)) {
             resultInstance.put("brandType", "include");
-            resultInstance.put("brandList", JSONArray.toJSON(brandWhitelist.split(",")));
+            resultInstance.put("brandList", JSONArray.toJSON(brandWhitelist.split(SPLIT_SYMBOL)));
         } else {
             resultInstance.put("brandType", "include");
             resultInstance.put("brandList", new JSONArray());

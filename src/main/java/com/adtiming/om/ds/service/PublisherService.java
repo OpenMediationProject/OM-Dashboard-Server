@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -187,7 +188,8 @@ public class PublisherService extends BaseService {
                 return Response.RES_PARAMETER_ERROR;
             }
 
-            if (omPublisher.getEmail() != null && !omPublisher.getEmail().equals(dbPublisher.getEmail())) {
+            if (omPublisher.getEmail() != null && !StringUtils.isEmpty(omPublisher.getEmail())
+                    && !StringUtils.isEmpty(dbPublisher.getEmail()) && !omPublisher.getEmail().equals(dbPublisher.getEmail())) {
                 UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
                 if (umUser == null) {
                     umUser = addUser(omPublisher);

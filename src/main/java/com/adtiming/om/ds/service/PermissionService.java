@@ -10,14 +10,14 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PermissionService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     @Resource
     private UmPermissionMapper umPermissionMapper;
@@ -118,6 +120,8 @@ public class PermissionService extends BaseService {
 
     /**
      * Get roles permissions
+     *
+     * @param rolePermissions
      */
     public List<UmPermission> getPermissions(List<UmRolePermission> rolePermissions) {
         if (CollectionUtils.isEmpty(rolePermissions)) {
@@ -136,6 +140,8 @@ public class PermissionService extends BaseService {
 
     /**
      * Get role permissions
+     *
+     * @param roleIds
      */
     public Map<Integer, List<UmRolePermission>> getUmRolePermissions(List<Integer> roleIds) {
         UmRolePermissionCriteria umRolePermissionCriteria = new UmRolePermissionCriteria();
@@ -147,6 +153,9 @@ public class PermissionService extends BaseService {
 
     /**
      * Get role permission
+     *
+     * @param roleId
+     * @param permissionId
      */
     public UmRolePermission getUmRolePermission(Integer roleId, Integer permissionId) {
         UmRolePermissionKey permissionKey = new UmRolePermissionKey();
@@ -165,6 +174,10 @@ public class PermissionService extends BaseService {
 
     /**
      * Build role permission database object, and insert into database
+     *
+     * @param roleId
+     * @param permissionName
+     * @param permissionType
      */
     @Transactional
     public Response createPermission(Integer roleId, String permissionName, PermissionType permissionType) {
@@ -215,6 +228,8 @@ public class PermissionService extends BaseService {
 
     /**
      * Build role permission database object, and insert into database
+     *
+     * @param umRolePermission
      */
     public Response createRolePermission(UmRolePermission umRolePermission) {
         try {
@@ -234,6 +249,10 @@ public class PermissionService extends BaseService {
 
     /**
      * Delete role database object
+     *
+     * @param roleId
+     * @param permissionName
+     * @param permissionType
      */
     @Transactional
     public Response deleteRolePermission(Integer roleId, String permissionName, PermissionType permissionType) {

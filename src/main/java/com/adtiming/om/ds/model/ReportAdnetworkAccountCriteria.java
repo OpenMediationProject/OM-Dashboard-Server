@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.util.ArrayList;
@@ -18,20 +15,20 @@ public class ReportAdnetworkAccountCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -228,6 +225,66 @@ public class ReportAdnetworkAccountCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andPublisherIdIsNull() {
+            addCriterion("publisher_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdIsNotNull() {
+            addCriterion("publisher_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdEqualTo(Integer value) {
+            addCriterion("publisher_id =", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdNotEqualTo(Integer value) {
+            addCriterion("publisher_id <>", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdGreaterThan(Integer value) {
+            addCriterion("publisher_id >", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("publisher_id >=", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdLessThan(Integer value) {
+            addCriterion("publisher_id <", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdLessThanOrEqualTo(Integer value) {
+            addCriterion("publisher_id <=", value, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdIn(List<Integer> values) {
+            addCriterion("publisher_id in", values, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdNotIn(List<Integer> values) {
+            addCriterion("publisher_id not in", values, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdBetween(Integer value1, Integer value2) {
+            addCriterion("publisher_id between", value1, value2, "publisherId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPublisherIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("publisher_id not between", value1, value2, "publisherId");
+            return (Criteria) this;
+        }
+
         public Criteria andAdnAccountIdIsNull() {
             addCriterion("adn_account_id is null");
             return (Criteria) this;
@@ -285,6 +342,76 @@ public class ReportAdnetworkAccountCriteria {
 
         public Criteria andAdnAccountIdNotBetween(Integer value1, Integer value2) {
             addCriterion("adn_account_id not between", value1, value2, "adnAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameIsNull() {
+            addCriterion("adn_account_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameIsNotNull() {
+            addCriterion("adn_account_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameEqualTo(String value) {
+            addCriterion("adn_account_name =", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameNotEqualTo(String value) {
+            addCriterion("adn_account_name <>", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameGreaterThan(String value) {
+            addCriterion("adn_account_name >", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameGreaterThanOrEqualTo(String value) {
+            addCriterion("adn_account_name >=", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameLessThan(String value) {
+            addCriterion("adn_account_name <", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameLessThanOrEqualTo(String value) {
+            addCriterion("adn_account_name <=", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameLike(String value) {
+            addCriterion("adn_account_name like", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameNotLike(String value) {
+            addCriterion("adn_account_name not like", value, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameIn(List<String> values) {
+            addCriterion("adn_account_name in", values, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameNotIn(List<String> values) {
+            addCriterion("adn_account_name not in", values, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameBetween(String value1, String value2) {
+            addCriterion("adn_account_name between", value1, value2, "adnAccountName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountNameNotBetween(String value1, String value2) {
+            addCriterion("adn_account_name not between", value1, value2, "adnAccountName");
             return (Criteria) this;
         }
 
@@ -838,6 +965,136 @@ public class ReportAdnetworkAccountCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andAuthTypeIsNull() {
+            addCriterion("auth_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeIsNotNull() {
+            addCriterion("auth_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeEqualTo(Byte value) {
+            addCriterion("auth_type =", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeNotEqualTo(Byte value) {
+            addCriterion("auth_type <>", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeGreaterThan(Byte value) {
+            addCriterion("auth_type >", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeGreaterThanOrEqualTo(Byte value) {
+            addCriterion("auth_type >=", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeLessThan(Byte value) {
+            addCriterion("auth_type <", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeLessThanOrEqualTo(Byte value) {
+            addCriterion("auth_type <=", value, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeIn(List<Byte> values) {
+            addCriterion("auth_type in", values, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeNotIn(List<Byte> values) {
+            addCriterion("auth_type not in", values, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeBetween(Byte value1, Byte value2) {
+            addCriterion("auth_type between", value1, value2, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthTypeNotBetween(Byte value1, Byte value2) {
+            addCriterion("auth_type not between", value1, value2, "authType");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIsNull() {
+            addCriterion("currency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIsNotNull() {
+            addCriterion("currency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyEqualTo(String value) {
+            addCriterion("currency =", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotEqualTo(String value) {
+            addCriterion("currency <>", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyGreaterThan(String value) {
+            addCriterion("currency >", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyGreaterThanOrEqualTo(String value) {
+            addCriterion("currency >=", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLessThan(String value) {
+            addCriterion("currency <", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLessThanOrEqualTo(String value) {
+            addCriterion("currency <=", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLike(String value) {
+            addCriterion("currency like", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotLike(String value) {
+            addCriterion("currency not like", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIn(List<String> values) {
+            addCriterion("currency in", values, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotIn(List<String> values) {
+            addCriterion("currency not in", values, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyBetween(String value1, String value2) {
+            addCriterion("currency between", value1, value2, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotBetween(String value1, String value2) {
+            addCriterion("currency not between", value1, value2, "currency");
+            return (Criteria) this;
+        }
+
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;
@@ -895,6 +1152,76 @@ public class ReportAdnetworkAccountCriteria {
 
         public Criteria andStatusNotBetween(Byte value1, Byte value2) {
             addCriterion("status not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonIsNull() {
+            addCriterion("reason is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonIsNotNull() {
+            addCriterion("reason is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonEqualTo(String value) {
+            addCriterion("reason =", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotEqualTo(String value) {
+            addCriterion("reason <>", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonGreaterThan(String value) {
+            addCriterion("reason >", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonGreaterThanOrEqualTo(String value) {
+            addCriterion("reason >=", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLessThan(String value) {
+            addCriterion("reason <", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLessThanOrEqualTo(String value) {
+            addCriterion("reason <=", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonLike(String value) {
+            addCriterion("reason like", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotLike(String value) {
+            addCriterion("reason not like", value, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonIn(List<String> values) {
+            addCriterion("reason in", values, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotIn(List<String> values) {
+            addCriterion("reason not in", values, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonBetween(String value1, String value2) {
+            addCriterion("reason between", value1, value2, "reason");
+            return (Criteria) this;
+        }
+
+        public Criteria andReasonNotBetween(String value1, String value2) {
+            addCriterion("reason not between", value1, value2, "reason");
             return (Criteria) this;
         }
 
@@ -1043,6 +1370,38 @@ public class ReportAdnetworkAccountCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -1077,38 +1436,6 @@ public class ReportAdnetworkAccountCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

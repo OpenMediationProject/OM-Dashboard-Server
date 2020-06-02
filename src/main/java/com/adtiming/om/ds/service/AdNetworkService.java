@@ -4,10 +4,7 @@
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dao.*;
-import com.adtiming.om.ds.dto.AdvertisementType;
-import com.adtiming.om.ds.dto.NormalStatus;
-import com.adtiming.om.ds.dto.ReportApiStatus;
-import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.dto.*;
 import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.util.ReflectUtil;
 import com.adtiming.om.ds.util.Util;
@@ -16,17 +13,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.CaseFormat;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +35,19 @@ import java.util.stream.Collectors;
 @Service
 public class AdNetworkService extends BaseService {
 
+    protected static final Logger log = LogManager.getLogger();
+
+    @Resource
+    private ReportAdnetworkAccountMapper reportAdnetworkAccountMapper;
+
     @Resource
     private OmAdnetworkMapper omAdnetworkMapper;
 
     @Resource
     private OmAdnetworkAppMapper omAdnetworkAppMapper;
+
+    @Resource
+    private OmAdnetworkAppChangeMapper omAdnetworkAppChangeMapper;
 
     @Resource
     private OmPublisherAppMapper omPublisherAppMapper;
@@ -60,17 +62,7 @@ public class AdNetworkService extends BaseService {
     private InstanceService instanceService;
 
     @Resource
-    private SqlSessionFactory sqlSessionFactory;
-
-    public boolean doesPlatMatch(OmPublisherApp publisherApp, OmAdnetwork adNetwork){
-        if (publisherApp != null && publisherApp.getPlat() == 0 && adNetwork.getIosAdtype() == 0) {
-            return false;
-        }
-        if (publisherApp != null && publisherApp.getPlat() == 1 && adNetwork.getAndroidAdtype() == 0) {
-            return false;
-        }
-        return true;
-    }
+    private AccountService accountService;
 
     /**
      * Select all AdNetwork
@@ -79,26 +71,21 @@ public class AdNetworkService extends BaseService {
      */
     public JSONArray getAdNetworks(Integer pubAppId) {
         JSONArray resultAdNetWorks = new JSONArray();
-        List<OmInstanceWithBLOBs> appInstances = instanceService.getInstancesByStatus(pubAppId, NormalStatus.ACTIVE);
+        List<OmInstanceWithBLOBs> appInstances = instanceService.getInstancesByStatus(pubAppId, NormalStatus.Active);
         Map<Integer, List<OmInstanceWithBLOBs>> appAdnIdInstanceMap = appInstances.stream()
                 .collect(Collectors.groupingBy(OmInstance::getAdnId, Collectors.toList()));
 
         OmPublisherApp publisherApp = omPublisherAppMapper.selectByPrimaryKey(pubAppId);
-        List<OmAdnetworkApp> adNetworkApps = this.getAdNetWorkApps(pubAppId);
-        Map<Integer, OmAdnetworkApp> appAdNetworkMap = new HashMap<>();
-        for (OmAdnetworkApp omAdnetworkApp : adNetworkApps) {
-            appAdNetworkMap.put(omAdnetworkApp.getAdnId(), omAdnetworkApp);
-        }
-
+        Map<Integer, OmAdnetworkApp> appAdNetworkMap = this.getAdNetWorkAppMap(pubAppId);
         List<OmAdnetwork> adNetworks = this.getAllAdNetworks();
         for (OmAdnetwork adNetwork : adNetworks) {
-            if (!this.doesPlatMatch(publisherApp, adNetwork)){
+            if (!this.doesPlatMatch(publisherApp, adNetwork)) {
                 continue;
             }
             JSONObject resultAdNetwork = (JSONObject) JSONObject.toJSON(adNetwork);
             resultAdNetwork.put("status", 0);
             resultAdNetwork.put("adTypes", this.buildAdTypes(adNetwork, publisherApp));
-            resultAdNetwork.put("reportapiStatus", "OFF");
+            resultAdNetwork.put("reportapiStatus", ReportApiStatus.OFF.name());
 
             List<OmInstanceWithBLOBs> appAdnInstances = appAdnIdInstanceMap.get(adNetwork.getId());
             if (!CollectionUtils.isEmpty(appAdnInstances)) {
@@ -110,22 +97,34 @@ public class AdNetworkService extends BaseService {
             if (omAdnetworkApp != null) {
                 resultAdNetwork.put("adNetworkAppId", omAdnetworkApp.getId());
                 ReportApiStatus reportApiStatus = ReportApiStatus.getReportApiStatus(omAdnetworkApp.getReportapiStatus());
-                if (reportApiStatus.ordinal() == ReportApiStatus.NotSet.ordinal()) {
-                    resultAdNetwork.put("reportapiStatus", ReportApiStatus.OFF.name());
-                } else {
-                    resultAdNetwork.put("reportapiStatus", reportApiStatus.name());
-                }
+                resultAdNetwork.put("reportapiStatus", reportApiStatus.name());
                 resultAdNetwork.put("status", omAdnetworkApp.getStatus());
+                if (AdNetworkType.AdMob.name().equals(adNetwork.getClassName())) {
+                    ReportAdnetworkAccount account = reportAdnAccountMapper.selectByPrimaryKey(omAdnetworkApp.getReportAccountId());
+                    if (account != null) {
+                        omAdnetworkApp.setRedirectUrl("/api/report/callback/admob/" + account.getAuthKey());
+                    }
+                }
                 resultAdNetwork.put("adNetworkApp", omAdnetworkApp);
-            } else {
-                resultAdNetwork.put("reportapiStatus", ReportApiStatus.OFF.name());
-            }
-            if (adNetwork.getStatus() != 1) {
-                resultAdNetwork.put("reportapiStatus", ReportApiStatus.OFF.name());
             }
             resultAdNetWorks.add(resultAdNetwork);
         }
         return resultAdNetWorks;
+    }
+
+    public boolean doesPlatMatch(OmPublisherApp publisherApp, OmAdnetwork adNetwork) {
+        if (publisherApp != null && publisherApp.getPlat() == MobilePlatformType.iOS.ordinal() && adNetwork.getIosAdtype() == 0) {
+            return false;
+        }
+        return publisherApp == null || publisherApp.getPlat() != MobilePlatformType.Android.ordinal() || adNetwork.getAndroidAdtype() != 0;
+    }
+
+    private String getAdMobRedirectUrl(Integer reportAdNetworkAccountId) {
+        ReportAdnetworkAccount account = reportAdnAccountMapper.selectByPrimaryKey(reportAdNetworkAccountId);
+        if (account != null) {
+            return "/api/report/callback/admob/" + account.getAuthKey();
+        }
+        return null;
     }
 
     private JSONArray buildAdTypes(OmAdnetwork adNetwork, OmPublisherApp publisherApp) {
@@ -136,9 +135,9 @@ public class AdNetworkService extends BaseService {
         String typeStr = Integer.toBinaryString(adType);
         typeStr = new StringBuilder(typeStr).reverse().toString();
         JSONArray adTypes = new JSONArray();
-        for (int type = 0; type < typeStr.length() && type < 4; type++) {
+        for (int type = 0; type < typeStr.length() && type < 10; type++) {
             char hourChar = typeStr.charAt(type);
-            if ("1" .equals(hourChar + "")) {
+            if ("1".equals(hourChar + "")) {
                 AdvertisementType advertisementType = AdvertisementType.getAdvertisementType(type);
                 adTypes.add(advertisementType.name());
             }
@@ -189,8 +188,8 @@ public class AdNetworkService extends BaseService {
      *
      * @return adNetworkAppMap
      */
-    public Map<Integer, OmAdnetworkApp> getAdNetworkIdAppMap(Integer pubAppId) {
-        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId);
+    public Map<Integer, OmAdnetworkApp> getAdNetworkIdAppMap(Integer pubAppId, NormalStatus status) {
+        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId, null, status);
         Map<Integer, OmAdnetworkApp> adNetworkAppMap = new HashMap<>();
         omAdNetworkApps.forEach(omAdNetworkApp -> adNetworkAppMap.put(omAdNetworkApp.getAdnId(), omAdNetworkApp));
         return adNetworkAppMap;
@@ -199,14 +198,34 @@ public class AdNetworkService extends BaseService {
     /**
      * Select AdNetworks by publisher app id, adNetWorkId
      *
+     * @return omAdNetworkAppMap
+     */
+    public Map<Integer, OmAdnetworkApp> getAdNetWorkAppMap(Integer pubAppId) {
+        List<OmAdnetworkApp> adNetworkApps = this.getAdNetWorkApps(pubAppId, null, null);
+        Map<Integer, OmAdnetworkApp> appAdNetworkMap = new HashMap<>();
+        for (OmAdnetworkApp omAdnetworkApp : adNetworkApps) {
+            appAdNetworkMap.put(omAdnetworkApp.getAdnId(), omAdnetworkApp);
+        }
+        return appAdNetworkMap;
+    }
+
+    /**
+     * Select AdNetworks by publisher app id, adNetWorkId
+     *
      * @return omAdNetworkApps
      */
-    public List<OmAdnetworkApp> getAdNetWorkApps(Integer pubAppId) {
+    public List<OmAdnetworkApp> getAdNetWorkApps(Integer pubAppId, Integer adnId, NormalStatus status) {
         OmAdnetworkAppCriteria omAdnetworkAppCriteria = new OmAdnetworkAppCriteria();
         OmAdnetworkAppCriteria.Criteria criteria = omAdnetworkAppCriteria.createCriteria();
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+        if (adnId != null){
+            criteria.andAdnIdEqualTo(adnId);
+        }
         if (pubAppId != null) {
             criteria.andPubAppIdEqualTo(pubAppId);
+        }
+        if (status != null){
+            criteria.andStatusEqualTo((byte)status.ordinal());
         }
         List<OmAdnetworkApp> omAdNetworkApps = this.omAdnetworkAppMapper.select(omAdnetworkAppCriteria);
         log.info("Select app's adNetWork size: {}", omAdNetworkApps.size());
@@ -220,23 +239,61 @@ public class AdNetworkService extends BaseService {
      */
     @Transactional
     public Response createAppAdNetwork(OmAdnetworkApp omAdnetworkApp) {
-        SqlSession sqlSession = sqlSessionFactory.openSession(false);
         try {
-            int result = this.omAdnetworkAppMapper.insertSelective(omAdnetworkApp);
-            if (result > 0) {
-                saveReportAccount(omAdnetworkApp);
-                log.info("Create AppAdNetwork {} success", omAdnetworkApp.getId());
+            List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(omAdnetworkApp.getPubAppId(),
+                    omAdnetworkApp.getAdnId(), NormalStatus.Active);
+            if (!CollectionUtils.isEmpty(omAdNetworkApps)) {
+                log.error("OmAdnetworkApp {} already existed", JSONObject.toJSON(omAdnetworkApp));
+                return Response.RES_DATA_EXISTED;
             }
-            sqlSession.commit();
+
+            ReportAdnetworkAccount adNetworkAccount = this.reportAdnetworkAccountMapper.selectByPrimaryKey(omAdnetworkApp.getReportAccountId());
+            if (adNetworkAccount != null && adNetworkAccount.getStatus() == SwitchStatus.ON.ordinal()) {
+                omAdnetworkApp.setReportapiStatus((byte) SwitchStatus.ON.ordinal());
+            }
+
+            omAdNetworkApps = this.getAdNetWorkApps(omAdnetworkApp.getPubAppId(), omAdnetworkApp.getAdnId(), null);
+            if (CollectionUtils.isEmpty(omAdNetworkApps)) {
+                int result = this.omAdnetworkAppMapper.insertSelective(omAdnetworkApp);
+                if (result <= 0) {
+                    throw new RuntimeException("Create AdNetwork app " + JSONObject.toJSONString(omAdnetworkApp) + " failed");
+                }
+            } else {
+                omAdnetworkApp.setId(omAdNetworkApps.get(0).getId());
+                int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
+                if (result <= 0) {
+                    throw new RuntimeException("Create AdNetwork app " + JSONObject.toJSONString(omAdnetworkApp) + " use existed item failed");
+                }
+            }
+
+            if (omAdnetworkApp.getAdnId() == AdNetworkType.Facebook.ordinal()) {
+                ReportAdnetworkAccount account = new ReportAdnetworkAccount();
+                account.setAdnId(omAdnetworkApp.getAdnId());
+                account.setAdnAppId(omAdnetworkApp.getAdnAppKey());
+                account.setAdnAppToken(omAdnetworkApp.getRefreshToken());
+                account.setPublisherId(this.getCurrentUser().getPublisherId());
+                ReportAdnetworkAccount existedAccount = this.accountService.getDuplicatedAccount(account);
+                if (existedAccount == null) {
+                    int result = this.reportAdnetworkAccountMapper.insertSelective(account);
+                    if (result <= 0) {
+                        throw new RuntimeException("Create facebook account " + JSONObject.toJSON(omAdnetworkApp) + " failed");
+                    }
+                } else {
+                    account.setId(existedAccount.getId());
+                    int result = this.reportAdnetworkAccountMapper.updateByPrimaryKeySelective(account);
+                    if (result <= 0) {
+                        throw new RuntimeException("Update facebook account " + JSONObject.toJSON(omAdnetworkApp) + " failed");
+                    }
+                }
+                omAdnetworkApp.setReportapiStatus((byte) SwitchStatus.ON.ordinal());
+                this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
+            }
+            log.info("Create AppAdNetwork {} success", omAdnetworkApp.getId());
             return Response.buildSuccess(omAdnetworkApp);
         } catch (Exception e) {
             log.info("Create AdNetwork {} error", JSONObject.toJSONString(omAdnetworkApp), e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            //sqlSession.rollback();
-        } finally {
-            sqlSession.close();
         }
-        log.info("Create AdNetwork {} failed", JSONObject.toJSONString(omAdnetworkApp));
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create placement failed!");
     }
 
@@ -247,36 +304,58 @@ public class AdNetworkService extends BaseService {
      */
     @Transactional
     public Response updateAppAdNetworks(OmAdnetworkApp omAdnetworkApp) {
-        Connection conn = null;
         try {
-            //savepoint = conn.setSavepoint();
-            OmAdnetworkApp oldAdnApp = this.omAdnetworkAppMapper.selectByPrimaryKey(omAdnetworkApp.getId());
-            if (oldAdnApp == null) {
+            OmAdnetworkApp dbAdnApp = this.omAdnetworkAppMapper.selectByPrimaryKey(omAdnetworkApp.getId());
+            if (dbAdnApp == null) {
                 log.error("AdNetworkAppId {} does not existed", omAdnetworkApp.getId());
                 return Response.RES_DATA_DOES_NOT_EXISTED;
             }
-            //int result = sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", omAdnetworkApp);
             int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);
-            if (result > 0) {
-                // save adnetwork report account info
-                updateReportAccount(omAdnetworkApp, oldAdnApp);
-                accountMajorKeyChanged(oldAdnApp, omAdnetworkApp);
-                log.info("Update AdNetworks {} success", omAdnetworkApp.getId());
+            if (result <= 0) {
+                throw new RuntimeException("Update AdNetworks app " + JSONObject.toJSON(omAdnetworkApp) + " failed");
             }
-            conn.commit();
-            return Response.build();
+            if (AdNetworkType.Facebook.ordinal() == omAdnetworkApp.getAdnId()) {
+                this.updateFacebookReportAccount(omAdnetworkApp, dbAdnApp);
+                if (omAdnetworkApp.getAdnAppKey() != null && dbAdnApp.getAdnAppKey() != null
+                        && dbAdnApp.getStatus().intValue() == ReportApiStatus.Running.ordinal()
+                        && !omAdnetworkApp.getAdnAppKey().equals(dbAdnApp.getAdnAppKey())) {
+                    OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
+                    PropertyUtils.copyProperties(appChange, dbAdnApp);
+                    appChange.setNewAccountKey(omAdnetworkApp.getAdnAppKey());
+                    appChange.setNewReportAccountId(omAdnetworkApp.getReportAccountId());
+                    result = this.omAdnetworkAppChangeMapper.insertSelective(appChange);
+                    if (result <= 0) {
+                        throw new RuntimeException("Add Facebook OmAdnetworkAppChange for " + JSONObject.toJSON(dbAdnApp) + " failed");
+                    }
+                }
+            } else if (dbAdnApp.getReportAccountId() != null && !dbAdnApp.getReportAccountId().equals(omAdnetworkApp.getReportAccountId())) {
+                OmAdnetworkAppChange appChange = this.copyAdNetworkApp(dbAdnApp);
+                appChange.setNewReportAccountId(omAdnetworkApp.getReportAccountId());
+                result = this.omAdnetworkAppChangeMapper.insertSelective(appChange);
+                if (result <= 0) {
+                    throw new RuntimeException("Add OmAdnetworkApp for " + JSONObject.toJSON(dbAdnApp) + " failed");
+                }
+            }
+            return Response.buildSuccess(omAdnetworkApp);
         } catch (Exception e) {
             log.error("Update AdNetworks error {}", JSONObject.toJSONString(omAdnetworkApp), e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ignored) {
-            }
         }
-        log.error("Update AdNetworks {} failed", omAdnetworkApp.getId());
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update AdNetworks failed!");
+    }
+
+    private OmAdnetworkAppChange copyAdNetworkApp(OmAdnetworkApp app) {
+        OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
+        appChange.setId(app.getId());
+        appChange.setPubAppId(app.getPubAppId());
+        appChange.setAdnId(app.getAdnId());
+        appChange.setReportAccountId(app.getReportAccountId());
+        appChange.setAccountId(app.getAccountId());
+        appChange.setAccountOwner(app.getAccountOwner());
+        appChange.setAdnAppKey(app.getAdnAppKey());
+        appChange.setReportAppId(app.getReportAppId());
+        appChange.setRefreshToken(app.getRefreshToken());
+        return appChange;
     }
 
     /**
@@ -304,65 +383,12 @@ public class AdNetworkService extends BaseService {
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update adNetwork app status failed!");
     }
 
-    private void saveReportAccount(OmAdnetworkApp adnApp) {
+    @Transactional
+    private void updateFacebookReportAccount(OmAdnetworkApp newAdnApp, OmAdnetworkApp oldAdnApp) {
         Map<String, String> fieldMap = new HashMap<>();
-        String primaryFiled = buildAccountInfo(adnApp.getAdnId(), fieldMap);
-        if (StringUtils.isNotBlank(primaryFiled)) {
-            Object primaryValue = ReflectUtil.getValue(adnApp, primaryFiled);
-            if (primaryValue == null || StringUtils.isBlank(primaryValue.toString())) {
-                return;
-            }
-            String whereSql = String.format("%s='%s'", CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldMap.get(primaryFiled)), primaryValue);
-            List<ReportAdnetworkAccount> accountList = reportAdnAccountMapper.selectByDynamic(whereSql);
-            if (accountList != null && !accountList.isEmpty()) {
-                ReportAdnetworkAccount oldAccount = accountList.get(0);
-                ReportAdnetworkAccount newAccount = new ReportAdnetworkAccount();
-                newAccount.setId(oldAccount.getId());
-                final boolean[] needChanged = {false};
-                fieldMap.forEach((adnField, accountField) -> {
-                    //Account info changed
-                    if (!ReflectUtil.equals(adnApp, oldAccount, adnField, accountField)) {
-                        ReflectUtil.setValue(newAccount, accountField, ReflectUtil.getValue(adnApp, adnField));
-                        needChanged[0] = true;
-                    }
-                });
-                if (needChanged[0]) {
-                    reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
-                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
-                    updateReportAccountId(adnApp, oldAccount);
-                }
-            } else {
-                ReportAdnetworkAccount account = new ReportAdnetworkAccount();
-                final boolean[] needInsert = {true};
-                fieldMap.forEach((adnField, accountField) -> {
-                    Object fieldValue = ReflectUtil.getValue(adnApp, adnField);
-                    if (fieldValue == null || StringUtils.isBlank(fieldValue.toString())) {
-                        needInsert[0] = false;
-                        return;
-                    }
-                    ReflectUtil.setValue(account, accountField, fieldValue);
-                });
-                if (needInsert[0]) {
-                    fillInsertAccountField(account, adnApp);
-                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
-                    reportAdnAccountMapper.insertSelective(account);
-                    updateReportAccountId(adnApp, account);
-                }
-            }
-        }
-    }
-
-    private void fillInsertAccountField(ReportAdnetworkAccount account, OmAdnetworkApp adnApp) {
-        account.setAdnId(adnApp.getAdnId());
-        account.setAuthKey(Util.buildAuthKey());
-        if (account.getAdnId() == 2) {//admob
-            account.setCredentialPath("/credential/" + account.getAuthKey());
-        }
-    }
-
-    private void updateReportAccount(OmAdnetworkApp newAdnApp, OmAdnetworkApp oldAdnApp) {
-        Map<String, String> fieldMap = new HashMap<>();
-        String primaryFiled = buildAccountInfo(oldAdnApp.getAdnId(), fieldMap);
+        String primaryFiled = "adnAppKey";
+        fieldMap.put("adnAppKey", "adnAppId");
+        fieldMap.put("refreshToken", "adnAppToken");
         if (StringUtils.isNotBlank(primaryFiled)) {
             Map<String, Object> valueChangeMap = ReflectUtil.getChangedValues(oldAdnApp, newAdnApp, new ArrayList<>(fieldMap.keySet()));
             if (valueChangeMap.isEmpty()) {
@@ -370,7 +396,8 @@ public class AdNetworkService extends BaseService {
             }
 
             //Account info changed
-            String whereSql = String.format("%s='%s'", CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldMap.get(primaryFiled)), ReflectUtil.getValue(newAdnApp, primaryFiled));
+            String whereSql = String.format("%s='%s'", CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldMap.get(primaryFiled)),
+                    ReflectUtil.getValue(newAdnApp, primaryFiled));
             List<ReportAdnetworkAccount> accountList = reportAdnAccountMapper.selectByDynamic(whereSql);
             if (accountList != null && !accountList.isEmpty()) {
                 ReportAdnetworkAccount oldAccount = accountList.get(0);
@@ -385,8 +412,10 @@ public class AdNetworkService extends BaseService {
                     ReflectUtil.setValue(newAccount, fieldMap.get(filed), changedVal);
                 });
                 if (!hasNullValue[0]) {
-                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.updateByPrimaryKeySelective", newAccount);
-                    reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
+                    int result = this.reportAdnAccountMapper.updateByPrimaryKeySelective(newAccount);
+                    if (result <= 0) {
+                        throw new RuntimeException("updateFacebookReportAccount " + oldAdnApp.getId() + "failed");
+                    }
                     updateReportAccountId(oldAdnApp, oldAccount);
                 }
             } else {
@@ -400,129 +429,34 @@ public class AdNetworkService extends BaseService {
                     ReflectUtil.setValue(account, fieldMap.get(filed), changedVal);
                 });
                 if (needInsert[0]) {
-                    fillInsertAccountField(account, oldAdnApp);
-                    //sqlSession.update("com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper.insertSelective", account);
-                    reportAdnAccountMapper.insertSelective(account);
+                    account.setAdnId(oldAdnApp.getAdnId());
+                    account.setAuthKey(Util.buildAuthKey());
+                    if (account.getPublisherId() == null){
+                        account.setPublisherId(this.getCurrentUser().getPublisherId());
+                    }
+                    account.setAdnAppId(newAdnApp.getAdnAppKey());
+                    account.setAdnAppToken(newAdnApp.getRefreshToken());
+                    int result = this.reportAdnAccountMapper.insertSelective(account);
+                    if (result <= 0) {
+                        throw new RuntimeException("Create Facebook Report Account " + oldAdnApp.getId() + "failed");
+                    }
                     updateReportAccountId(oldAdnApp, account);
                 }
             }
         }
     }
 
+    @Transactional
     private void updateReportAccountId(OmAdnetworkApp oldAdnApp, ReportAdnetworkAccount account) {
-        if (!account.getId().equals(oldAdnApp.getReportAccountId())) {
+        if (!oldAdnApp.getReportAccountId().equals(account.getId())) {
             OmAdnetworkApp updateAccountIdAdn = new OmAdnetworkApp();
             updateAccountIdAdn.setId(oldAdnApp.getId());
+            updateAccountIdAdn.setReportapiStatus((byte) ReportApiStatus.Running.ordinal());
             updateAccountIdAdn.setReportAccountId(account.getId());
-            //sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppMapper.updateByPrimaryKeySelective", updateAccountIdAdn);
-            omAdnetworkAppMapper.updateByPrimaryKeySelective(updateAccountIdAdn);
+            int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(updateAccountIdAdn);
+            if (result <= 0) {
+                throw new RuntimeException("updateReportAccountId " + oldAdnApp.getId() + "failed");
+            }
         }
-    }
-
-    private String buildAccountInfo(int adnId, Map<String, String> fieldMap) {
-        String primaryFiled = "";
-        switch (adnId) {
-            case 1://Adtiming
-                fieldMap.put("refreshToken", "adnAppToken");
-                primaryFiled = "refreshToken";
-                break;
-            case 2://Admob
-                fieldMap.put("clientId", "adnApiKey");
-                fieldMap.put("clientSecret", "adnAppToken");
-                fieldMap.put("reportAppId", "userId");
-                primaryFiled = "reportAppId";
-                break;
-            case 3: //Facebook
-                fieldMap.put("adnAppKey", "adnAppId");
-                fieldMap.put("refreshToken", "adnAppToken");
-                primaryFiled = "adnAppKey";
-                break;
-            case 4: //Unity
-                fieldMap.put("apiKey", "adnApiKey");
-                primaryFiled = "apiKey";
-                break;
-            case 5: //Vungle
-                fieldMap.put("reportAppId", "adnApiKey");
-                primaryFiled = "reportAppId";
-                break;
-            case 7: //AdColony
-                fieldMap.put("clientSecret", "adnAppToken");
-                primaryFiled = "clientSecret";
-                break;
-            case 8: //AppLovin
-            case 9: //Mopub
-                fieldMap.put("adnAppKey", "adnAppId");
-                fieldMap.put("apiKey", "adnApiKey");
-                primaryFiled = "apiKey";
-                break;
-            case 11: //Tapjoy
-                fieldMap.put("apiKey", "adnApiKey");
-                fieldMap.put("refreshToken", "adnAppToken");
-                primaryFiled = "apiKey";
-                break;
-            case 12: //Charboost
-                fieldMap.put("apiKey", "userId");
-                fieldMap.put("clientSecret", "userSignature");
-                primaryFiled = "apiKey";
-                break;
-            case 13: //TikTok
-                fieldMap.put("clientId", "userId");
-                fieldMap.put("clientSecret", "userSignature");
-                primaryFiled = "clientId";
-                break;
-            case 14: //Mintegral
-                fieldMap.put("apiKey", "adnApiKey");
-                fieldMap.put("clientSecret", "userSignature");
-                primaryFiled = "apiKey";
-                break;
-            case 15: //IronSource
-                fieldMap.put("clientId", "userId");
-                fieldMap.put("clientSecret", "userSignature");
-                primaryFiled = "clientId";
-                break;
-            default:
-                break;
-        }
-        return primaryFiled;
-    }
-
-    private void accountMajorKeyChanged(OmAdnetworkApp old, OmAdnetworkApp newAdnApp) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        String keyField = getAccountKeyField(old.getAdnId());
-        Object keyValue = ReflectUtil.getValue(newAdnApp, keyField);
-        //OmAdnetworkApp adnApp = omAdnetworkAppMapper.selectByPrimaryKey(newAdnApp.getId());
-        if (keyValue != null && StringUtils.isNotBlank(keyValue.toString()) //Account Major Key changed
-                && !ReflectUtil.equals(old, newAdnApp, keyField, keyField)
-                && Util.byteToInt(old.getStatus()) == 1) {
-            //adnetworkAppChangeMapper.deleteByPrimaryKey(old.getId());
-            //sqlSession.delete("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.deleteByPrimaryKey", old.getId());
-            OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
-            PropertyUtils.copyProperties(appChange, old);
-            appChange.setNewAccountKey(keyValue.toString());
-            //sqlSession.update("com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper.insertSelective", appChange);
-            adnAppChange.insertSelective(appChange);
-        }
-    }
-
-    private String getAccountKeyField(int adnId) {
-        switch (adnId) {
-            case 1:
-            case 4:
-                return "reportAppId";
-            case 2:
-            case 7:
-            case 8:
-                return "adnAppKey";
-            case 3:
-            case 10:
-            case 11:
-            case 12:
-            case 14:
-                return "apiKey";
-            case 6:
-                return "refreshToken";
-            case 15:
-                return "clientId";
-        }
-        return "";
     }
 }

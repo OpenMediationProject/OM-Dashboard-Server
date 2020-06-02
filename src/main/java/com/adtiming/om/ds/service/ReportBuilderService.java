@@ -4,10 +4,15 @@
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dao.OmReportBuilderMapper;
+import com.adtiming.om.ds.dao.OmReportBuilderTaskMapper;
+import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.OmReportBuilderCriteria;
+import com.adtiming.om.ds.model.OmReportBuilderTask;
+import com.adtiming.om.ds.model.OmReportBuilderTaskCriteria;
 import com.adtiming.om.ds.model.OmReportBuilderWithBLOBs;
+import com.adtiming.om.ds.util.Util;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +34,9 @@ public class ReportBuilderService extends BaseService {
 
     @Resource
     private OmReportBuilderMapper omReportBuilderMapper;
+
+    @Resource
+    private OmReportBuilderTaskMapper omReportBuilderTaskMapper;
 
     public List<OmReportBuilderWithBLOBs> getReportBuilders(Integer publisherId) {
         OmReportBuilderCriteria reportBuilderCriteria = new OmReportBuilderCriteria();
@@ -111,6 +119,35 @@ public class ReportBuilderService extends BaseService {
             }
         } catch (Exception e) {
             log.error("Delete report builder {} error:", id, e);
+        }
+        return Response.RES_FAILED;
+    }
+
+    public Response doTest(Integer id) {
+        try {
+            OmReportBuilderWithBLOBs builder = this.omReportBuilderMapper.selectByPrimaryKey(id);
+            if (builder == null) {
+                return Response.RES_DATA_DOES_NOT_EXISTED;
+            }
+            if (builder.getStatus() != SwitchStatus.ON.ordinal()) {
+                return Response.build(Response.CODE_RES_FAILED, Response.STATUS_DISABLE, "Builder should not be stop!");
+            }
+
+            OmReportBuilderTaskCriteria taskCriteria = new OmReportBuilderTaskCriteria();
+            OmReportBuilderTaskCriteria.Criteria criteria = taskCriteria.createCriteria();
+            criteria.andBuilderIdEqualTo(id);
+            criteria.andDayEqualTo(Util.getDateYYYYMMDD(Util.getYYYYMMDD(new Date())));
+            List<OmReportBuilderTask> tasks = this.omReportBuilderTaskMapper.select(taskCriteria);
+            for (OmReportBuilderTask task : tasks) {
+                task.setStatus((byte) NormalStatus.Pending.ordinal());
+                int result = this.omReportBuilderTaskMapper.updateByPrimaryKeySelective(task);
+                if (result <= 0) {
+                    log.error("Update builder task {} failed", JSONObject.toJSON(task));
+                }
+            }
+            return Response.build(Response.SUCCESS_CODE, Response.STATUS_ENABLE, "Please wait no more than ten minutes");
+        } catch (Exception e) {
+            log.error("Do builder id {} test error:", id, e);
         }
         return Response.RES_FAILED;
     }

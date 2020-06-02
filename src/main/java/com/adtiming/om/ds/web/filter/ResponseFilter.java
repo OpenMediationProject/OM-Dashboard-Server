@@ -2,6 +2,7 @@ package com.adtiming.om.ds.web.filter;
 
 import com.adtiming.om.ds.dto.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,8 +25,13 @@ public class ResponseFilter implements Filter {
             throws IOException, ServletException {
         ResponseWrapper wrapperResponse = new ResponseWrapper((HttpServletResponse) response);
         filterChain.doFilter(request, wrapperResponse);
+        if (wrapperResponse.getStatus() != HttpServletResponse.SC_OK) {
+            return;
+        }
+
         byte[] content = wrapperResponse.getContent();
-        if (content.length > 0) {
+        String contentType = wrapperResponse.getContentType();
+        if (StringUtils.isNotBlank(contentType) && contentType.contains("json") && content.length > 0) {
             String responseContent = new String(content, StandardCharsets.UTF_8);
             try {
                 Response responseObject = objectMapper.readValue(responseContent, Response.class);
@@ -37,9 +43,9 @@ public class ResponseFilter implements Filter {
             } catch (Exception e) {
                 log.error("Filter response content {} error:", responseContent, e);
             }
-            ServletOutputStream out = response.getOutputStream();
-            out.write(responseContent.getBytes());
-            out.flush();
         }
+        ServletOutputStream out = response.getOutputStream();
+        out.write(content);
+        out.flush();
     }
 }

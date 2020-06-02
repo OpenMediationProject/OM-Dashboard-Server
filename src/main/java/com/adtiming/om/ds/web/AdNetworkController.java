@@ -4,6 +4,8 @@
 package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.AdNetworkAppStatus;
+import com.adtiming.om.ds.dto.AdNetworkType;
+import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.service.AdNetworkService;
@@ -12,6 +14,8 @@ import com.adtiming.om.ds.service.PlacementService;
 import com.adtiming.om.ds.service.PublisherAppService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +37,8 @@ import java.util.stream.Collectors;
 @RestController
 public class AdNetworkController extends BaseController {
 
+    protected static final Logger log = LogManager.getLogger();
+
     @Autowired
     protected AdNetworkService adNetworkService;
 
@@ -53,12 +59,10 @@ public class AdNetworkController extends BaseController {
         try {
             List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
             Map<Integer, OmAdnetworkApp> adNetworkAppMap = new HashMap<>();
-            Map<Integer, OmPublisherApp> publisherAppMap = new HashMap<>();
             if (pubAppId != null) {
-                adNetworkAppMap = this.adNetworkService.getAdNetworkIdAppMap(pubAppId);
-                List<Integer> publisherAppIds = adNetworkAppMap.values().stream().map(OmAdnetworkApp::getPubAppId).collect(Collectors.toList());
-                publisherAppMap = publisherAppService.getPublisherAppMap(publisherAppIds);
+                adNetworkAppMap = this.adNetworkService.getAdNetworkIdAppMap(pubAppId, NormalStatus.Active);
             }
+            OmPublisherApp publisherApp = this.publisherAppService.getPublisherApp(pubAppId);
             JSONArray results = new JSONArray();
             for (OmAdnetwork omAdnetwork : adNetworks) {
                 JSONObject result = new JSONObject();
@@ -68,8 +72,7 @@ public class AdNetworkController extends BaseController {
                 OmAdnetworkApp adNetworkApp = adNetworkAppMap.get(omAdnetwork.getId());
                 if (adNetworkApp != null) {
                     result.put("adNetworkAppId", adNetworkApp.getId());
-                    OmPublisherApp publisherApp = publisherAppMap.get(adNetworkApp.getPubAppId());
-                    if (publisherApp != null && !this.adNetworkService.doesPlatMatch(publisherApp, omAdnetwork)){
+                    if (publisherApp != null && !this.adNetworkService.doesPlatMatch(publisherApp, omAdnetwork)) {
                         continue;
                     }
                 }
@@ -171,6 +174,13 @@ public class AdNetworkController extends BaseController {
     @RequestMapping(value = "/adnetwork/app/create", method = RequestMethod.POST)
     public Response createAdNetworkApp(@RequestBody OmAdnetworkApp omAdnetworkApp) {
         if (omAdnetworkApp.getAdnId() == null || omAdnetworkApp.getPubAppId() == null) {
+            return Response.RES_PARAMETER_ERROR;
+        }
+        if (omAdnetworkApp.getAdnId() != AdNetworkType.Adtiming.ordinal()
+                && omAdnetworkApp.getAdnId() != AdNetworkType.Facebook.ordinal()
+                && omAdnetworkApp.getAdnId() != AdNetworkType.TencentAd.ordinal()
+                && omAdnetworkApp.getReportAccountId() == null) {
+            log.warn("Create adNetworkApp parameters ReportAccountId must not null");
             return Response.RES_PARAMETER_ERROR;
         }
         return this.adNetworkService.createAppAdNetwork(omAdnetworkApp);

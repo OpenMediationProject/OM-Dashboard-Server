@@ -27,10 +27,10 @@ import java.util.*;
 @Service
 public class CacheService {
 
-    public static final int REVENUE_BEFORE_DAYS = 7;
+    public static final int REVENUE_BEFORE_DAYS = 6;
     public static final int TOP_COUNTRY_SIZE = 5;
     private static final Logger log = LogManager.getLogger();
-    private static List<String> DEFAULT_TOP_REVENUE_COUNTRIES = new ArrayList<>(Arrays.asList("US", "CA", "GB", "AU", "JP"));
+    private static List<String> DEFAULT_TOP_REVENUE_COUNTRIES = new ArrayList<>(Arrays.asList("USA", "CAN", "GBR", "AUS", "JPN"));
     private static Map<String, Double> DEFAULT_TOP_COUNTRY_REVENUES = new HashMap<>();
 
     static {
@@ -40,8 +40,11 @@ public class CacheService {
     }
 
     private Map<Integer, Double> placementRevenueMap = new HashMap<>();
+
     private Map<Integer, Double> publisherAppRevenueMap = new HashMap<>();
+
     private Map<Integer, Map<String, Double>> appIdCountryRevenueMap = new HashMap<>();
+
     @Autowired
     private ReportService reportService;
 
@@ -127,7 +130,7 @@ public class CacheService {
             Map<Integer, Double> tmpPublisherAppRevenueMap = new HashMap<>();
             for (StatAdnetwork statAdnetwork : publisherAppStat) {
                 double revenue = statAdnetwork.getCost() == null ? 0D : statAdnetwork.getCost().doubleValue();
-                tmpPublisherAppRevenueMap.put(statAdnetwork.getPlacementId(), revenue);
+                tmpPublisherAppRevenueMap.put(statAdnetwork.getPubAppId(), revenue);
             }
             if (!CollectionUtils.isEmpty(tmpPublisherAppRevenueMap)) {
                 this.publisherAppRevenueMap = tmpPublisherAppRevenueMap;

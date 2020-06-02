@@ -74,6 +74,7 @@ public class OmShiroConfig {
         Map<String, Filter> filterMap = new LinkedHashMap<>();
         filterMap.put("authc", new OmFormAuthenticationFilter());
         filterMap.put("perms", new OmShiroPermissionFilter());
+        filterMap.put("logout", new OmLogoutFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
 
         /*
@@ -83,10 +84,14 @@ public class OmShiroConfig {
          * */
         filterChainDefinitionMap.put("/check", "anon");
         filterChainDefinitionMap.put("/auth/login", "anon");
+        filterChainDefinitionMap.put("/auth/login.admin", "anon");
         filterChainDefinitionMap.put("/auth/un_auth", "anon");
         filterChainDefinitionMap.put("/auth/unauthorized", "anon");
         filterChainDefinitionMap.put("/report/callback/admob/**", "anon");
+        filterChainDefinitionMap.put("/report/callback/google/**", "anon");
+        filterChainDefinitionMap.put("/finance/pingpong/link/succeed", "anon");
         filterChainDefinitionMap.put("/auth/logout", "logout");
+        filterChainDefinitionMap.put("/un_auth", "anon");
 
         filterChainDefinitionMap.put("/user/info", "authc");
         filterChainDefinitionMap.put("/publisher/app/sort_list", "authc");
@@ -95,6 +100,11 @@ public class OmShiroConfig {
         filterChainDefinitionMap.put("/util/**", "authc");
         filterChainDefinitionMap.put("/adnetwork/list", "authc");
         filterChainDefinitionMap.put("/auth/login/switch/publisher", "authc");
+        //authc,perms
+        filterChainDefinitionMap.put("/**", "authc,perms");
+        shiroFilterFactoryBean.setLoginUrl("/un_auth");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/un_auth");
+
         //authc,perms
         filterChainDefinitionMap.put("/**", "authc,perms");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
