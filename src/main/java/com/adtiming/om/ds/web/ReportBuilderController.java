@@ -29,7 +29,9 @@ import java.util.List;
 public class ReportBuilderController {
 
     public static final String SPLIT_TAG = ",";
+
     protected static final Logger log = LogManager.getLogger();
+
     @Autowired
     private ReportBuilderService reportBuilderService;
 
@@ -98,8 +100,7 @@ public class ReportBuilderController {
             log.error("Delete report builder id must not null");
             return Response.RES_PARAMETER_ERROR;
         }
-        //TODO
-        return Response.build();
+        return this.reportBuilderService.doTest(id);
     }
 
     /**

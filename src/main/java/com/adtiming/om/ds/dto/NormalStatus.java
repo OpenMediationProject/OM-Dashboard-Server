@@ -7,16 +7,21 @@ package com.adtiming.om.ds.dto;
  * Created by ruandianbo on 20-2-13.
  */
 public enum NormalStatus {
-    PENDING, ACTIVE;
+    Pending, Active, Paused, Deleted;
 
-    public static NormalStatus getStatus(int instanceStatus) {
+    public static NormalStatus getStatus(Integer instanceStatus) {
+        if (instanceStatus == null) {
+            return Pending;
+        }
         switch (instanceStatus) {
-            case 0:
-                return PENDING;
             case 1:
-                return ACTIVE;
+                return Active;
+            case 2:
+                return Paused;
+            case 3:
+                return Deleted;
             default:
-                return PENDING;
+                return Pending;
         }
     }
 }

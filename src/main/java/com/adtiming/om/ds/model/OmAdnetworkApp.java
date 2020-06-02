@@ -47,6 +47,8 @@ public class OmAdnetworkApp {
 
     private Date lastmodify;
 
+    private String redirectUrl;
+
     public Integer getId() {
         return id;
     }
@@ -221,6 +223,14 @@ public class OmAdnetworkApp {
 
     public void setLastmodify(Date lastmodify) {
         this.lastmodify = lastmodify;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     @Override

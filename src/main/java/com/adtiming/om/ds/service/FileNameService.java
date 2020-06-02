@@ -7,6 +7,7 @@ import com.adtiming.om.ds.dao.OmAdnetworkMapper;
 import com.adtiming.om.ds.dao.OmInstanceMapper;
 import com.adtiming.om.ds.dao.OmPlacementMapper;
 import com.adtiming.om.ds.dao.OmPublisherAppMapper;
+import com.adtiming.om.ds.dto.MobilePlatformType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -53,15 +54,16 @@ public class FileNameService {
 
     public synchronized void initIdName() {
         try {
-            List<OmAdnetwork> adnetworks = this.omAdnetworkMapper.select(new OmAdnetworkCriteria());
-            adnetworks.forEach(adnetwork -> {
-                this.idNameMap.put("adnId" + adnetwork.getId(), adnetwork.getClassName());
+            List<OmAdnetwork> adNetworks = this.omAdnetworkMapper.select(new OmAdnetworkCriteria());
+            adNetworks.forEach(adNetwork -> {
+                this.idNameMap.put("adnId" + adNetwork.getId(), adNetwork.getDescn());
             });
-            log.info("Init adnetworks size: {}", adnetworks.size());
+            log.info("Init adNetworks size: {}", adNetworks.size());
 
             List<OmPublisherApp> publisherApps = omPublisherAppMapper.select(new OmPublisherAppCriteria());
             publisherApps.forEach(publisherApp -> {
-                this.idNameMap.put("pubAppId" + publisherApp.getId(), publisherApp.getAppName());
+                String appName = MobilePlatformType.getPlatType(publisherApp.getPlat()).name() + "-" + publisherApp.getAppName();
+                this.idNameMap.put("pubAppId" + publisherApp.getId(), appName);
             });
             log.info("Init publisherApps size: {}", publisherApps.size());
 

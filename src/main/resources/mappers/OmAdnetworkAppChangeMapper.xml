@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.adtiming.om.ds.dao.OmAdnetworkAppChangeMapper">
   <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmAdnetworkAppChange">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="id" jdbcType="INTEGER" property="id" />
     <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="account_id" jdbcType="INTEGER" property="accountId" />
@@ -17,6 +17,7 @@
     <result column="new_account_key" jdbcType="VARCHAR" property="newAccountKey" />
     <result column="ab_test_mode" jdbcType="TINYINT" property="abTestMode" />
     <result column="report_account_id" jdbcType="INTEGER" property="reportAccountId" />
+    <result column="new_report_account_id" jdbcType="INTEGER" property="newReportAccountId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
   </resultMap>
@@ -52,7 +53,7 @@
   <sql id="Base_Column_List">
     id, pub_app_id, adn_id, account_id, account_owner, status, adn_app_key, client_id, 
     client_secret, refresh_token, api_key, report_app_id, new_account_key, ab_test_mode, 
-    report_account_id, create_time, lastmodify
+    report_account_id, new_report_account_id, create_time, lastmodify
   </sql>
   <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppChangeCriteria" resultMap="BaseResultMap">
     select
@@ -68,32 +69,27 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from om_adnetwork_app_change
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from om_adnetwork_app_change
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
   <insert id="insert" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppChange">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into om_adnetwork_app_change (id, pub_app_id, adn_id, account_id,
+    insert into om_adnetwork_app_change (pub_app_id, adn_id, account_id, 
       account_owner, status, adn_app_key, 
       client_id, client_secret, refresh_token, 
       api_key, report_app_id, new_account_key, 
-      ab_test_mode, report_account_id)
-    values (#{id,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER},
+      ab_test_mode, report_account_id, new_report_account_id, 
+      create_time, lastmodify)
+    values (#{pubAppId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
       #{accountOwner,jdbcType=TINYINT}, #{status,jdbcType=TINYINT}, #{adnAppKey,jdbcType=VARCHAR}, 
       #{clientId,jdbcType=VARCHAR}, #{clientSecret,jdbcType=VARCHAR}, #{refreshToken,jdbcType=VARCHAR}, 
       #{apiKey,jdbcType=VARCHAR}, #{reportAppId,jdbcType=VARCHAR}, #{newAccountKey,jdbcType=VARCHAR}, 
-      #{abTestMode,jdbcType=TINYINT}, #{reportAccountId,jdbcType=INTEGER})
+      #{abTestMode,jdbcType=TINYINT}, #{reportAccountId,jdbcType=INTEGER}, #{newReportAccountId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppChange">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into om_adnetwork_app_change
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -140,6 +136,9 @@
       </if>
       <if test="reportAccountId != null">
         report_account_id,
+      </if>
+      <if test="newReportAccountId != null">
+        new_report_account_id,
       </if>
       <if test="createTime != null">
         create_time,
@@ -194,6 +193,9 @@
       <if test="reportAccountId != null">
         #{reportAccountId,jdbcType=INTEGER},
       </if>
+      <if test="newReportAccountId != null">
+        #{newReportAccountId,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -202,78 +204,4 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppChange">
-    update om_adnetwork_app_change
-    <set>
-      <if test="pubAppId != null">
-        pub_app_id = #{pubAppId,jdbcType=INTEGER},
-      </if>
-      <if test="adnId != null">
-        adn_id = #{adnId,jdbcType=INTEGER},
-      </if>
-      <if test="accountId != null">
-        account_id = #{accountId,jdbcType=INTEGER},
-      </if>
-      <if test="accountOwner != null">
-        account_owner = #{accountOwner,jdbcType=TINYINT},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=TINYINT},
-      </if>
-      <if test="adnAppKey != null">
-        adn_app_key = #{adnAppKey,jdbcType=VARCHAR},
-      </if>
-      <if test="clientId != null">
-        client_id = #{clientId,jdbcType=VARCHAR},
-      </if>
-      <if test="clientSecret != null">
-        client_secret = #{clientSecret,jdbcType=VARCHAR},
-      </if>
-      <if test="refreshToken != null">
-        refresh_token = #{refreshToken,jdbcType=VARCHAR},
-      </if>
-      <if test="apiKey != null">
-        api_key = #{apiKey,jdbcType=VARCHAR},
-      </if>
-      <if test="reportAppId != null">
-        report_app_id = #{reportAppId,jdbcType=VARCHAR},
-      </if>
-      <if test="newAccountKey != null">
-        new_account_key = #{newAccountKey,jdbcType=VARCHAR},
-      </if>
-      <if test="abTestMode != null">
-        ab_test_mode = #{abTestMode,jdbcType=TINYINT},
-      </if>
-      <if test="reportAccountId != null">
-        report_account_id = #{reportAccountId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="lastmodify != null">
-        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmAdnetworkAppChange">
-    update om_adnetwork_app_change
-    set pub_app_id = #{pubAppId,jdbcType=INTEGER},
-      adn_id = #{adnId,jdbcType=INTEGER},
-      account_id = #{accountId,jdbcType=INTEGER},
-      account_owner = #{accountOwner,jdbcType=TINYINT},
-      status = #{status,jdbcType=TINYINT},
-      adn_app_key = #{adnAppKey,jdbcType=VARCHAR},
-      client_id = #{clientId,jdbcType=VARCHAR},
-      client_secret = #{clientSecret,jdbcType=VARCHAR},
-      refresh_token = #{refreshToken,jdbcType=VARCHAR},
-      api_key = #{apiKey,jdbcType=VARCHAR},
-      report_app_id = #{reportAppId,jdbcType=VARCHAR},
-      new_account_key = #{newAccountKey,jdbcType=VARCHAR},
-      ab_test_mode = #{abTestMode,jdbcType=TINYINT},
-      report_account_id = #{reportAccountId,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
 </mapper>

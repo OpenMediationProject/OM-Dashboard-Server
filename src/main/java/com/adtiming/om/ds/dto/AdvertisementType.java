@@ -9,7 +9,7 @@ package com.adtiming.om.ds.dto;
  * @author dianbo
  */
 public enum AdvertisementType {
-    Banner, Native, RewardedVideo, Interstitial;
+    Banner, Native, RewardedVideo, Interstitial, Splash;
 
     public static AdvertisementType getAdvertisementType(int advertisementType) {
         switch (advertisementType) {
@@ -21,6 +21,8 @@ public enum AdvertisementType {
                 return RewardedVideo;
             case 3:
                 return Interstitial;
+            case 4:
+                return Splash;
             default:
                 return Banner;
         }

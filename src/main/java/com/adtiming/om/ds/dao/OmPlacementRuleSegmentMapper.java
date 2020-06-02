@@ -6,7 +6,6 @@ package com.adtiming.om.ds.dao;
 import com.adtiming.om.ds.model.OmPlacementRuleSegment;
 import com.adtiming.om.ds.model.OmPlacementRuleSegmentCriteria;
 import com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs;
-
 import java.util.List;
 
 public interface OmPlacementRuleSegmentMapper {
@@ -16,9 +15,9 @@ public interface OmPlacementRuleSegmentMapper {
 
     int insertSelective(OmPlacementRuleSegmentWithBLOBs record);
 
-    List<OmPlacementRuleSegmentWithBLOBs> selectByExampleWithBLOBs(OmPlacementRuleSegmentCriteria example);
+    List<OmPlacementRuleSegmentWithBLOBs> selectWithBLOBs(OmPlacementRuleSegmentCriteria example);
 
-    List<OmPlacementRuleSegment> selectByExample(OmPlacementRuleSegmentCriteria example);
+    List<OmPlacementRuleSegment> select(OmPlacementRuleSegmentCriteria example);
 
     OmPlacementRuleSegmentWithBLOBs selectByPrimaryKey(Integer id);
 

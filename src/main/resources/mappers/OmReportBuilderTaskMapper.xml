@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.adtiming.om.ds.dao.OmCurrencyExchangeMapper">
-  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmCurrencyExchange">
+<mapper namespace="com.adtiming.om.ds.dao.OmReportBuilderTaskMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmReportBuilderTask">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="cur_from" jdbcType="VARCHAR" property="curFrom" />
-    <result column="cur_to" jdbcType="VARCHAR" property="curTo" />
-    <result column="exchange_rate" jdbcType="DECIMAL" property="exchangeRate" />
+    <result column="day" jdbcType="DATE" property="day" />
+    <result column="builder_id" jdbcType="INTEGER" property="builderId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="reparation_count" jdbcType="INTEGER" property="reparationCount" />
+    <result column="report_line_size" jdbcType="INTEGER" property="reportLineSize" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
   </resultMap>
@@ -39,15 +41,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cur_from, cur_to, exchange_rate, create_time, lastmodify
+    id, day, builder_id, status, reparation_count, report_line_size, create_time, lastmodify
   </sql>
-  <select id="select" parameterType="com.adtiming.om.ds.model.OmCurrencyExchangeCriteria" resultMap="BaseResultMap">
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmReportBuilderTaskCriteria" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from om_currency_exchange
+    from om_report_builder_task
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -58,36 +60,44 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from om_currency_exchange
+    from om_report_builder_task
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from om_currency_exchange
+    delete from om_report_builder_task
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmCurrencyExchange">
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmReportBuilderTask">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into om_currency_exchange (cur_from, cur_to, exchange_rate, 
-      create_time, lastmodify)
-    values (#{curFrom,jdbcType=VARCHAR}, #{curTo,jdbcType=VARCHAR}, #{exchangeRate,jdbcType=DECIMAL}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
+    insert into om_report_builder_task (day, builder_id, status, 
+      reparation_count, report_line_size, create_time, 
+      lastmodify)
+    values (#{day,jdbcType=DATE}, #{builderId,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{reparationCount,jdbcType=INTEGER}, #{reportLineSize,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmCurrencyExchange">
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmReportBuilderTask">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into om_currency_exchange
+    insert into om_report_builder_task
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="curFrom != null">
-        cur_from,
+      <if test="day != null">
+        day,
       </if>
-      <if test="curTo != null">
-        cur_to,
+      <if test="builderId != null">
+        builder_id,
       </if>
-      <if test="exchangeRate != null">
-        exchange_rate,
+      <if test="status != null">
+        status,
+      </if>
+      <if test="reparationCount != null">
+        reparation_count,
+      </if>
+      <if test="reportLineSize != null">
+        report_line_size,
       </if>
       <if test="createTime != null">
         create_time,
@@ -97,14 +107,20 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="curFrom != null">
-        #{curFrom,jdbcType=VARCHAR},
+      <if test="day != null">
+        #{day,jdbcType=DATE},
       </if>
-      <if test="curTo != null">
-        #{curTo,jdbcType=VARCHAR},
+      <if test="builderId != null">
+        #{builderId,jdbcType=INTEGER},
       </if>
-      <if test="exchangeRate != null">
-        #{exchangeRate,jdbcType=DECIMAL},
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="reparationCount != null">
+        #{reparationCount,jdbcType=INTEGER},
+      </if>
+      <if test="reportLineSize != null">
+        #{reportLineSize,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -114,17 +130,23 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmCurrencyExchange">
-    update om_currency_exchange
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmReportBuilderTask">
+    update om_report_builder_task
     <set>
-      <if test="curFrom != null">
-        cur_from = #{curFrom,jdbcType=VARCHAR},
+      <if test="day != null">
+        day = #{day,jdbcType=DATE},
       </if>
-      <if test="curTo != null">
-        cur_to = #{curTo,jdbcType=VARCHAR},
+      <if test="builderId != null">
+        builder_id = #{builderId,jdbcType=INTEGER},
       </if>
-      <if test="exchangeRate != null">
-        exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="reparationCount != null">
+        reparation_count = #{reparationCount,jdbcType=INTEGER},
+      </if>
+      <if test="reportLineSize != null">
+        report_line_size = #{reportLineSize,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -135,11 +157,13 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmCurrencyExchange">
-    update om_currency_exchange
-    set cur_from = #{curFrom,jdbcType=VARCHAR},
-      cur_to = #{curTo,jdbcType=VARCHAR},
-      exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmReportBuilderTask">
+    update om_report_builder_task
+    set day = #{day,jdbcType=DATE},
+      builder_id = #{builderId,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      reparation_count = #{reparationCount,jdbcType=INTEGER},
+      report_line_size = #{reportLineSize,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

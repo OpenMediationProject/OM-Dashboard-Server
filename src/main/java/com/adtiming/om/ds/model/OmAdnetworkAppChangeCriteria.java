@@ -1075,6 +1075,66 @@ public class OmAdnetworkAppChangeCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andNewReportAccountIdIsNull() {
+            addCriterion("new_report_account_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdIsNotNull() {
+            addCriterion("new_report_account_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdEqualTo(Integer value) {
+            addCriterion("new_report_account_id =", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdNotEqualTo(Integer value) {
+            addCriterion("new_report_account_id <>", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdGreaterThan(Integer value) {
+            addCriterion("new_report_account_id >", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("new_report_account_id >=", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdLessThan(Integer value) {
+            addCriterion("new_report_account_id <", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdLessThanOrEqualTo(Integer value) {
+            addCriterion("new_report_account_id <=", value, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdIn(List<Integer> values) {
+            addCriterion("new_report_account_id in", values, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdNotIn(List<Integer> values) {
+            addCriterion("new_report_account_id not in", values, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdBetween(Integer value1, Integer value2) {
+            addCriterion("new_report_account_id between", value1, value2, "newReportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andNewReportAccountIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("new_report_account_id not between", value1, value2, "newReportAccountId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

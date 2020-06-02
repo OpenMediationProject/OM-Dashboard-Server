@@ -55,7 +55,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, pub_app_id, adn_id, account_id, account_owner, status, adn_app_key, client_id, 
+    id, pub_app_id, adn_id, account_id, account_owner, status, adn_app_key, client_id,
     client_secret, refresh_token, api_key, report_app_id, credential_path, descn, mediation_audience_segment, 
     mediation_audience_segment_day, reportapi_status, ab_test_mode, ab_test_status, report_account_id, 
     create_time, lastmodify

@@ -123,7 +123,7 @@ public class ReportService extends BaseService {
         Double yesterdayRevenue = this.getRevenue(yesterday, yesterday, pubAppId);
         resultRevenue.put("yesterdayRevenue", yesterdayRevenue);
 
-        String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -8));
+        String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -7));
         String lastSevenDayEnd = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -1));
         Double lastSevenDayRevenue = this.getRevenue(lastSevenDayBegin, lastSevenDayEnd, pubAppId);
         resultRevenue.put("lastSevenDayRevenue", lastSevenDayRevenue);
@@ -154,6 +154,7 @@ public class ReportService extends BaseService {
             }
             reportConditionDTO.setDateBegin(dateBegin);
             reportConditionDTO.setDateEnd(dateEnd);
+            this.handleDataPermissions(reportConditionDTO);
             List<StatAdnetwork> statAdNetworks = this.getAdNetworkReport(reportConditionDTO);
             if (CollectionUtils.isEmpty(statAdNetworks)) {
                 return 0D;
@@ -181,7 +182,7 @@ public class ReportService extends BaseService {
     public Response getRegionRevenue(Integer pubAppId) {
         try {
             Set<String> top3RevenueCountrySet = this.getTopRevenueCountries(3);
-            String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -8));
+            String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -7));
             String lastSevenDayEnd = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -1));
             ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
             if (pubAppId != null) {
@@ -191,6 +192,7 @@ public class ReportService extends BaseService {
             reportConditionDTO.setDateBegin(lastSevenDayBegin);
             reportConditionDTO.setDateEnd(lastSevenDayEnd);
             reportConditionDTO.setDimension(new String[]{"day", "country"});
+            this.handleDataPermissions(reportConditionDTO);
             List<StatAdnetwork> allStatAdNetworks = this.getAdNetworkReport(reportConditionDTO);
             List<StatAdnetwork> top3StatAdNetworks = new ArrayList<>();
             Iterator<StatAdnetwork> iterator = allStatAdNetworks.iterator();
@@ -225,7 +227,10 @@ public class ReportService extends BaseService {
                 otherCountryStat.setCost(new BigDecimal(0));
                 for (StatAdnetwork statAdnetwork : entry.getValue()) {
                     if (statAdnetwork.getCost() != null) {
-                        otherCountryStat.setRevenue(otherCountryStat.getCost().add(statAdnetwork.getCost()));
+                        otherCountryStat.setCost(otherCountryStat.getCost().add(statAdnetwork.getCost()));
+                    }
+                    if (statAdnetwork.getRevenue() != null) {
+                        otherCountryStat.setRevenue(otherCountryStat.getRevenue().add(statAdnetwork.getRevenue()));
                     }
                 }
                 JSONObject otherResult = (JSONObject) JSONObject.toJSON(otherCountryStat);
@@ -246,7 +251,7 @@ public class ReportService extends BaseService {
      * @param top
      */
     private Set<String> getTopRevenueCountries(Integer top) {
-        String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -8));
+        String lastSevenDayBegin = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -7));
         String lastSevenDayEnd = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -1));
         ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
         reportConditionDTO.setDateBegin(lastSevenDayBegin);

@@ -15,7 +15,7 @@ public interface OmCurrencyExchangeMapper {
 
     int insertSelective(OmCurrencyExchange record);
 
-    List<OmCurrencyExchange> selectByExample(OmCurrencyExchangeCriteria example);
+    List<OmCurrencyExchange> select(OmCurrencyExchangeCriteria criteria);
 
     OmCurrencyExchange selectByPrimaryKey(Integer id);
 

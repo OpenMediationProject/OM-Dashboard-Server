@@ -5,6 +5,7 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmCountry;
+import com.adtiming.om.ds.model.OmCurrencyExchange;
 import com.adtiming.om.ds.model.OmSupportDevice;
 import com.adtiming.om.ds.service.CacheService;
 import com.adtiming.om.ds.service.UtilService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,19 @@ public class UtilController {
 
     @Autowired
     UtilService utilService;
+
+    /**
+     * Get currency list
+     */
+    @RequestMapping(value = "/util/currency/list", method = RequestMethod.GET)
+    public Response getCurrencyList() {
+        List<OmCurrencyExchange> currencyList = this.utilService.getCurrencyList();
+        List<String> results = new ArrayList<>();
+        currencyList.forEach(currency -> {
+            results.add(currency.getCurFrom());
+        });
+        return Response.buildSuccess(results);
+    }
 
     /**
      * Get support device brand list
@@ -79,7 +94,7 @@ public class UtilController {
     }
 
     /**
-     * Get support device list
+     * Get country list order by app revenue
      *
      * @param pubAppId
      */

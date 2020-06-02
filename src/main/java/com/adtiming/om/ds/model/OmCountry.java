@@ -46,6 +46,8 @@ public class OmCountry {
 
     private String timeZones;
 
+    private Double revenue;
+
     public Integer getId() {
         return id;
     }
@@ -204,6 +206,14 @@ public class OmCountry {
 
     public void setTimeZones(String timeZones) {
         this.timeZones = timeZones == null ? null : timeZones.trim();
+    }
+
+    public Double getRevenue() {
+        return revenue;
+    }
+
+    public void setRevenue(Double revenue) {
+        this.revenue = revenue;
     }
 
     @Override

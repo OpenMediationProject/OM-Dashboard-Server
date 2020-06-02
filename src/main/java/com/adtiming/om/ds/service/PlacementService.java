@@ -13,7 +13,8 @@ import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PlacementService extends BaseService {
+
+    protected static final Logger log = LogManager.getLogger();
 
     public static byte DEFAULT_PRELOAD_TIMEOUT = 30;
 
@@ -135,14 +138,17 @@ public class PlacementService extends BaseService {
             }
             placements.sort((placement1, placement2) -> {
                 Double revenue1 = placementRevenueMap.get(placement1.getId());
+                Double revenue2 = placementRevenueMap.get(placement2.getId());
+                if (revenue1 == null && revenue2 == null) {
+                    return 0;
+                }
                 if (revenue1 == null) {
                     revenue1 = 0D;
                 }
-                Double revenue2 = placementRevenueMap.get(placement2.getId());
                 if (revenue2 == null) {
                     revenue2 = 0D;
                 }
-                return (int) (revenue2 - revenue1);
+                return revenue2.compareTo(revenue1);
             });
         } catch (Exception e) {
             log.error("Sort placement by revenue error:", e);

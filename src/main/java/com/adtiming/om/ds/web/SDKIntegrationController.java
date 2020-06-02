@@ -10,6 +10,8 @@ import com.adtiming.om.ds.model.OmDevDevice;
 import com.adtiming.om.ds.service.SDKIntegrationService;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,8 +28,21 @@ import java.util.List;
 @RestController
 public class SDKIntegrationController extends BaseController {
 
+    protected static final Logger log = LogManager.getLogger();
+
     @Resource
     private SDKIntegrationService sdkIntegrationService;
+
+    /**
+     * Create develop app when not existed,
+     *
+     * @param pubAppId
+     * @see OmDevApp
+     */
+    @RequestMapping(value = "/sdk/dev_app/get", method = RequestMethod.GET)
+    public Response getDevApp(Integer pubAppId) {
+        return this.sdkIntegrationService.getDevApp(pubAppId);
+    }
 
     /**
      * Get adnetwork in use
