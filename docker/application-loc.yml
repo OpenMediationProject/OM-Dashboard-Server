@@ -11,6 +11,11 @@ logging:
 
 om.adc.domain: http://adc.adtiming.com
 
+admob:
+  adt:
+    client_id: googleapi.client_id
+    client_secret: googleapi.client_secret
+
 spring:
   ## datasource
   datasource:
