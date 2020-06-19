@@ -76,7 +76,7 @@ do
         continue
     fi
     if [[ $env_var =~ ^OMYML_ ]]; then
-        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ -)
+        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' )
 	if [[ ${item_name} = "redisdb" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
             sed -i "/redis/,+4s/database:.*/database: ${!env_var}/g" ${CONFFILE}/application-loc.yml
@@ -106,7 +106,7 @@ do
     fi
 
     if [[ $env_var =~ ^OMDSSERVER_ ]]; then
-        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' | tr _ - )
+        item_name=$(echo "$env_var" | cut -d_ -f2- | tr '[:upper:]' '[:lower:]' )
         if [[ ${item_name} = "mountpath" ]]; then
             loginfo_note "[Cloud Storage] Link ${!env_var}/${CONFFILE}/data to /${CONFFILE}/data"
             if [[ -d /${CONFFILE}/data ]];then
