@@ -45,11 +45,11 @@ public class AdmobService extends BaseService {
     @Value("${om.adc.domain}")
     private String adcDomain;
 
-    @Value("${admob.adt.client_id}")
-    public String adtClientId;
+    @Value("${admob.client_id}")
+    public String admobClientId;
 
-    @Value("${admob.adt.client_secret}")
-    public String adtClientSecret;
+    @Value("${admob.client_secret}")
+    public String admobClientSecret;
 
     /**
      * Get admob auth grant url
@@ -122,8 +122,8 @@ public class AdmobService extends BaseService {
                 new NetHttpTransport.Builder().build(),
                 JacksonFactory.getDefaultInstance(),
                 "https://oauth2.googleapis.com/token",//clientSecrets.getDetails().getTokenUri(),
-                adtClientId,//clientSecrets.getDetails().getClientId(),
-                adtClientSecret,//clientSecrets.getDetails().getClientSecret(),
+                admobClientId,//clientSecrets.getDetails().getClientId(),
+                admobClientSecret,//clientSecrets.getDetails().getClientSecret(),
                 authCode,
                 "postmessage")  // Specify the same redirect URI that you use with your web
                 // app. If you don't have a web version of your app, you can
@@ -135,7 +135,7 @@ public class AdmobService extends BaseService {
         if (StringUtils.isBlank(refreshToken)) {
             throw new Exception("This Account is granted!");
         }
-        String publisherId = getAdmobPublisherId(adtClientId, adtClientSecret, refreshToken);
+        String publisherId = getAdmobPublisherId(admobClientId, admobClientSecret, refreshToken);
         adnetworkAccount.setUserId(publisherId);
         adnetworkAccount.setAdnAppToken(refreshToken);
         int dbResult = this.reportAdnAccountMapper.updateByPrimaryKeySelective(adnetworkAccount);
