@@ -3,10 +3,7 @@
 
 package com.adtiming.om.ds.web;
 
-import com.adtiming.om.ds.dto.AdNetworkAppStatus;
-import com.adtiming.om.ds.dto.AdNetworkType;
-import com.adtiming.om.ds.dto.NormalStatus;
-import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.dto.*;
 import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.service.AdNetworkService;
 import com.adtiming.om.ds.service.InstanceService;
@@ -55,14 +52,22 @@ public class AdNetworkController extends BaseController {
      * Get all AdNetworks of publisher app
      */
     @RequestMapping(value = "/adnetwork/select/list", method = RequestMethod.GET)
-    public Response getAdNetWorkSelectList(Integer pubAppId) {
+    public Response getAdNetWorkSelectList(Integer pubAppId, Integer placementId) {
         try {
             List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
             Map<Integer, OmAdnetworkApp> adNetworkAppMap = new HashMap<>();
             if (pubAppId != null) {
                 adNetworkAppMap = this.adNetworkService.getAdNetworkIdAppMap(pubAppId, NormalStatus.Active);
             }
-            OmPublisherApp publisherApp = this.publisherAppService.getPublisherApp(pubAppId);
+            OmPublisherApp publisherApp = null;
+            if (pubAppId != null){
+                publisherApp = this.publisherAppService.getPublisherApp(pubAppId);
+            }
+            OmPlacementWithBLOBs placement = null;
+            if (placementId != null){
+                placement = this.placementService.getPlacement(placementId);
+            }
+
             JSONArray results = new JSONArray();
             for (OmAdnetwork omAdnetwork : adNetworks) {
                 JSONObject result = new JSONObject();
@@ -74,6 +79,16 @@ public class AdNetworkController extends BaseController {
                     result.put("adNetworkAppId", adNetworkApp.getId());
                     if (publisherApp != null && !this.adNetworkService.doesPlatMatch(publisherApp, omAdnetwork)) {
                         continue;
+                    }
+                }
+                //创建instance时过滤不支持广告位类型的adnetwork
+                if (placement != null && publisherApp != null){
+                    List<String> adTypes = this.adNetworkService.buildAdTypes(omAdnetwork, publisherApp);
+                    if (placement.getAdType() != null) {
+                        AdvertisementType adType = AdvertisementType.getAdvertisementType(placement.getAdType().intValue());
+                        if (!adTypes.contains(adType.name())) {
+                            continue;
+                        }
                     }
                 }
                 results.add(result);

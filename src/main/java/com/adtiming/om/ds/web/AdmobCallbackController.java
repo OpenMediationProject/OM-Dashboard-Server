@@ -24,18 +24,18 @@ public class AdmobCallbackController extends BaseController {
         return admobService.getAdmobAuthUrl(adnAppId);
     }
 
-    @RequestMapping("/report/callback/google/{authKey}")
+    @RequestMapping("/report/callback/admob/{authKey}")
     public Object admobOAuthCallback(String user_id, String code, String error, @PathVariable("authKey") String authKey) {
         return admobService.admobAuthCallBack(user_id, code, error, authKey);
     }
 
     @RequestMapping("/report/google/refreshToken/save")
     @Transactional
-    public Response saveRefreshToken(int accountId, String authCode) {
+    public Response saveRefreshToken(String authCode) {
         try {
-            return admobService.saveTokenByCode(accountId, authCode);
+            return admobService.saveTokenByCode(authCode);
         } catch (Exception e) {
-            log.warn("Grant failed, accountId {} authCode {} error:", accountId, authCode, e);
+            log.warn("Grant failed, authCode {} error:", authCode, e);
             return Response.build().code(500).msg(String.format("Grant failed,msg:%s", e.getMessage()));
         }
     }

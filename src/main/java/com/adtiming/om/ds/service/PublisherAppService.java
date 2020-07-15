@@ -25,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Publisher Manager
@@ -77,21 +80,6 @@ public class PublisherAppService extends BaseService {
      */
     public List<OmPublisherApp> getPublisherApps(List<Integer> pubAppIds) {
         return this.getPublisherApps(pubAppIds, null, null);
-    }
-
-    /**
-     * Select publisher app map
-     *
-     * @param pubAppIds
-     * @return publisherApps
-     */
-    public Map<Integer, OmPublisherApp> getPublisherAppMap(List<Integer> pubAppIds) {
-        List<OmPublisherApp> publisherApps = this.getPublisherApps(pubAppIds, null, null);
-        Map<Integer, OmPublisherApp> publisherAppMap = new HashMap<>();
-        publisherApps.forEach(publisherApp -> {
-            publisherAppMap.put(publisherApp.getId(), publisherApp);
-        });
-        return publisherAppMap;
     }
 
     /**
@@ -201,17 +189,16 @@ public class PublisherAppService extends BaseService {
                 int result = this.umUserAppMapper.insertSelective(userApp);
                 if (result > 0) {
                     log.info("Create user app {} success", JSONObject.toJSONString(userApp));
-                    this.placementService.createDefaultPlacement(omPublisherApp);
                     return Response.buildSuccess(omPublisherApp);
                 } else {
                     throw new RuntimeException("Create user app failed" + JSONObject.toJSONString(userApp));
                 }
             } else {
-                throw new RuntimeException("update publisher app failed" + JSONObject.toJSONString(omPublisherApp));
+                throw new RuntimeException("Update publisher app failed" + JSONObject.toJSONString(omPublisherApp));
             }
         } catch (Exception e) {
+            log.error("Create publisher app error {} ", JSONObject.toJSONString(omPublisherApp), e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("create publisher app error {} ", JSONObject.toJSONString(omPublisherApp), e);
         }
         return Response.RES_FAILED;
     }
@@ -267,14 +254,14 @@ public class PublisherAppService extends BaseService {
             }
             omPublisherApp.setLastmodify(new Date());
             int result = this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
-            if (result == 1) {
-                log.info("update publisher app {} successfully", JSONObject.toJSONString(publisherAppDTO));
-                return Response.build();
+            if (result <= 0) {
+                throw new RuntimeException("update publisher app " + JSONObject.toJSONString(publisherAppDTO) + " failed");
             }
+            log.info("Update publisher app {} successfully", JSONObject.toJSONString(publisherAppDTO));
+            return Response.build();
         } catch (Exception e) {
             log.error("updatePublisherApp error {}", JSONObject.toJSONString(publisherAppDTO), e);
         }
-        log.info("update publisher app {} failed", JSONObject.toJSONString(publisherAppDTO));
         return Response.RES_FAILED;
     }
 

@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.web;
 
+import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmPlacementCountry;
@@ -14,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -133,8 +135,22 @@ public class PlacementController extends BaseController {
      * @see OmPlacementWithBLOBs
      */
     @RequestMapping(value = "/placement/create", method = RequestMethod.POST)
-    public Response createPlacement(@RequestBody OmPlacementWithBLOBs omPlacementWithBLOBs) {
-        return this.placementService.createPlacement(omPlacementWithBLOBs);
+    public Response createPlacement(@RequestBody OmPlacementWithBLOBs placement) {
+        if (placement.getPubAppId() == null || placement.getAdType() == null){
+            return Response.RES_PARAMETER_ERROR;
+        }
+        AdvertisementType adType = AdvertisementType.getAdvertisementType(placement.getAdType().intValue());
+        if (AdvertisementType.Interstitial.equals(adType) || AdvertisementType.Interstitial.equals(adType)){
+            Byte[] adTypes = new Byte[1];
+            adTypes[0] = (byte)adType.ordinal();
+            List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(placement.getPubAppId(), adTypes);
+            if (!CollectionUtils.isEmpty(placements)){
+                String warn = adType.name() + " already exists";
+                log.warn(warn);
+                return Response.failure(Response.CODE_RES_DATA_EXISTED, warn);
+            }
+        }
+        return this.placementService.createPlacement(placement);
     }
 
     /**

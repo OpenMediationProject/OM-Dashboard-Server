@@ -307,11 +307,13 @@ public class InstanceService extends BaseService {
                 return Response.RES_DATA_EXISTED;
             }
 
-            boolean isPlacementKeyDuplicated = isPlacementKeyDuplicated(instance.getAdnId(), placement.getPubAppId(),
-                    instance.getPlacementKey(), instance.getId());
-            if (NormalStatus.Active.equals(status) && isPlacementKeyDuplicated) {
-                log.error("It already has active PlacementKey {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
-                return Response.RES_DATA_EXISTED;
+            if (NormalStatus.Active.equals(status)) {
+                boolean isPlacementKeyDuplicated = isPlacementKeyDuplicated(instance.getAdnId(), placement.getPubAppId(),
+                        instance.getPlacementKey(), instance.getId());
+                if (isPlacementKeyDuplicated) {
+                    log.warn("It already has active placement key {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
+                    return Response.failure(Response.CODE_RES_DATA_EXISTED, "Placement key" + instance.getPlacementKey() + " already existed");
+                }
             }
 
             instance.setStatus((byte) status.ordinal());
@@ -367,11 +369,8 @@ public class InstanceService extends BaseService {
     }
 
     private void instancePlacementKeyChange(OmInstance oldInstance, OmInstance newInstance) {
-        //when status is on and placementKey changed
-        if (StringUtils.isNotBlank(oldInstance.getPlacementKey())
-                && StringUtils.isNotBlank(newInstance.getPlacementKey())
-                && Util.byteToInt(oldInstance.getStatus()) == 1
-                && Util.byteToInt(newInstance.getStatus()) == 1) {
+        if (StringUtils.isNotBlank(oldInstance.getPlacementKey()) && StringUtils.isNotBlank(newInstance.getPlacementKey())
+                && !oldInstance.getPlacementKey().equals(newInstance.getPlacementKey())) {
             OmAdnetworkApp adnApp = omAdnetworkAppMapper.selectByPrimaryKey(oldInstance.getAdnAppId());
             if (adnApp != null && StringUtils.isNotBlank(adnApp.getAdnAppKey())) {
                 OmInstanceChangeCriteria omInstanceChangeCriteria = new OmInstanceChangeCriteria();
@@ -379,6 +378,7 @@ public class InstanceService extends BaseService {
                 criteria.andPlacementKeyIn(
                         Arrays.asList(oldInstance.getPlacementKey(), newInstance.getPlacementKey()));
                 criteria.andIdEqualTo(oldInstance.getId());
+                criteria.andPubAppIdEqualTo(oldInstance.getPubAppId());
                 List<OmInstanceChange> oldPlacementKeys = omInstanceChangeMapper.selectByExample(omInstanceChangeCriteria);
                 //
                 if (!oldPlacementKeys.isEmpty()) {
@@ -401,6 +401,7 @@ public class InstanceService extends BaseService {
                 omInstanceChange.setAccountId(adnApp.getAccountId());
                 omInstanceChange.setAccountOwner(adnApp.getAccountOwner());
                 omInstanceChange.setAbTestMode(oldInstance.getAbTestMode());
+                omInstanceChange.setStatus(oldInstance.getStatus());
                 //insert into om_instance_change
                 omInstanceChangeMapper.insertSelective(omInstanceChange);
             }

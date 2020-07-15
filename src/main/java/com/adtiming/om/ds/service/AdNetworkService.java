@@ -127,14 +127,14 @@ public class AdNetworkService extends BaseService {
         return null;
     }
 
-    private JSONArray buildAdTypes(OmAdnetwork adNetwork, OmPublisherApp publisherApp) {
+    public List<String> buildAdTypes(OmAdnetwork adNetwork, OmPublisherApp publisherApp) {
         Byte adType = adNetwork.getAndroidAdtype();
         if (publisherApp != null && publisherApp.getPlat() == (byte) 0) {
             adType = adNetwork.getIosAdtype();
         }
         String typeStr = Integer.toBinaryString(adType);
         typeStr = new StringBuilder(typeStr).reverse().toString();
-        JSONArray adTypes = new JSONArray();
+        List<String> adTypes = new ArrayList<>();
         for (int type = 0; type < typeStr.length() && type < 10; type++) {
             char hourChar = typeStr.charAt(type);
             if ("1".equals(hourChar + "")) {
@@ -369,6 +369,11 @@ public class AdNetworkService extends BaseService {
             if (omAdnetworkApp == null) {
                 log.error("AdNetworkAppId {} does not existed", adNetworkAppId);
                 return Response.RES_DATA_DOES_NOT_EXISTED;
+            }
+            if (status.intValue() == NormalStatus.Active.ordinal()){
+                omAdnetworkApp.setReportapiStatus((byte)NormalStatus.Active.ordinal());
+            } else {
+                omAdnetworkApp.setReportapiStatus((byte)NormalStatus.Pending.ordinal());
             }
             omAdnetworkApp.setStatus(status);
             int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdnetworkApp);

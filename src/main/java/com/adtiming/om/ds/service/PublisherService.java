@@ -64,7 +64,15 @@ public class PublisherService extends BaseService {
 
             List<OmPublisher> publishers = new ArrayList<>();
             if (userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId())) {
-                List<OmPublisher> adminPublishers = this.selectPublishersByOwner(null, status);
+                List<OmPublisher> adminPublishers = this.omPublisherMapper.selectWithOwnerEmail();
+                if (status != null) {
+                    adminPublishers.removeIf(publisher -> {
+                        if (publisher.getStatus().intValue() != status.ordinal()) {
+                            return true;
+                        }
+                        return false;
+                    });
+                }
                 publishers.addAll(adminPublishers);
             } else if (userRoleIdSet.contains(RoleType.ORGANIZATION_OWNER.getId())) {
                 List<OmPublisher> userPublishers = this.selectPublishersByOwner(userId, status);
@@ -93,6 +101,10 @@ public class PublisherService extends BaseService {
             log.error("Get select publishers by user id {} error:", userId, e);
         }
         return Response.RES_FAILED;
+    }
+
+    List<OmPublisher> selectWithOwnerEmail(){
+        return this.omPublisherMapper.selectWithOwnerEmail();
     }
 
     public List<OmPublisher> selectPublishersByOwner(Integer userId, SwitchStatus status) {
@@ -182,21 +194,17 @@ public class PublisherService extends BaseService {
         try {
             OmPublisher dbPublisher = this.omPublisherMapper.selectByPrimaryKey(omPublisher.getId());
             UmUser currentUser = this.getCurrentUser();
-            if (currentUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId() && omPublisher.getEmail() != null
-                    && !dbPublisher.getEmail().equals(omPublisher.getEmail())) {
-                log.error("Organization owner can not update organization's owner email");
-                return Response.RES_PARAMETER_ERROR;
-            }
-
-            if (omPublisher.getEmail() != null && !StringUtils.isEmpty(omPublisher.getEmail())
-                    && !StringUtils.isEmpty(dbPublisher.getEmail()) && !omPublisher.getEmail().equals(dbPublisher.getEmail())) {
-                UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
-                if (umUser == null) {
-                    umUser = addUser(omPublisher);
+            if (currentUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
+                if (omPublisher.getEmail() != null && !StringUtils.isEmpty(omPublisher.getEmail())
+                        && !StringUtils.isEmpty(dbPublisher.getEmail()) && !omPublisher.getEmail().equals(dbPublisher.getEmail())) {
+                    UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
+                    if (umUser == null) {
+                        umUser = addUser(omPublisher);
+                    }
+                    omPublisher.setOwnerUserId(umUser.getId());
+                } else {
+                    omPublisher.setOwnerUserId(dbPublisher.getOwnerUserId());
                 }
-                omPublisher.setOwnerUserId(umUser.getId());
-            } else {
-                omPublisher.setOwnerUserId(dbPublisher.getOwnerUserId());
             }
             omPublisher.setLastmodify(new Date());
             int result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);

@@ -18,22 +18,44 @@ public class Response {
 
     public static final int CODE_RES_FAILED = 1001;
 
+    public static final int CODE_DATA_DOES_NOT_EXISTED = 1002;
+
     public static final int CODE_DATABASE_ERROR = 1003;
 
     public static final int CODE_PARAMETER_ERROR = 1004;
 
     public static final int CODE_RES_DATA_EXISTED = 1005;
+
+    public static final int CODE_RES_SEND_MAIL_FAILED = 1008;
+
+    public static final int CODE_DATA_INCOMPLETE = 1009;
+
+    public static final int CODE_PARAMETER_NULL = 1010;
+
     public static final Response RES_UNAUTHORIZED = new Response(CODE_RES_UNAUTHORIZED, STATUS_DISABLE, "Insufficient authority");
+
     public static final Response RES_FAILED = new Response(CODE_RES_FAILED, STATUS_DISABLE, "Request failed");
-    public static final Response RES_DATA_DOES_NOT_EXISTED = new Response(1002, STATUS_DISABLE, "Data does not existed");
+
+    public static final Response RES_DATA_DOES_NOT_EXISTED = new Response(CODE_DATA_DOES_NOT_EXISTED, STATUS_DISABLE, "Data does not exist");
+
     public static final Response RES_DB_ERROR = new Response(CODE_DATABASE_ERROR, STATUS_DISABLE, "Database error");
+
     public static final Response RES_PARAMETER_ERROR = new Response(CODE_PARAMETER_ERROR, STATUS_DISABLE, "Parameter error");
-    public static final Response RES_DATA_EXISTED = new Response(CODE_RES_DATA_EXISTED, STATUS_DISABLE, "Data does existed");
-    public static final Response RES_PUBLISHER_NOT_EXISTED = new Response(1006, STATUS_DISABLE, "Publisher does existed");
-    public static final Response RES_PUBLISHER_APP_NOT_EXISTED = new Response(1007, STATUS_DISABLE, "Publisher APP does existed");
+
+    public static final Response RES_DATA_EXISTED = new Response(CODE_RES_DATA_EXISTED, STATUS_DISABLE, "Data already exists");
+
+    public static final Response RES_PUBLISHER_NOT_EXISTED = new Response(1006, STATUS_DISABLE, "Publisher already exists");
+
+    public static final Response RES_PUBLISHER_APP_NOT_EXISTED = new Response(1007, STATUS_DISABLE, "Publisher APP already exists");
+
+    public static final Response RES_SEND_MAIL_FAILED = new Response(CODE_RES_SEND_MAIL_FAILED, STATUS_DISABLE, "Send mail failed");
+
     private int code;
+
     private String status;
+
     private String msg;
+
     private Object data;
 
     public Response() {
@@ -61,6 +83,7 @@ public class Response {
 
     public static Response failure(int code, String msg) {
         Response response = build();
+        response.status = STATUS_DISABLE;
         response.code = code;
         response.msg(msg);
         return response;
@@ -76,11 +99,6 @@ public class Response {
 
     public Response code(int code) {
         this.code = code;
-        return this;
-    }
-
-    public Response stats(String stats) {
-        this.status = stats;
         return this;
     }
 

@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,9 @@ import java.util.stream.Collectors;
 public class UserController extends BaseController {
 
     protected static final Logger log = LogManager.getLogger();
+
+    @Value("${admob.client_id}")
+    public String adtClientId;
 
     @Autowired
     private UserService userService;
@@ -53,7 +57,8 @@ public class UserController extends BaseController {
         try {
             UmUser user = userService.getCurrentUser();
             log.info("current user:{}", JSON.toJSONString(user));
-            UmUser resultUser = user.clone();
+            JSONObject resultUser = (JSONObject) JSONObject.toJSON(user.clone());
+            resultUser.put("clientId", adtClientId);
             return Response.buildSuccess(resultUser);
         } catch (Exception e) {
             log.error("getCurrentUserInfo error:", e);

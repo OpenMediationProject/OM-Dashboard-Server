@@ -45,7 +45,7 @@ public class ReportService extends BaseService {
     private StatAdnetworkMapper statAdnetworkMapper;
 
     @Autowired
-    private FileNameService fileNameService;
+    private FieldNameService fieldNameService;
 
     /**
      * Get dau lr revenue reports
@@ -56,8 +56,13 @@ public class ReportService extends BaseService {
     public Response getReport(ReportConditionDTO reportConditionDTO, Set<String> reportTypeSet) {
         try {
             this.handleDataPermissions(reportConditionDTO);
+            Set<String> dimensionSet = new HashSet<>();
+            if (reportConditionDTO.getDimension() != null && reportConditionDTO.getDimension().length > 0) {
+                Collections.addAll(dimensionSet, reportConditionDTO.getDimension());
+            }
+
             List<JSONObject> resultReport = new ArrayList<>();
-            if (reportTypeSet.contains("api")) {
+            if (reportTypeSet.contains("api") && !dimensionSet.contains("sceneId")) {
                 List<StatAdnetwork> statAdnetworks = this.getAdNetworkReport(reportConditionDTO);
                 statAdnetworks.forEach(statAdnetwork -> {
                     resultReport.add((JSONObject) JSONObject.toJSON(statAdnetwork));
@@ -71,7 +76,7 @@ public class ReportService extends BaseService {
                 });
             }
 
-            if (reportTypeSet.contains("dau")) {
+            if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
                 List<StatDau> statDaus = this.getDauReport(reportConditionDTO);
                 statDaus.forEach(statDau -> {
                     JSONObject resultStatDau = (JSONObject) JSONObject.toJSON(statDau);
@@ -103,7 +108,7 @@ public class ReportService extends BaseService {
                     result.put("day", Util.getYYYYMMDD(result.getDate("day")));
                 }
             });
-            fileNameService.fillName(results);
+            fieldNameService.fillName(results);
             return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("getReport_error {} ", JSONObject.toJSONString(reportConditionDTO), e);
@@ -429,6 +434,11 @@ public class ReportService extends BaseService {
         List<Integer> instanceIds = Util.buildIntegerList(reportConditionDTO.getInstanceId());
         if (!CollectionUtils.isEmpty(instanceIds)) {
             criteria.andInstanceIdIn(instanceIds);
+        }
+
+        List<Integer> sceneIds = Util.buildIntegerList(reportConditionDTO.getSceneId());
+        if (!CollectionUtils.isEmpty(sceneIds)) {
+            criteria.andSceneIdIn(sceneIds);
         }
 
         List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());

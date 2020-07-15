@@ -6,7 +6,6 @@ package com.adtiming.om.ds.service;
 import com.adtiming.om.ds.dao.OmPlacementCountryMapper;
 import com.adtiming.om.ds.dao.OmPlacementMapper;
 import com.adtiming.om.ds.dao.OmPlacementSceneMapper;
-import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.RoleType;
@@ -43,16 +42,6 @@ public class PlacementService extends BaseService {
 
     @Resource
     private OmPlacementCountryMapper omPlacementCountryMapper;
-
-    /**
-     * Select all placements by publisher app id
-     *
-     * @param pubAppId
-     * @return placements
-     */
-    public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId) {
-        return this.getPlacements(pubAppId, null, null, null);
-    }
 
     /**
      * Select all placements from database which related to current user
@@ -208,34 +197,6 @@ public class PlacementService extends BaseService {
         defaultPlacementScene.setName("Default_Scene");
         defaultPlacementScene.setPlacementId(omPlacement.getId());
         this.createPlacementScene(defaultPlacementScene);
-    }
-
-    /**
-     * Build default placement database object for publisher app, and insert into database
-     *
-     * @param omPublisherApp
-     */
-    public void createDefaultPlacement(OmPublisherApp omPublisherApp) {
-        Date currentTime = new Date();
-        OmPlacementWithBLOBs defaultInterstitialPlacement = new OmPlacementWithBLOBs();
-        defaultInterstitialPlacement.setName("Default_Interstitial");
-        defaultInterstitialPlacement.setPubAppId(omPublisherApp.getId());
-        defaultInterstitialPlacement.setPublisherId(omPublisherApp.getPublisherId());
-        defaultInterstitialPlacement.setAdType((byte) AdvertisementType.Interstitial.ordinal());
-        defaultInterstitialPlacement.setPreloadTimeout(DEFAULT_PRELOAD_TIMEOUT);
-        defaultInterstitialPlacement.setCreateTime(currentTime);
-        defaultInterstitialPlacement.setCreateTime(currentTime);
-        this.createPlacement(defaultInterstitialPlacement);
-
-        OmPlacementWithBLOBs defaultRewardVideoPlacement = new OmPlacementWithBLOBs();
-        defaultRewardVideoPlacement.setName("Default_RewardVideo");
-        defaultRewardVideoPlacement.setPubAppId(omPublisherApp.getId());
-        defaultRewardVideoPlacement.setPublisherId(omPublisherApp.getPublisherId());
-        defaultRewardVideoPlacement.setAdType((byte) AdvertisementType.RewardedVideo.ordinal());
-        defaultRewardVideoPlacement.setPreloadTimeout(DEFAULT_PRELOAD_TIMEOUT);
-        defaultRewardVideoPlacement.setCreateTime(currentTime);
-        defaultRewardVideoPlacement.setCreateTime(currentTime);
-        this.createPlacement(defaultRewardVideoPlacement);
     }
 
     /**

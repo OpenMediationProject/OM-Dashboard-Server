@@ -110,12 +110,12 @@ public class AdmobService extends BaseService {
         }
     }
 
-    public Response saveTokenByCode(Integer accountId, String authCode) throws Exception {
-        ReportAdnetworkAccount adnetworkAccount = this.reportAdnAccountMapper.selectByPrimaryKey(accountId);
-        if (adnetworkAccount == null) {
-            log.error("Admob ReportAdnetworkAccount {} does not existed", accountId);
-            return Response.RES_DATA_DOES_NOT_EXISTED;
-        }
+    public Response saveTokenByCode(String authCode) throws Exception {
+//        ReportAdnetworkAccount adnetworkAccount = this.reportAdnAccountMapper.selectByPrimaryKey(accountId);
+//        if (adnetworkAccount == null) {
+//            log.error("Admob ReportAdnetworkAccount {} does not existed", accountId);
+//            return Response.RES_DATA_DOES_NOT_EXISTED;
+//        }
         // Exchange auth code for access token
         //GoogleClientSecrets clientSecrets = getClientSecrets();
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
@@ -131,20 +131,21 @@ public class AdmobService extends BaseService {
                 .execute();
         //GoogleIdToken idToken = tokenResponse.parseIdToken();
         String refreshToken = tokenResponse.getRefreshToken();
-        log.info("Account id {} get refresh token {}", accountId, refreshToken);
+        log.info("Get refresh token {}", refreshToken);
         if (StringUtils.isBlank(refreshToken)) {
             throw new Exception("This Account is granted!");
         }
         String publisherId = getAdmobPublisherId(admobClientId, admobClientSecret, refreshToken);
-        adnetworkAccount.setUserId(publisherId);
-        adnetworkAccount.setAdnAppToken(refreshToken);
-        int dbResult = this.reportAdnAccountMapper.updateByPrimaryKeySelective(adnetworkAccount);
-        if (dbResult <= 0) {
-            log.error("Update adnetworkAccount {} failed", JSONObject.toJSON(adnetworkAccount));
-            return Response.RES_FAILED;
-        }
+//        adnetworkAccount.setUserId(publisherId);
+//        adnetworkAccount.setAdnAppToken(refreshToken);
+//        int dbResult = this.reportAdnAccountMapper.updateByPrimaryKeySelective(adnetworkAccount);
+//        if (dbResult <= 0) {
+//            log.error("Update adnetworkAccount {} failed", JSONObject.toJSON(adnetworkAccount));
+//            return Response.RES_FAILED;
+//        }
         JSONObject result = new JSONObject();
         result.put("pubId", publisherId);
+        result.put("refreshToken", refreshToken);
         return Response.buildSuccess(result);
     }
 

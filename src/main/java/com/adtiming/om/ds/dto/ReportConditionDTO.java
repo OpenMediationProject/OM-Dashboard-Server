@@ -28,6 +28,8 @@ public class ReportConditionDTO {
 
     private Integer[] instanceId;
 
+    private Integer[] sceneId;
+
     private Integer[] adnId;
 
     private Byte[] abt;
@@ -118,6 +120,14 @@ public class ReportConditionDTO {
 
     public void setAdnId(Integer[] adnId) {
         this.adnId = adnId;
+    }
+
+    public Integer[] getSceneId() {
+        return sceneId;
+    }
+
+    public void setSceneId(Integer[] sceneId) {
+        this.sceneId = sceneId;
     }
 
     public Byte[] getAbt() {

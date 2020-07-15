@@ -45,7 +45,6 @@ public class Util {
 
     public static Date getLastMonthFirstDay() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.add(Calendar.MONTH, -1);
         return getDateYYYYMMDD(getYYYYMMDD(calendar.getTime()));
@@ -53,9 +52,8 @@ public class Util {
 
     public static Date getLastMonthLastDay() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.add(Calendar.MONTH, -1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DATE, -1);
         return getDateYYYYMMDD(getYYYYMMDD(calendar.getTime()));
     }
 

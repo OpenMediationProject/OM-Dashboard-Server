@@ -1,7 +1,7 @@
 package com.adtiming.om.ds;
 
 import com.adtiming.om.ds.dto.ReportConditionDTO;
-import com.adtiming.om.ds.service.FileNameService;
+import com.adtiming.om.ds.service.FieldNameService;
 import com.adtiming.om.ds.service.ReportService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class ReportTest extends BaseCommonTests {
     ReportService reportService;
 
     @Autowired
-    FileNameService fileNameService;
+    FieldNameService fieldNameService;
 
     @Test
     public void testGetDashboardHeadRevenues() throws Exception {
@@ -47,7 +47,7 @@ public class ReportTest extends BaseCommonTests {
 
     @Test
     public void testGetReportList() throws Exception {
-        fileNameService.initIdName();
+        fieldNameService.initIdName();
         ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
         reportConditionDTO.setDateBegin("2020-02-20");
         reportConditionDTO.setDateEnd("2020-03-03");

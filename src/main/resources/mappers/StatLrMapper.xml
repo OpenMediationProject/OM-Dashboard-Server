@@ -11,19 +11,20 @@
     <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
     <result column="placement_id" jdbcType="INTEGER" property="placementId" />
     <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="abt" jdbcType="TINYINT" property="abt" />
-    <result column="waterfall_request" jdbcType="BIGINT" property="waterfallRequest" />
-    <result column="waterfall_filled" jdbcType="BIGINT" property="waterfallFilled" />
-    <result column="instance_request" jdbcType="BIGINT" property="instanceRequest" />
-    <result column="instance_filled" jdbcType="BIGINT" property="instanceFilled" />
-    <result column="video_start" jdbcType="BIGINT" property="videoStart" />
-    <result column="video_complete" jdbcType="BIGINT" property="videoComplete" />
-    <result column="called_show" jdbcType="BIGINT" property="calledShow" />
-    <result column="is_ready_true" jdbcType="BIGINT" property="isReadyTrue" />
-    <result column="is_ready_false" jdbcType="BIGINT" property="isReadyFalse" />
-    <result column="click" jdbcType="BIGINT" property="click" />
-    <result column="impr" jdbcType="BIGINT" property="impr" />
+    <result column="waterfall_request" jdbcType="INTEGER" property="waterfallRequest" />
+    <result column="waterfall_filled" jdbcType="INTEGER" property="waterfallFilled" />
+    <result column="instance_request" jdbcType="INTEGER" property="instanceRequest" />
+    <result column="instance_filled" jdbcType="INTEGER" property="instanceFilled" />
+    <result column="video_start" jdbcType="INTEGER" property="videoStart" />
+    <result column="video_complete" jdbcType="INTEGER" property="videoComplete" />
+    <result column="called_show" jdbcType="INTEGER" property="calledShow" />
+    <result column="is_ready_true" jdbcType="INTEGER" property="isReadyTrue" />
+    <result column="is_ready_false" jdbcType="INTEGER" property="isReadyFalse" />
+    <result column="click" jdbcType="INTEGER" property="click" />
+    <result column="impr" jdbcType="INTEGER" property="impr" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -57,7 +58,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, instance_id, 
-    adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
+    scene_id, adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
     video_start, video_complete, called_show, is_ready_true, is_ready_false, click, impr, 
     create_time
   </sql>
@@ -93,20 +94,20 @@
     </selectKey>
     insert into stat_lr (day, hour, country, 
       platform, publisher_id, pub_app_id, 
-      placement_id, instance_id, adn_id, 
-      abt, waterfall_request, waterfall_filled, 
-      instance_request, instance_filled, video_start, 
-      video_complete, called_show, is_ready_true, 
-      is_ready_false, click, impr, 
-      create_time)
+      placement_id, instance_id, scene_id, 
+      adn_id, abt, waterfall_request, 
+      waterfall_filled, instance_request, instance_filled, 
+      video_start, video_complete, called_show, 
+      is_ready_true, is_ready_false, click, 
+      impr, create_time)
     values (#{day,jdbcType=DATE}, #{hour,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, 
       #{platform,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
-      #{placementId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, 
-      #{abt,jdbcType=TINYINT}, #{waterfallRequest,jdbcType=INTEGER}, #{waterfallFilled,jdbcType=INTEGER}, 
-      #{instanceRequest,jdbcType=INTEGER}, #{instanceFilled,jdbcType=INTEGER}, #{videoStart,jdbcType=INTEGER}, 
-      #{videoComplete,jdbcType=INTEGER}, #{calledShow,jdbcType=INTEGER}, #{isReadyTrue,jdbcType=INTEGER}, 
-      #{isReadyFalse,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, #{impr,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      #{placementId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER}, 
+      #{adnId,jdbcType=INTEGER}, #{abt,jdbcType=TINYINT}, #{waterfallRequest,jdbcType=INTEGER}, 
+      #{waterfallFilled,jdbcType=INTEGER}, #{instanceRequest,jdbcType=INTEGER}, #{instanceFilled,jdbcType=INTEGER}, 
+      #{videoStart,jdbcType=INTEGER}, #{videoComplete,jdbcType=INTEGER}, #{calledShow,jdbcType=INTEGER}, 
+      #{isReadyTrue,jdbcType=INTEGER}, #{isReadyFalse,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, 
+      #{impr,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatLr">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -137,6 +138,9 @@
       </if>
       <if test="instanceId != null">
         instance_id,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
       </if>
       <if test="adnId != null">
         adn_id,
@@ -206,6 +210,9 @@
       <if test="instanceId != null">
         #{instanceId,jdbcType=INTEGER},
       </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
       <if test="adnId != null">
         #{adnId,jdbcType=INTEGER},
       </if>
@@ -274,6 +281,9 @@
       <if test="instanceId != null">
         instance_id = #{instanceId,jdbcType=INTEGER},
       </if>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
       <if test="adnId != null">
         adn_id = #{adnId,jdbcType=INTEGER},
       </if>
@@ -329,6 +339,7 @@
       pub_app_id = #{pubAppId,jdbcType=INTEGER},
       placement_id = #{placementId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
+      scene_id = #{sceneId,jdbcType=INTEGER},
       adn_id = #{adnId,jdbcType=INTEGER},
       abt = #{abt,jdbcType=TINYINT},
       waterfall_request = #{waterfallRequest,jdbcType=INTEGER},
@@ -400,6 +411,9 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_sceneId')">
+      scene_id,
+    </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
@@ -439,6 +453,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_sceneId')">
+      scene_id,
     </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
