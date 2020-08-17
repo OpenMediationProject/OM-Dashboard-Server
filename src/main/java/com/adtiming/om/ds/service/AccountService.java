@@ -330,7 +330,7 @@ public class AccountService extends BaseService {
     }
 
     @Transactional
-    Response isUserRelateToAccount(ReportAdnetworkAccount account) {
+    private Response isUserRelateToAccount(ReportAdnetworkAccount account) {
         UmUser currentUser = this.getCurrentUser();
         ReportAdnetworkAccountPublisherKey key = new ReportAdnetworkAccountPublisherKey();
         key.setPublisherId(currentUser.getPublisherId());

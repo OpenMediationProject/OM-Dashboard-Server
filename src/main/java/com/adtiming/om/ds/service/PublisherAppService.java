@@ -237,6 +237,7 @@ public class PublisherAppService extends BaseService {
     public boolean updatePublisherAppInfo(OmPublisherApp omPublisherApp) {
         try {
             String updateUrl = String.format(APP_UPDATE_URL, omPublisherApp.getAppId());
+            log.info("Update publisher app's info : {}", updateUrl);
             HttpGet httpGet = new HttpGet(updateUrl);
             HttpResponse response = HttpConnMgr.getHttpClient().execute(httpGet);
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
@@ -273,9 +274,6 @@ public class PublisherAppService extends BaseService {
                 }
                 if (appInfoJson.containsKey("os_require")) {
                     omPublisherApp.setOsRequire(appInfoJson.getString("os_require"));
-                }
-                if (appInfoJson.containsKey("country")) {
-                    omPublisherApp.setCountry(appInfoJson.getString("country"));
                 }
                 if (appInfoJson.containsKey("available_countries")) {
                     omPublisherApp.setAvailableCountries(appInfoJson.getString("available_countries"));
