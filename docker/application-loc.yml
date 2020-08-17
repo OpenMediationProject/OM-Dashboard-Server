@@ -10,6 +10,7 @@ logging:
   config: classpath:log4j2-prod.xml
 
 om.adc.domain: http://adc.adtiming.com
+mreport.domain: 
 
 admob:
   adt:

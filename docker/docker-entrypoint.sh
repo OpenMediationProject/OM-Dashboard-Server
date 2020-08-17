@@ -102,6 +102,11 @@ do
             sed -i "/om.adc.domain/s@om.adc.domain.*@om.adc.domain: ${!env_var}@g" ${CONFFILE}/application-loc.yml
             continue
         fi
+	if [[ ${item_name} = "mreportdomain" ]];then
+	    loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
+            sed -i "/mreport.domain/s@mreport.domain.*@mreport.domain: ${!env_var}@g" ${CONFFILE}/application-loc.yml
+            continue
+	fi
         updateymlConfig "$item_name" "${!env_var}" "${CONFFILE}/application-loc.yml"
     fi
 
