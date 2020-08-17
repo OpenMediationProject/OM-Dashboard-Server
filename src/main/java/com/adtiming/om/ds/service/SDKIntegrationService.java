@@ -263,7 +263,7 @@ public class SDKIntegrationService extends BaseService {
         if (result != null) {
             criteria.andDevResultEqualTo((byte) result.ordinal());
         }
-        criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
         devAppCriteria.setOrderByClause(" lastmodify desc ");
         List<OmDevApp> devApps = omDevAppMapper.select(devAppCriteria);
@@ -292,7 +292,7 @@ public class SDKIntegrationService extends BaseService {
         if (publisherId != null) {
             criteria.andPublisherIdEqualTo(publisherId);
         }
-        criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
         if (status != null) {
             criteria.andStatusEqualTo(status);
         }

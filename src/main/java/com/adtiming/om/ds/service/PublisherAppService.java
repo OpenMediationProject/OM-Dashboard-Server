@@ -4,7 +4,6 @@
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dto.NormalStatus;
-import com.adtiming.om.ds.dto.PublisherAppDTO;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmPublisherApp;
 import com.adtiming.om.ds.model.OmPublisherAppCriteria;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
@@ -64,15 +62,6 @@ public class PublisherAppService extends BaseService {
     }
 
     /**
-     * Select all publisher apps
-     *
-     * @return publisherApps
-     */
-    public List<OmPublisherApp> getPublisherApps() {
-        return this.getPublisherApps(null, null, null);
-    }
-
-    /**
      * Select publisher apps
      *
      * @param pubAppIds
@@ -102,7 +91,7 @@ public class PublisherAppService extends BaseService {
             criteria.andPublisherIdIn(userPublisherIds);
         }
         criteria.andIdIn(this.getAppIdsOfCurrentUser());
-        criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
         omPublisherAppCriteria.setOrderByClause(" id desc ");
         List<OmPublisherApp> publisherApps = this.omPublisherAppMapper.select(omPublisherAppCriteria);
         log.info("Get publisher apps size: {}", publisherApps.size());
@@ -161,46 +150,32 @@ public class PublisherAppService extends BaseService {
      */
     @Transactional
     public Response createPublisherApp(OmPublisherApp omPublisherApp) {
-        try {
-            if (omPublisherApp.getPublisherId() == null || omPublisherApp.getPublisherId() <= 0) {
-                Integer publisherId = this.getCurrentUser().getPublisherId();
-                if (publisherId == null) {
-                    throw new RuntimeException("There is no publisher with current user" + JSONObject.toJSON(this.getCurrentUser()));
-                }
-                omPublisherApp.setPublisherId(publisherId);
+        if (omPublisherApp.getPublisherId() == null || omPublisherApp.getPublisherId() <= 0) {
+            Integer publisherId = this.getCurrentUser().getPublisherId();
+            if (publisherId == null) {
+                throw new RuntimeException("There is no publisher with current user" + JSONObject.toJSON(this.getCurrentUser()));
             }
-
-            OmPublisherApp sameAppIdOne = this.getPublisherApp(omPublisherApp.getPublisherId(), omPublisherApp.getAppId());
-            if (sameAppIdOne != null) {
-                log.warn("App id {} existed!", omPublisherApp.getAppId());
-                return Response.build(Response.CODE_RES_DATA_EXISTED, Response.STATUS_DISABLE, "App id existed!");
-            }
-
-            omPublisherApp.setAppKey(Util.buildAppKey());
-            omPublisherApp.setStatus((byte) NormalStatus.Active.ordinal());
-            omPublisherApp.setCreateTime(new Date());
-            omPublisherApp.setLastmodify(new Date());
-            int id = this.omPublisherAppMapper.insertSelective(omPublisherApp);
-            if (id > 0) {
-                log.info("create publisher app {} successfully", JSONObject.toJSONString(omPublisherApp));
-                UmUserApp userApp = new UmUserApp();
-                userApp.setUserId(this.getCurrentUser().getId());
-                userApp.setPubAppId(omPublisherApp.getId());
-                int result = this.umUserAppMapper.insertSelective(userApp);
-                if (result > 0) {
-                    log.info("Create user app {} success", JSONObject.toJSONString(userApp));
-                    return Response.buildSuccess(omPublisherApp);
-                } else {
-                    throw new RuntimeException("Create user app failed" + JSONObject.toJSONString(userApp));
-                }
-            } else {
-                throw new RuntimeException("Update publisher app failed" + JSONObject.toJSONString(omPublisherApp));
-            }
-        } catch (Exception e) {
-            log.error("Create publisher app error {} ", JSONObject.toJSONString(omPublisherApp), e);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            omPublisherApp.setPublisherId(publisherId);
         }
-        return Response.RES_FAILED;
+
+        omPublisherApp.setAppKey(Util.buildAppKey());
+        omPublisherApp.setStatus((byte) NormalStatus.Active.ordinal());
+        omPublisherApp.setCreateTime(new Date());
+        omPublisherApp.setLastmodify(new Date());
+        int result = this.omPublisherAppMapper.insertSelective(omPublisherApp);
+        if (result <= 0) {
+            throw new RuntimeException("Update publisher app failed" + JSONObject.toJSONString(omPublisherApp));
+        }
+        log.info("create publisher app {} successfully", JSONObject.toJSONString(omPublisherApp));
+        UmUserApp userApp = new UmUserApp();
+        userApp.setUserId(this.getCurrentUser().getId());
+        userApp.setPubAppId(omPublisherApp.getId());
+        result = this.umUserAppMapper.insertSelective(userApp);
+        if (result <= 0) {
+            throw new RuntimeException("Create user app failed" + JSONObject.toJSONString(userApp));
+        }
+        log.info("Create user app {} success", JSONObject.toJSONString(userApp));
+        return Response.buildSuccess(omPublisherApp);
     }
 
     /**
@@ -216,15 +191,17 @@ public class PublisherAppService extends BaseService {
     /**
      * Select publisher app from database by app id
      *
-     * @param publisherId
      * @param appId
+     * @param status
      * @return publisherApp
      */
-    public OmPublisherApp getPublisherApp(Integer publisherId, String appId) {
+    public OmPublisherApp getPublisherApp(String appId, NormalStatus status) {
         OmPublisherAppCriteria omPublisherAppCriteria = new OmPublisherAppCriteria();
         OmPublisherAppCriteria.Criteria criteria = omPublisherAppCriteria.createCriteria();
         criteria.andAppIdEqualTo(appId);
-        criteria.andPublisherIdEqualTo(publisherId);
+        if (status != null) {
+            criteria.andStatusEqualTo((byte) status.ordinal());
+        }
         List<OmPublisherApp> publisherApps = this.omPublisherAppMapper.select(omPublisherAppCriteria);
         if (CollectionUtils.isEmpty(publisherApps)) {
             return null;
@@ -235,34 +212,21 @@ public class PublisherAppService extends BaseService {
     /**
      * Update publisher app's info
      *
-     * @param publisherAppDTO
+     * @param omPublisherApp
      */
-    public Response updatePublisherApp(PublisherAppDTO publisherAppDTO) {
-        try {
-            OmPublisherApp omPublisherApp = this.omPublisherAppMapper.selectByPrimaryKey(publisherAppDTO.getId());
-            if (omPublisherApp == null) {
-                log.warn("App id {} existed!", publisherAppDTO.getAppId());
-                return Response.RES_DATA_DOES_NOT_EXISTED;
-            }
-            omPublisherApp.setAppId(publisherAppDTO.getAppId());
-            omPublisherApp.setAppName(publisherAppDTO.getAppName());
-            if (publisherAppDTO.getStatus() != null) {
-                omPublisherApp.setStatus(publisherAppDTO.getStatus());
-            }
-            if (publisherAppDTO.getDebugStatus() != null) {
-                omPublisherApp.setDebugStatus(publisherAppDTO.getDebugStatus());
-            }
-            omPublisherApp.setLastmodify(new Date());
-            int result = this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
-            if (result <= 0) {
-                throw new RuntimeException("update publisher app " + JSONObject.toJSONString(publisherAppDTO) + " failed");
-            }
-            log.info("Update publisher app {} successfully", JSONObject.toJSONString(publisherAppDTO));
-            return Response.build();
-        } catch (Exception e) {
-            log.error("updatePublisherApp error {}", JSONObject.toJSONString(publisherAppDTO), e);
+    public Response updatePublisherApp(OmPublisherApp omPublisherApp) {
+        OmPublisherApp dbOmPublisherApp = this.omPublisherAppMapper.selectByPrimaryKey(omPublisherApp.getId());
+        if (dbOmPublisherApp == null) {
+            log.warn("App id {} existed!", omPublisherApp.getAppId());
+            return Response.RES_DATA_DOES_NOT_EXISTED;
         }
-        return Response.RES_FAILED;
+        omPublisherApp.setLastmodify(new Date());
+        int result = this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
+        if (result <= 0) {
+            throw new RuntimeException("update publisher app " + JSONObject.toJSONString(omPublisherApp) + " failed");
+        }
+        log.info("Update publisher app {} successfully", JSONObject.toJSONString(omPublisherApp));
+        return Response.build();
     }
 
     /**

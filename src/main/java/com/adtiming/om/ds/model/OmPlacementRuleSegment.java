@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -18,6 +15,10 @@ public class OmPlacementRuleSegment {
     private Byte conType;
 
     private Byte gender;
+
+    private Integer ageMin;
+
+    private Integer ageMax;
 
     private String interest;
 
@@ -85,6 +86,22 @@ public class OmPlacementRuleSegment {
 
     public void setGender(Byte gender) {
         this.gender = gender;
+    }
+
+    public Integer getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(Integer ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public Integer getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(Integer ageMax) {
+        this.ageMax = ageMax;
     }
 
     public String getInterest() {
@@ -185,6 +202,8 @@ public class OmPlacementRuleSegment {
             && (this.getFrequency() == null ? other.getFrequency() == null : this.getFrequency().equals(other.getFrequency()))
             && (this.getConType() == null ? other.getConType() == null : this.getConType().equals(other.getConType()))
             && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
+            && (this.getAgeMin() == null ? other.getAgeMin() == null : this.getAgeMin().equals(other.getAgeMin()))
+            && (this.getAgeMax() == null ? other.getAgeMax() == null : this.getAgeMax().equals(other.getAgeMax()))
             && (this.getInterest() == null ? other.getInterest() == null : this.getInterest().equals(other.getInterest()))
             && (this.getIapMin() == null ? other.getIapMin() == null : this.getIapMin().equals(other.getIapMin()))
             && (this.getIapMax() == null ? other.getIapMax() == null : this.getIapMax().equals(other.getIapMax()))
@@ -207,6 +226,8 @@ public class OmPlacementRuleSegment {
         result = prime * result + ((getFrequency() == null) ? 0 : getFrequency().hashCode());
         result = prime * result + ((getConType() == null) ? 0 : getConType().hashCode());
         result = prime * result + ((getGender() == null) ? 0 : getGender().hashCode());
+        result = prime * result + ((getAgeMin() == null) ? 0 : getAgeMin().hashCode());
+        result = prime * result + ((getAgeMax() == null) ? 0 : getAgeMax().hashCode());
         result = prime * result + ((getInterest() == null) ? 0 : getInterest().hashCode());
         result = prime * result + ((getIapMin() == null) ? 0 : getIapMin().hashCode());
         result = prime * result + ((getIapMax() == null) ? 0 : getIapMax().hashCode());

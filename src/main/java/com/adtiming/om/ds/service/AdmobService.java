@@ -31,10 +31,20 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 
+/**
+ *
+ * @author dianbo ruan
+ */
 @Service
 public class AdmobService extends BaseService {
 
     protected static final Logger log = LogManager.getLogger();
+
+    @Value("${admob.client_id}")
+    public String adtClientId;
+
+    @Value("${admob.client_secret}")
+    public String adtClientSecret;
 
     @Resource
     private OmAdnetworkAppMapper omAdnetworkAppMapper;
@@ -44,12 +54,6 @@ public class AdmobService extends BaseService {
 
     @Value("${om.adc.domain}")
     private String adcDomain;
-
-    @Value("${admob.client_id}")
-    public String admobClientId;
-
-    @Value("${admob.client_secret}")
-    public String admobClientSecret;
 
     /**
      * Get admob auth grant url
@@ -82,48 +86,53 @@ public class AdmobService extends BaseService {
         return Response.buildSuccess(url);
     }
 
-    public String getAdmobPublisherId(String clientId, String clientSecret, String refreshToken) throws IOException {
-        NetHttpTransport transport = new NetHttpTransport.Builder().build();
-        GoogleCredential credential = new GoogleCredential.Builder()
-                .setJsonFactory(JacksonFactory.getDefaultInstance())
-                .setTransport(transport)
-                .setClientSecrets(clientId, clientSecret)
-                .build()
-                .setRefreshToken(refreshToken);
-        boolean isRefreshed = credential.refreshToken();
+    public Response getAdmobPublisherId(String clientId, String clientSecret, String refreshToken) {
+        try {
+            NetHttpTransport transport = new NetHttpTransport.Builder().build();
+            GoogleCredential credential = new GoogleCredential.Builder()
+                    .setJsonFactory(JacksonFactory.getDefaultInstance())
+                    .setTransport(transport)
+                    .setClientSecrets(clientId, clientSecret)
+                    .build()
+                    .setRefreshToken(refreshToken);
+            boolean isRefreshed = credential.refreshToken();
 
-        if (!isRefreshed) {
-            throw new IOException("Refresh credential failed.");
-        }
-        AdSense adsense = new AdSense.Builder(transport,
-                JacksonFactory.getDefaultInstance(), credential)
-                .setApplicationName("google_api")
-                .build();
-        Accounts accounts = adsense.accounts().list()
-                .setMaxResults(1)
-                .execute();
-        if (accounts.getItems() != null && !accounts.getItems().isEmpty()) {
-            Account account = accounts.getItems().get(0);
-            return account.getId();
-        } else {
-            throw new IOException("No accounts found.");
+            if (!isRefreshed) {
+                throw new IOException("Refresh credential failed.");
+            }
+            AdSense adsense = new AdSense.Builder(transport,
+                    JacksonFactory.getDefaultInstance(), credential)
+                    .setApplicationName("google_api")
+                    .build();
+            Accounts accounts = adsense.accounts().list()
+                    .setMaxResults(1)
+                    .execute();
+            if (accounts.getItems() != null && !accounts.getItems().isEmpty()) {
+                Account account = accounts.getItems().get(0);
+                if (StringUtils.isEmpty(account.getId())) {
+                    log.error("Get account {} admobPublisherId failed", JSONObject.toJSON(account));
+                    return Response.failure(Response.CODE_DATA_DOES_NOT_EXISTED, "Get admob publisher id failed! Id is empty!");
+                }
+                return Response.buildSuccess(account.getId());
+            } else {
+                throw new IOException("No accounts found.");
+            }
+        } catch (Exception e) {
+            log.error("Grant failed, get admob publisher id by client id {} client secret {} refresh token {} error:",
+                    clientId, clientSecret, refreshToken, e);
+            return Response.failure(Response.CODE_DATA_INCOMPLETE, "Grant failed, get admob publisher id failed " + e.getMessage());
         }
     }
 
     public Response saveTokenByCode(String authCode) throws Exception {
-//        ReportAdnetworkAccount adnetworkAccount = this.reportAdnAccountMapper.selectByPrimaryKey(accountId);
-//        if (adnetworkAccount == null) {
-//            log.error("Admob ReportAdnetworkAccount {} does not existed", accountId);
-//            return Response.RES_DATA_DOES_NOT_EXISTED;
-//        }
         // Exchange auth code for access token
         //GoogleClientSecrets clientSecrets = getClientSecrets();
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
                 new NetHttpTransport.Builder().build(),
                 JacksonFactory.getDefaultInstance(),
                 "https://oauth2.googleapis.com/token",//clientSecrets.getDetails().getTokenUri(),
-                admobClientId,//clientSecrets.getDetails().getClientId(),
-                admobClientSecret,//clientSecrets.getDetails().getClientSecret(),
+                adtClientId,//clientSecrets.getDetails().getClientId(),
+                adtClientSecret,//clientSecrets.getDetails().getClientSecret(),
                 authCode,
                 "postmessage")  // Specify the same redirect URI that you use with your web
                 // app. If you don't have a web version of your app, you can
@@ -135,14 +144,11 @@ public class AdmobService extends BaseService {
         if (StringUtils.isBlank(refreshToken)) {
             throw new Exception("This Account is granted!");
         }
-        String publisherId = getAdmobPublisherId(admobClientId, admobClientSecret, refreshToken);
-//        adnetworkAccount.setUserId(publisherId);
-//        adnetworkAccount.setAdnAppToken(refreshToken);
-//        int dbResult = this.reportAdnAccountMapper.updateByPrimaryKeySelective(adnetworkAccount);
-//        if (dbResult <= 0) {
-//            log.error("Update adnetworkAccount {} failed", JSONObject.toJSON(adnetworkAccount));
-//            return Response.RES_FAILED;
-//        }
+        Response response = getAdmobPublisherId(adtClientId, adtClientSecret, refreshToken);
+        if (response.getCode() != Response.SUCCESS_CODE){
+            return response;
+        }
+        String publisherId = response.getData().toString();
         JSONObject result = new JSONObject();
         result.put("pubId", publisherId);
         result.put("refreshToken", refreshToken);

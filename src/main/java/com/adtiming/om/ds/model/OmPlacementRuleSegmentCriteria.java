@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -476,6 +473,126 @@ public class OmPlacementRuleSegmentCriteria {
 
         public Criteria andGenderNotBetween(Byte value1, Byte value2) {
             addCriterion("gender not between", value1, value2, "gender");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinIsNull() {
+            addCriterion("age_min is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinIsNotNull() {
+            addCriterion("age_min is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinEqualTo(Integer value) {
+            addCriterion("age_min =", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinNotEqualTo(Integer value) {
+            addCriterion("age_min <>", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinGreaterThan(Integer value) {
+            addCriterion("age_min >", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinGreaterThanOrEqualTo(Integer value) {
+            addCriterion("age_min >=", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinLessThan(Integer value) {
+            addCriterion("age_min <", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinLessThanOrEqualTo(Integer value) {
+            addCriterion("age_min <=", value, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinIn(List<Integer> values) {
+            addCriterion("age_min in", values, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinNotIn(List<Integer> values) {
+            addCriterion("age_min not in", values, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinBetween(Integer value1, Integer value2) {
+            addCriterion("age_min between", value1, value2, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMinNotBetween(Integer value1, Integer value2) {
+            addCriterion("age_min not between", value1, value2, "ageMin");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxIsNull() {
+            addCriterion("age_max is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxIsNotNull() {
+            addCriterion("age_max is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxEqualTo(Integer value) {
+            addCriterion("age_max =", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxNotEqualTo(Integer value) {
+            addCriterion("age_max <>", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxGreaterThan(Integer value) {
+            addCriterion("age_max >", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxGreaterThanOrEqualTo(Integer value) {
+            addCriterion("age_max >=", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxLessThan(Integer value) {
+            addCriterion("age_max <", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxLessThanOrEqualTo(Integer value) {
+            addCriterion("age_max <=", value, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxIn(List<Integer> values) {
+            addCriterion("age_max in", values, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxNotIn(List<Integer> values) {
+            addCriterion("age_max not in", values, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxBetween(Integer value1, Integer value2) {
+            addCriterion("age_max between", value1, value2, "ageMax");
+            return (Criteria) this;
+        }
+
+        public Criteria andAgeMaxNotBetween(Integer value1, Integer value2) {
+            addCriterion("age_max not between", value1, value2, "ageMax");
             return (Criteria) this;
         }
 

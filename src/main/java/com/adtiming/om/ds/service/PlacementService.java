@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -31,8 +32,6 @@ import java.util.stream.Collectors;
 public class PlacementService extends BaseService {
 
     protected static final Logger log = LogManager.getLogger();
-
-    public static byte DEFAULT_PRELOAD_TIMEOUT = 30;
 
     @Resource
     private OmPlacementMapper omPlacementMapper;
@@ -106,7 +105,7 @@ public class PlacementService extends BaseService {
             criteria.andStatusEqualTo((byte) status.ordinal());
         }
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
-        criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
 
         PageHelper.offsetPage(0, 1000);
         List<OmPlacementWithBLOBs> placements = omPlacementMapper.selectWithBLOBs(omPlacementCriteria);
@@ -162,41 +161,29 @@ public class PlacementService extends BaseService {
      *
      * @param omPlacement
      */
+    @Transactional
     public Response createPlacement(OmPlacementWithBLOBs omPlacement) {
-        try {
-            Date currentTime = new Date();
-            if (omPlacement.getPublisherId() == null || omPlacement.getPublisherId() <= 0) {
-                Integer currentUserPublisherId = this.getCurrentUser().getPublisherId();
-                if (currentUserPublisherId == null || currentUserPublisherId == 0) {
-                    log.error("No publisher with current user {}", JSONObject.toJSON(this.getCurrentUser()));
-                    return Response.RES_PUBLISHER_NOT_EXISTED;
-                }
-                omPlacement.setPublisherId(currentUserPublisherId);
+        Date currentTime = new Date();
+        if (omPlacement.getPublisherId() == null || omPlacement.getPublisherId() <= 0) {
+            Integer currentUserPublisherId = this.getCurrentUser().getPublisherId();
+            if (currentUserPublisherId == null || currentUserPublisherId == 0) {
+                log.error("No publisher with current user {}", JSONObject.toJSON(this.getCurrentUser()));
+                return Response.RES_PUBLISHER_NOT_EXISTED;
             }
-            if (omPlacement.getPubAppId() == null || omPlacement.getPubAppId() <= 0) {
-                log.error("Publisher app does not existed {}", JSONObject.toJSONString(omPlacement));
-                return Response.RES_PUBLISHER_APP_NOT_EXISTED;
-            }
-            omPlacement.setCreateTime(currentTime);
-            omPlacement.setLastmodify(currentTime);
-            int id = this.omPlacementMapper.insertSelective(omPlacement);
-            if (id > 0) {
-                this.buildDefaultScenes(omPlacement);
-                log.info("Create placement name {}", omPlacement.getName());
-                return Response.buildSuccess(omPlacement);
-            }
-        } catch (Exception e) {
-            log.error("Create placement error {}", JSONObject.toJSONString(omPlacement), e);
+            omPlacement.setPublisherId(currentUserPublisherId);
         }
-        log.info("Create placement name {} failed", omPlacement.getName());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create placement failed!");
-    }
-
-    private void buildDefaultScenes(OmPlacement omPlacement) {
-        OmPlacementScene defaultPlacementScene = new OmPlacementScene();
-        defaultPlacementScene.setName("Default_Scene");
-        defaultPlacementScene.setPlacementId(omPlacement.getId());
-        this.createPlacementScene(defaultPlacementScene);
+        if (omPlacement.getPubAppId() == null || omPlacement.getPubAppId() <= 0) {
+            log.error("Publisher app does not existed {}", JSONObject.toJSONString(omPlacement));
+            return Response.RES_PUBLISHER_APP_NOT_EXISTED;
+        }
+        omPlacement.setCreateTime(currentTime);
+        omPlacement.setLastmodify(currentTime);
+        int id = this.omPlacementMapper.insertSelective(omPlacement);
+        if (id <= 0) {
+            throw new RuntimeException("Insert placement " + JSONObject.toJSON(omPlacement) + " failed!");
+        }
+        log.info("Create placement name {}", omPlacement.getName());
+        return Response.buildSuccess(omPlacement);
     }
 
     /**
@@ -204,19 +191,15 @@ public class PlacementService extends BaseService {
      *
      * @param omPlacement
      */
+    @Transactional
     public Response updatePlacement(OmPlacementWithBLOBs omPlacement) {
-        try {
-            omPlacement.setLastmodify(new Date());
-            int result = this.omPlacementMapper.updateByPrimaryKeySelective(omPlacement);
-            if (result > 0) {
-                log.info("Update placement {} success", omPlacement.getId());
-                return Response.build();
-            }
-        } catch (Exception e) {
-            log.error("Update placement error {}", JSONObject.toJSONString(omPlacement), e);
+        omPlacement.setLastmodify(new Date());
+        int result = this.omPlacementMapper.updateByPrimaryKeySelective(omPlacement);
+        if (result <= 0) {
+            throw new RuntimeException("Update placement " + JSONObject.toJSON(omPlacement) + " failed!");
         }
-        log.error("Update placement {} failed", omPlacement.getId());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update placement failed!");
+        log.info("Update placement {} success", omPlacement.getId());
+        return Response.build();
     }
 
     /**
@@ -234,6 +217,25 @@ public class PlacementService extends BaseService {
     }
 
     /**
+     * Select placement scenes map by placement id
+     *
+     * @param placementIds
+     * @return Map<Integer, List < PublisherPlacementScene>>
+     */
+    public Map<Integer, List<OmPlacementScene>> getPlacementScenesMap(List<Integer> placementIds) {
+        if (CollectionUtils.isEmpty(placementIds)) {
+            return new HashMap<>();
+        }
+        OmPlacementSceneCriteria omPlacementSceneCriteria = new OmPlacementSceneCriteria();
+        OmPlacementSceneCriteria.Criteria criteria = omPlacementSceneCriteria.createCriteria();
+        criteria.andPlacementIdIn(placementIds);
+        criteria.andStatusEqualTo((byte)NormalStatus.Active.ordinal());
+        List<OmPlacementScene> placementScenes = this.omPlacementSceneMapper.select(omPlacementSceneCriteria);
+        return placementScenes.stream()
+                .collect(Collectors.groupingBy(m -> m.getPlacementId(), Collectors.toList()));
+    }
+
+    /**
      * Select apps placements map
      *
      * @param pubAppIds
@@ -247,31 +249,11 @@ public class PlacementService extends BaseService {
         criteria.andPubAppIdIn(pubAppIds);
         if (this.getCurrentUser().getRoleId() != RoleType.ADMINISTRATOR.getId()) {
             criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
-            criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+            criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
         }
         List<OmPlacement> publisherAppPlacements = omPlacementMapper.select(omPlacementCriteria);
         return publisherAppPlacements.stream()
                 .collect(Collectors.groupingBy(OmPlacement::getPubAppId, Collectors.toList()));
-    }
-
-    /**
-     * Select placement by publisher app id
-     *
-     * @param pubAppId
-     */
-    public List<OmPlacement> getPlacementsByPublisherAppId(Integer pubAppId, NormalStatus status) {
-        OmPlacementCriteria omPlacementCriteria = new OmPlacementCriteria();
-        OmPlacementCriteria.Criteria criteria = omPlacementCriteria.createCriteria();
-        if (status != null) {
-            criteria.andStatusEqualTo((byte) status.ordinal());
-        }
-        criteria.andPubAppIdEqualTo(pubAppId);
-        if (this.getCurrentUser().getRoleId() != RoleType.ADMINISTRATOR.getId()) {
-            criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
-            criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
-        }
-        List<OmPlacement> publisherAppPlacements = omPlacementMapper.select(omPlacementCriteria);
-        return publisherAppPlacements;
     }
 
     /**
@@ -280,21 +262,17 @@ public class PlacementService extends BaseService {
      * @param omPlacementScene
      * @return Response
      */
+    @Transactional
     public Response createPlacementScene(OmPlacementScene omPlacementScene) {
-        try {
-            Date currentTime = new Date();
-            omPlacementScene.setCreateTime(currentTime);
-            omPlacementScene.setLastmodify(currentTime);
-            int id = this.omPlacementSceneMapper.insertSelective(omPlacementScene);
-            if (id > 0) {
-                log.info("Create placement scene id {}", omPlacementScene.getName());
-                return Response.buildSuccess(omPlacementScene);
-            }
-        } catch (Exception e) {
-            log.error("Create placement scene error {}", JSONObject.toJSONString(omPlacementScene), e);
+        Date currentTime = new Date();
+        omPlacementScene.setCreateTime(currentTime);
+        omPlacementScene.setLastmodify(currentTime);
+        int result = this.omPlacementSceneMapper.insertSelective(omPlacementScene);
+        if (result <= 0) {
+            throw new RuntimeException("Create placement scene " + JSONObject.toJSON(omPlacementScene) + " failed!");
         }
-        log.error("Create placement scene id {}", omPlacementScene.getName());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create placement scene failed!");
+        log.info("Create placement scene {}", JSONObject.toJSON(omPlacementScene));
+        return Response.buildSuccess(omPlacementScene);
     }
 
     /**
@@ -303,19 +281,15 @@ public class PlacementService extends BaseService {
      * @param omPlacementScene
      * @return Response
      */
+    @Transactional
     public Response updatePlacementScene(OmPlacementScene omPlacementScene) {
-        try {
-            omPlacementScene.setLastmodify(new Date());
-            int result = this.omPlacementSceneMapper.updateByPrimaryKeySelective(omPlacementScene);
-            if (result > 0) {
-                log.info("Update placement scene {} success", omPlacementScene.getId());
-                return Response.build();
-            }
-        } catch (Exception e) {
-            log.error("Update placement scene error {}", JSONObject.toJSONString(omPlacementScene), e);
+        omPlacementScene.setLastmodify(new Date());
+        int result = this.omPlacementSceneMapper.updateByPrimaryKeySelective(omPlacementScene);
+        if (result <= 0) {
+            throw new RuntimeException("Update placement scene " + omPlacementScene.getId() + " failed!");
         }
-        log.error("Update placement scene {} failed", omPlacementScene.getId());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update placement scene failed!");
+        log.info("Update placement scene {} success", JSONObject.toJSON(omPlacementScene));
+        return Response.build();
     }
 
     /**

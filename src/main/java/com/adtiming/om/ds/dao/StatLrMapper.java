@@ -6,7 +6,6 @@ package com.adtiming.om.ds.dao;
 import com.adtiming.om.ds.model.StatLr;
 import com.adtiming.om.ds.model.StatLrCriteria;
 import com.adtiming.om.ds.model.StatLrKey;
-
 import java.util.List;
 import java.util.Map;
 

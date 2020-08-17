@@ -57,6 +57,10 @@ public class BaseService {
         return currentUser;
     }
 
+    public Integer getCurrentPublisherId() {
+        return this.getCurrentUser().getPublisherId();
+    }
+
     public List<Integer> getAppIdsOfCurrentUser() {
         UmUser umUser = this.getCurrentUser();
         List<Integer> publisherAppIds = new ArrayList<>();
@@ -76,13 +80,6 @@ public class BaseService {
             publisherAppIds.add(0);
         }
         return publisherAppIds;
-    }
-
-    public List<Integer> getPublisherIdsOfCurrentUser() {
-        UmUser umUser = this.getCurrentUser();
-        List<Integer> publisherIds = new ArrayList();
-        publisherIds.add(umUser.getPublisherId());
-        return publisherIds;
     }
 
     /**

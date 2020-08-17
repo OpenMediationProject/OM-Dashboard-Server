@@ -90,11 +90,8 @@ public class UserService extends BaseService {
         } else {
             List<UmUser> users = new ArrayList<>();
             if (currentUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId()) {
-                List<Integer> currentUserPublisherIds = this.getPublisherIdsOfCurrentUser();
-                for (Integer currentPublisherId : currentUserPublisherIds) {
-                    List<UmUser> publisherUsers = this.umUserMapper.selectByPublisherId(currentPublisherId);
-                    users.addAll(publisherUsers);
-                }
+                List<UmUser> publisherUsers = this.umUserMapper.selectByPublisherId(this.getCurrentPublisherId());
+                users.addAll(publisherUsers);
                 users.add(currentUser);
             } else {
                 users = this.umUserMapper.getUsersByName(email);
@@ -214,12 +211,10 @@ public class UserService extends BaseService {
             return this.updatePassword(umUser);
         }
         if (currentUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId()) {
-            List<Integer> publisherIdsOfCurrentUser = this.getPublisherIdsOfCurrentUser();
             List<UmUserRole> umUserRoles = this.getUserRoles(umUser.getId());
-            Set<Integer> publisherIdSetOfCurrentUser = new HashSet<>(publisherIdsOfCurrentUser);
             boolean isManagedByCurrentUser = false;
             for (UmUserRole umUserRole : umUserRoles) {
-                if (publisherIdSetOfCurrentUser.contains(umUserRole.getPubId())) {
+                if (this.getCurrentPublisherId().equals(umUserRole.getPubId())) {
                     isManagedByCurrentUser = true;
                     break;
                 }
@@ -296,7 +291,7 @@ public class UserService extends BaseService {
                         this.roleService.deleteUserRolePublisher(dbUser.getId(), dbUser.getOldPublisherId());
                     }
                     Response response = this.roleService.createUserRole(umUser.getId(), umUser.getRoleId(), umUser.getPublisherId());
-                    if (response.getCode() == Response.SUCCESS_CODE) {
+                    if (response.success()) {
                         log.info("Update user {} role {} successfully when update user", umUser.getId(), umUser.getRoleId());
                     } else {
                         throw new RuntimeException("Update user " + umUser.getId() + " role " + umUser.getRoleId() + " failed when update user");

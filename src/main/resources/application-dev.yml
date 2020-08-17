@@ -9,7 +9,7 @@ app:
 logging:
   config: classpath:log4j2-prod.xml
 
-om.adc.domain: http://adc.adtiming.com
+om.adc.domain: replace_with_your_om.adc.domain
 
 admob:
   client_id: replace_with_your_googleapi.client_id

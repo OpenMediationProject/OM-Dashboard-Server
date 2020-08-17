@@ -7,6 +7,7 @@ import com.adtiming.om.ds.dao.OmAdnetworkMapper;
 import com.adtiming.om.ds.dao.OmInstanceMapper;
 import com.adtiming.om.ds.dao.OmPlacementMapper;
 import com.adtiming.om.ds.dao.OmPublisherAppMapper;
+import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.MobilePlatformType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by ruandianbo on 20-3-7.
+ * @author dianbo ruan
  */
 @Service
 public class FieldNameService {
@@ -30,6 +31,8 @@ public class FieldNameService {
     protected static final Logger log = LogManager.getLogger();
 
     private Map<String, String> idNameMap = new ConcurrentHashMap<>();
+
+    private Map<Integer, Integer> placementAdTypeMap = new ConcurrentHashMap<>();
 
     @Resource
     private OmAdnetworkMapper omAdnetworkMapper;
@@ -50,6 +53,7 @@ public class FieldNameService {
     @PostConstruct
     public void initCache() {
         this.initIdName();
+        this.initAdType();
     }
 
     public synchronized void initIdName() {
@@ -57,6 +61,7 @@ public class FieldNameService {
             List<OmAdnetwork> adNetworks = this.omAdnetworkMapper.select(new OmAdnetworkCriteria());
             adNetworks.forEach(adNetwork -> {
                 this.idNameMap.put("adnId" + adNetwork.getId(), adNetwork.getDescn());
+                this.idNameMap.put("adnId-1", "In-app Bidding");
             });
             log.info("Init adNetworks size: {}", adNetworks.size());
 
@@ -103,6 +108,28 @@ public class FieldNameService {
             Integer instanceId = result.getInteger("instanceId");
             if (instanceId != null) {
                 result.put("instanceName", this.idNameMap.get("instanceId" + instanceId));
+            }
+
+            Integer adType = result.getInteger("adType");
+            if (adType != null){
+                result.put("adType", AdvertisementType.getAdvertisementType(adType).name());
+            }
+        });
+    }
+
+    private synchronized void initAdType() {
+        List<OmPlacement> placements = this.omPlacementMapper.select(new OmPlacementCriteria());
+        placements.forEach(placement -> {
+            int adType = placement.getAdType();
+            placementAdTypeMap.put(placement.getId(), adType);
+        });
+    }
+
+    public void fillPlacementAdType(List<JSONObject> results) {
+        results.forEach(result -> {
+            Integer placementId = result.getInteger("placementId");
+            if (placementId != null) {
+                result.put("adType", this.placementAdTypeMap.get(placementId));
             }
         });
     }

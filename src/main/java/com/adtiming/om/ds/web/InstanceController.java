@@ -8,6 +8,7 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmAdnetwork;
 import com.adtiming.om.ds.model.OmInstanceCountry;
 import com.adtiming.om.ds.model.OmInstanceWithBLOBs;
+import com.adtiming.om.ds.model.OmPlacementRuleInstance;
 import com.adtiming.om.ds.service.AdNetworkService;
 import com.adtiming.om.ds.service.InstanceService;
 import com.adtiming.om.ds.service.MediationService;
@@ -126,11 +127,16 @@ public class InstanceController extends BaseController {
      */
     @RequestMapping(value = "/instance/create", method = RequestMethod.POST)
     public Response createInstance(@RequestBody OmInstanceWithBLOBs omInstanceWithBLOBs) {
-        if (omInstanceWithBLOBs.getPubAppId() == null || omInstanceWithBLOBs.getName() == null || omInstanceWithBLOBs.getAdnAppId() == null) {
-            log.error("Publisher id {} name {}", omInstanceWithBLOBs.getPubAppId(), omInstanceWithBLOBs.getName());
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omInstanceWithBLOBs.getPubAppId() == null || omInstanceWithBLOBs.getName() == null || omInstanceWithBLOBs.getAdnAppId() == null) {
+                log.error("Publisher id {} name {}", omInstanceWithBLOBs.getPubAppId(), omInstanceWithBLOBs.getName());
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.instanceService.createInstance(omInstanceWithBLOBs);
+        } catch (Exception e) {
+            log.error("Create instance {} error", JSONObject.toJSONString(omInstanceWithBLOBs), e);
         }
-        return this.instanceService.createInstance(omInstanceWithBLOBs);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create instance failed!");
     }
 
     /**
@@ -141,16 +147,24 @@ public class InstanceController extends BaseController {
      */
     @RequestMapping(value = "/instance/update/status", method = RequestMethod.GET)
     public Response updateInstance(Integer instanceId, Byte status) {
-        if (instanceId == null || status == null || status > NormalStatus.Active.ordinal()) {
-            log.error("Update instance {} status parameter, status {}", instanceId, status);
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (instanceId == null || status == null || status > NormalStatus.Active.ordinal()) {
+                log.error("Update instance {} status parameter, status {}", instanceId, status);
+                return Response.RES_PARAMETER_ERROR;
+            }
+            NormalStatus instanceStatus = NormalStatus.getStatus(status.intValue());
+            Response response = this.instanceService.updateInstanceStatus(instanceId, instanceStatus);
+            if (!NormalStatus.Active.equals(instanceStatus)) {
+                List<OmPlacementRuleInstance> placementRuleInstances = this.mediationService.getPlacementRuleInstancesByInstance(instanceId);
+                for (OmPlacementRuleInstance placementRuleInstance : placementRuleInstances) {
+                    this.mediationService.deletePlacementRuleInstance(placementRuleInstance.getRuleId(), placementRuleInstance.getInstanceId());
+                }
+            }
+            return response;
+        } catch (Exception e) {
+            log.error("Update instance {} instance error:", instanceId, e);
         }
-        NormalStatus instanceStatus = NormalStatus.getStatus(status.intValue());
-        Response response = this.instanceService.updateInstanceStatus(instanceId, instanceStatus);
-        if (!NormalStatus.Active.equals(instanceStatus)) {
-            this.mediationService.deleteRuleInstances(instanceId);
-        }
-        return response;
+        return Response.RES_FAILED;
     }
 
     /**
@@ -160,11 +174,16 @@ public class InstanceController extends BaseController {
      */
     @RequestMapping(value = "/instance/update", method = RequestMethod.POST)
     public Response updateInstance(@RequestBody OmInstanceWithBLOBs omInstanceWithBLOBs) {
-        if (omInstanceWithBLOBs.getId() == null || omInstanceWithBLOBs.getId() <= 0) {
-            log.error("It must have valid id");
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omInstanceWithBLOBs.getId() == null || omInstanceWithBLOBs.getId() <= 0) {
+                log.error("It must have valid id");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.instanceService.updateInstance(omInstanceWithBLOBs);
+        } catch (Exception e) {
+            log.error("Update instance error {}", JSONObject.toJSONString(omInstanceWithBLOBs), e);
         }
-        return this.instanceService.updateInstance(omInstanceWithBLOBs);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update instance failed!");
     }
 
     /**

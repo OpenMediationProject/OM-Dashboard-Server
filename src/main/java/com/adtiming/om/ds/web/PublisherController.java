@@ -13,13 +13,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Publisher interface
@@ -74,10 +77,15 @@ public class PublisherController extends BaseController {
      */
     @RequestMapping(value = "/publisher/create", method = RequestMethod.POST)
     public Response createPublisher(@RequestBody OmPublisher omPublisher) {
-        if (omPublisher.getName() == null || omPublisher.getEmail() == null || omPublisher.getPhone() == null) {
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omPublisher.getName() == null || omPublisher.getEmail() == null || omPublisher.getPhone() == null) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.publisherService.createPublisher(omPublisher);
+        } catch (Exception e) {
+            log.info("Create publisher {} error", JSONObject.toJSONString(omPublisher), e);
         }
-        return this.publisherService.createPublisher(omPublisher);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create publisher failed!");
     }
 
     /**
@@ -87,11 +95,16 @@ public class PublisherController extends BaseController {
      */
     @RequestMapping(value = "/publisher/update", method = RequestMethod.POST)
     public Response updatePublisher(@RequestBody OmPublisher omPublisher) {
-        if (omPublisher.getId() == null || omPublisher.getId() == 0) {
-            log.error("Update publisher {} id is not valid", JSONObject.toJSONString(omPublisher));
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omPublisher.getId() == null || omPublisher.getId() == 0) {
+                log.error("Update publisher {} id is not valid", JSONObject.toJSONString(omPublisher));
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.publisherService.updatePublisher(omPublisher);
+        } catch (Exception e) {
+            log.error("Update publisher error {}", JSONObject.toJSONString(omPublisher), e);
         }
-        return this.publisherService.updatePublisher(omPublisher);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update publisher failed!");
     }
 
     @RequestMapping(value = "/publisher/account/select/list", method = RequestMethod.GET)
@@ -109,8 +122,28 @@ public class PublisherController extends BaseController {
 
     @RequestMapping(value = "/publisher/account/list", method = RequestMethod.GET)
     public Response getAccounts(Integer adnId) {
-        List<ReportAdnetworkAccount> accounts = accountService.getAccounts(adnId);
-        return Response.buildSuccess(accounts);
+        try {
+            Map<Integer, Collection<JSONObject>> adnAccountAppIconsMap = this.accountService.getPublisherAdnAccountWithAppIconsMap(null);
+            List<ReportAdnetworkAccount> accounts = accountService.getAccounts(adnId);
+            JSONArray results = new JSONArray();
+            for (ReportAdnetworkAccount account : accounts) {
+                JSONObject result = (JSONObject) JSONObject.toJSON(account);
+                Collection<JSONObject> adnAccounts = adnAccountAppIconsMap.get(account.getAdnId());
+                result.put("appIcons", new JSONArray());
+                if (!CollectionUtils.isEmpty(adnAccounts)) {
+                    for (JSONObject adnAccount : adnAccounts) {
+                        if (account.getId().equals(adnAccount.getInteger("id"))) {
+                            result.put("appIcons", adnAccount.get("appIcons"));
+                        }
+                    }
+                }
+                results.add(result);
+            }
+            return Response.buildSuccess(results);
+        } catch (Exception e) {
+            log.error("Get adn id {} account error:", adnId, e);
+        }
+        return Response.RES_FAILED;
     }
 
     /**
@@ -120,11 +153,16 @@ public class PublisherController extends BaseController {
      */
     @RequestMapping(value = "/publisher/account/create", method = RequestMethod.POST)
     public Response createAccount(@RequestBody ReportAdnetworkAccount account) {
-        if (account.getAdnId() == null || account.getAdnAccountId() == null || account.getAuthType() == null) {
-            log.warn("Adn id and account id can not be null");
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (account.getAdnId() == null || account.getAdnAccountId() == null || account.getAuthType() == null) {
+                log.warn("Adn id and account id can not be null");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.accountService.createAccount(account);
+        } catch (Exception e) {
+            log.error("Create account {} error:", JSONObject.toJSON(account), e);
         }
-        return this.accountService.createAccount(account);
+        return Response.RES_FAILED;
     }
 
     /**
@@ -134,11 +172,16 @@ public class PublisherController extends BaseController {
      */
     @RequestMapping(value = "/publisher/account/update", method = RequestMethod.POST)
     public Response updateAccount(@RequestBody ReportAdnetworkAccount account) {
-        if (account.getId() == null || account.getAdnId() == null || account.getAdnAccountId() == null) {
-            log.warn("Id and Adn id and account id can not be null");
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (account.getId() == null || account.getAdnId() == null || account.getAdnAccountId() == null) {
+                log.warn("Id and Adn id and account id can not be null");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.accountService.updateAccount(account);
+        } catch (Exception e) {
+            log.error("Update account {} error:", JSONObject.toJSON(account), e);
         }
-        return this.accountService.updateAccount(account);
+        return Response.RES_FAILED;
     }
 
     /**
@@ -148,10 +191,15 @@ public class PublisherController extends BaseController {
      */
     @RequestMapping(value = "/publisher/account/delete", method = RequestMethod.GET)
     public Response updateAccount(Integer accountId) {
-        if (accountId == null) {
-            log.warn("Account id can not be null");
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (accountId == null) {
+                log.warn("Account id can not be null");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.accountService.deleteAccount(accountId);
+        } catch (Exception e) {
+            log.error("Delete account {} error:", accountId, e);
         }
-        return this.accountService.deleteAccount(accountId);
+        return Response.RES_FAILED;
     }
 }

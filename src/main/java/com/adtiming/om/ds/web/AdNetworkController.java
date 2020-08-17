@@ -5,10 +5,8 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.*;
 import com.adtiming.om.ds.model.*;
-import com.adtiming.om.ds.service.AdNetworkService;
-import com.adtiming.om.ds.service.InstanceService;
-import com.adtiming.om.ds.service.PlacementService;
-import com.adtiming.om.ds.service.PublisherAppService;
+import com.adtiming.om.ds.service.*;
+import com.adtiming.om.ds.util.Util;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -20,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +43,9 @@ public class AdNetworkController extends BaseController {
     @Autowired
     protected PublisherAppService publisherAppService;
 
+    @Autowired
+    protected AccountService accountService;
+
     /**
      * Get all AdNetworks of publisher app
      */
@@ -60,11 +58,11 @@ public class AdNetworkController extends BaseController {
                 adNetworkAppMap = this.adNetworkService.getAdNetworkIdAppMap(pubAppId, NormalStatus.Active);
             }
             OmPublisherApp publisherApp = null;
-            if (pubAppId != null){
+            if (pubAppId != null) {
                 publisherApp = this.publisherAppService.getPublisherApp(pubAppId);
             }
             OmPlacementWithBLOBs placement = null;
-            if (placementId != null){
+            if (placementId != null) {
                 placement = this.placementService.getPlacement(placementId);
             }
 
@@ -82,7 +80,7 @@ public class AdNetworkController extends BaseController {
                     }
                 }
                 //创建instance时过滤不支持广告位类型的adnetwork
-                if (placement != null && publisherApp != null){
+                if (placement != null && publisherApp != null) {
                     List<String> adTypes = this.adNetworkService.buildAdTypes(omAdnetwork, publisherApp);
                     if (placement.getAdType() != null) {
                         AdvertisementType adType = AdvertisementType.getAdvertisementType(placement.getAdType().intValue());
@@ -106,7 +104,21 @@ public class AdNetworkController extends BaseController {
     @RequestMapping(value = "/app/adnetwork/list", method = RequestMethod.GET)
     public Response getAdNetWorks(Integer pubAppId) {
         try {
-            JSONArray adNetworks = this.adNetworkService.getAdNetworks(pubAppId);
+            if (pubAppId == null) {
+                log.warn("Get AdNetWorks pubAppId can not be null");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            Map<Integer, Collection<JSONObject>> adnAccountAppIconsMap = this.accountService.getPublisherAdnAccountWithAppIconsMap(null);
+            List<JSONObject> adNetworks = this.adNetworkService.getAdNetworks(pubAppId);
+            for (JSONObject adNetwork : adNetworks) {
+                Integer andId = adNetwork.getInteger("id");
+                Collection<JSONObject> adnAccounts = adnAccountAppIconsMap.get(andId);
+                if (!CollectionUtils.isEmpty(adnAccounts)) {
+                    adNetwork.put("accounts", adnAccounts);
+                } else {
+                    adNetwork.put("accounts", new JSONArray());
+                }
+            }
             return Response.buildSuccess(adNetworks);
         } catch (Exception e) {
             log.error("get adNetworks error:", e);
@@ -143,8 +155,8 @@ public class AdNetworkController extends BaseController {
                         } else {
                             log.error("Adn id {} is not existed!", instanceWithBLOBs.getAdnId());
                         }
-                        buildBrandBlackWhiteType(resultInstance, instanceWithBLOBs.getBrandBlacklist(), instanceWithBLOBs.getBrandWhitelist());
-                        buildModelBlackWhiteType(resultInstance, instanceWithBLOBs.getModelBlacklist(), instanceWithBLOBs.getModelWhitelist());
+                        Util.buildBrandBlackWhiteType(resultInstance, instanceWithBLOBs.getBrandBlacklist(), instanceWithBLOBs.getBrandWhitelist());
+                        Util.buildModelBlackWhiteType(resultInstance, instanceWithBLOBs.getModelBlacklist(), instanceWithBLOBs.getModelWhitelist());
                         resultInstances.add(resultInstance);
                     }
                     resultPlacement.put("instances", resultInstances);
@@ -188,17 +200,22 @@ public class AdNetworkController extends BaseController {
      */
     @RequestMapping(value = "/adnetwork/app/create", method = RequestMethod.POST)
     public Response createAdNetworkApp(@RequestBody OmAdnetworkApp omAdnetworkApp) {
-        if (omAdnetworkApp.getAdnId() == null || omAdnetworkApp.getPubAppId() == null) {
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omAdnetworkApp.getAdnId() == null || omAdnetworkApp.getPubAppId() == null) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            if (omAdnetworkApp.getAdnId() != AdNetworkType.Adtiming.ordinal()
+                    && omAdnetworkApp.getAdnId() != AdNetworkType.Facebook.ordinal()
+                    && omAdnetworkApp.getAdnId() != AdNetworkType.TencentAd.ordinal()
+                    && omAdnetworkApp.getReportAccountId() == null) {
+                log.warn("Create adNetworkApp parameters ReportAccountId must not null");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.adNetworkService.createAppAdNetwork(omAdnetworkApp);
+        } catch (Exception e) {
+            log.info("Create AdNetwork {} error", JSONObject.toJSONString(omAdnetworkApp), e);
         }
-        if (omAdnetworkApp.getAdnId() != AdNetworkType.Adtiming.ordinal()
-                && omAdnetworkApp.getAdnId() != AdNetworkType.Facebook.ordinal()
-                && omAdnetworkApp.getAdnId() != AdNetworkType.TencentAd.ordinal()
-                && omAdnetworkApp.getReportAccountId() == null) {
-            log.warn("Create adNetworkApp parameters ReportAccountId must not null");
-            return Response.RES_PARAMETER_ERROR;
-        }
-        return this.adNetworkService.createAppAdNetwork(omAdnetworkApp);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create placement failed!");
     }
 
     /**
@@ -208,7 +225,12 @@ public class AdNetworkController extends BaseController {
      */
     @RequestMapping(value = "/adnetwork/app/update", method = RequestMethod.POST)
     public Response updateAdNetworkApp(@RequestBody OmAdnetworkApp omAdnetworkApp) {
-        return this.adNetworkService.updateAppAdNetworks(omAdnetworkApp);
+        try {
+            return this.adNetworkService.updateAppAdNetworks(omAdnetworkApp);
+        } catch (Exception e) {
+            log.error("Update AdNetworks error {}", JSONObject.toJSONString(omAdnetworkApp), e);
+        }
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update AdNetworks failed!");
     }
 
     /**
@@ -218,9 +240,14 @@ public class AdNetworkController extends BaseController {
      */
     @RequestMapping(value = "/adnetwork/app/status/update", method = RequestMethod.GET)
     public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status) {
-        if (status >= AdNetworkAppStatus.ADN_Paused.ordinal()) {
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (status >= AdNetworkAppStatus.ADN_Paused.ordinal()) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.adNetworkService.updateAdNetworkAppStatus(adNetworkAppId, status);
+        } catch (Exception e) {
+            log.error("Update AdNetworks error adNetworkAppId {}", adNetworkAppId, e);
         }
-        return this.adNetworkService.updateAdNetworkAppStatus(adNetworkAppId, status);
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update adNetwork app status failed!");
     }
 }

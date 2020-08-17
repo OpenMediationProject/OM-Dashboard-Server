@@ -3,6 +3,9 @@
 
 package com.adtiming.om.ds.util;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,11 +19,76 @@ import java.util.regex.Pattern;
  */
 public class Util {
 
+    public static final String SPLIT_SYMBOL = "\n";
     protected static final Logger log = LogManager.getLogger();
-
     private static Pattern linePattern = Pattern.compile("_(\\w)");
-
     private static Pattern humpPattern = Pattern.compile("[A-Z]");
+
+    /**
+     * Check to add include/exclude type for white/black list
+     *
+     * @param modelBlacklist
+     * @param modelWhitelist
+     */
+    public static void buildModelBlackWhiteType(JSONObject result, String modelBlacklist, String modelWhitelist) {
+        if (result.containsKey("modelType")) {
+            result.put("deviceModelType", result.get("modelType"));
+        }
+
+        if (StringUtils.isNotBlank(modelBlacklist)) {
+            result.put("modelType", "exclude");
+            result.put("modelList", JSONArray.toJSON(modelBlacklist.split(SPLIT_SYMBOL)));
+        } else if (StringUtils.isNotBlank(modelWhitelist)) {
+            result.put("modelType", "include");
+            result.put("modelList", JSONArray.toJSON(modelWhitelist.split(SPLIT_SYMBOL)));
+        } else {
+            result.put("modelType", "include");
+            result.put("modelList", new JSONArray());
+        }
+    }
+
+    /**
+     * Check to add include/exclude type for white/black list
+     *
+     * @param brandBlacklist
+     * @param brandWhitelist
+     */
+    public static void buildBrandBlackWhiteType(JSONObject resultInstance, String brandBlacklist, String brandWhitelist) {
+        if (StringUtils.isNotBlank(brandBlacklist)) {
+            resultInstance.put("brandType", "exclude");
+            resultInstance.put("brandList", JSONArray.toJSON(brandBlacklist.split(SPLIT_SYMBOL)));
+        } else if (StringUtils.isNotBlank(brandWhitelist)) {
+            resultInstance.put("brandType", "include");
+            resultInstance.put("brandList", JSONArray.toJSON(brandWhitelist.split(SPLIT_SYMBOL)));
+        } else {
+            resultInstance.put("brandType", "include");
+            resultInstance.put("brandList", new JSONArray());
+        }
+    }
+
+    public static Date getDateYYYYMMDDHH(String strDate) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH");
+            Date date = null;
+            date = f.parse(strDate);
+            return date;
+        } catch (Exception e) {
+            log.error("Get date string error {}", strDate, e);
+        }
+        return null;
+    }
+
+    public static int getHour(Date date) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("HH");
+            String result = f.format(date);
+
+            return Integer.parseInt(result);
+        } catch (Exception e) {
+            log.error("Get day error {}", date, e);
+        }
+        return 0;
+    }
 
     public static Integer[] stringToInteger(String[] data) {
         if (data == null || data.length <= 0) {
@@ -124,6 +192,16 @@ public class Util {
             log.error("Get day error {}", date, e);
         }
         return null;
+    }
+
+    public static int getInt(Map<?, ?> map, Object key) {
+        Object o = map.get(key);
+        return o == null ? 0 : ((Number) o).intValue();
+    }
+
+    public static float getFloat(Map<?, ?> map, Object key) {
+        Object o = map.get(key);
+        return o == null ? 0 : ((Number) o).floatValue();
     }
 
     public static List<Integer> buildIntegerList(Integer[] array) {

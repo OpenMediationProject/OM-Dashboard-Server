@@ -32,6 +32,8 @@ public class Response {
 
     public static final int CODE_PARAMETER_NULL = 1010;
 
+    public static final int CODE_CAN_NOT_CHANGE = 1011;
+
     public static final Response RES_UNAUTHORIZED = new Response(CODE_RES_UNAUTHORIZED, STATUS_DISABLE, "Insufficient authority");
 
     public static final Response RES_FAILED = new Response(CODE_RES_FAILED, STATUS_DISABLE, "Request failed");
@@ -49,6 +51,9 @@ public class Response {
     public static final Response RES_PUBLISHER_APP_NOT_EXISTED = new Response(1007, STATUS_DISABLE, "Publisher APP already exists");
 
     public static final Response RES_SEND_MAIL_FAILED = new Response(CODE_RES_SEND_MAIL_FAILED, STATUS_DISABLE, "Send mail failed");
+
+    public static final Response RES_CAN_NOT_CHANGE = new Response(CODE_CAN_NOT_CHANGE, STATUS_DISABLE, "Can not change!");
+
 
     private int code;
 
@@ -114,6 +119,14 @@ public class Response {
 
     public int getCode() {
         return code;
+    }
+
+    public boolean failed(){
+        return this.code != SUCCESS_CODE;
+    }
+
+    public boolean success(){
+        return this.code == SUCCESS_CODE;
     }
 
     public String getStatus() {

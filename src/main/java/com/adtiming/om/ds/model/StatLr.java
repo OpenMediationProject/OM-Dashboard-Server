@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class StatLr extends StatLrKey {
@@ -48,7 +49,23 @@ public class StatLr extends StatLrKey {
 
     private Integer impr;
 
+    private Integer mediationClick;
+
+    private Integer mediationImpr;
+
     private Date createTime;
+
+    private Integer bidReq;
+
+    private Integer bidResp;
+
+    private BigDecimal bidRespPrice;
+
+    private Integer bidWin;
+
+    private BigDecimal bidWinPrice;
+
+    private Byte bid;
 
     public Byte getHour() {
         return hour;
@@ -226,6 +243,70 @@ public class StatLr extends StatLrKey {
         this.createTime = createTime;
     }
 
+    public Integer getBidReq() {
+        return bidReq;
+    }
+
+    public void setBidReq(Integer bidReq) {
+        this.bidReq = bidReq;
+    }
+
+    public Integer getBidResp() {
+        return bidResp;
+    }
+
+    public void setBidResp(Integer bidResp) {
+        this.bidResp = bidResp;
+    }
+
+    public BigDecimal getBidRespPrice() {
+        return bidRespPrice;
+    }
+
+    public void setBidRespPrice(BigDecimal bidRespPrice) {
+        this.bidRespPrice = bidRespPrice;
+    }
+
+    public Integer getBidWin() {
+        return bidWin;
+    }
+
+    public void setBidWin(Integer bidWin) {
+        this.bidWin = bidWin;
+    }
+
+    public BigDecimal getBidWinPrice() {
+        return bidWinPrice;
+    }
+
+    public void setBidWinPrice(BigDecimal bidWinPrice) {
+        this.bidWinPrice = bidWinPrice;
+    }
+
+    public Byte getBid() {
+        return bid;
+    }
+
+    public void setBid(Byte bid) {
+        this.bid = bid;
+    }
+
+    public Integer getMediationClick() {
+        return mediationClick;
+    }
+
+    public void setMediationClick(Integer mediationClick) {
+        this.mediationClick = mediationClick;
+    }
+
+    public Integer getMediationImpr() {
+        return mediationImpr;
+    }
+
+    public void setMediationImpr(Integer mediationImpr) {
+        this.mediationImpr = mediationImpr;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -261,7 +342,13 @@ public class StatLr extends StatLrKey {
             && (this.getIsReadyFalse() == null ? other.getIsReadyFalse() == null : this.getIsReadyFalse().equals(other.getIsReadyFalse()))
             && (this.getClick() == null ? other.getClick() == null : this.getClick().equals(other.getClick()))
             && (this.getImpr() == null ? other.getImpr() == null : this.getImpr().equals(other.getImpr()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getBidReq() == null ? other.getBidReq() == null : this.getBidReq().equals(other.getBidReq()))
+            && (this.getBidResp() == null ? other.getBidResp() == null : this.getBidResp().equals(other.getBidResp()))
+            && (this.getBidRespPrice() == null ? other.getBidRespPrice() == null : this.getBidRespPrice().equals(other.getBidRespPrice()))
+            && (this.getBidWin() == null ? other.getBidWin() == null : this.getBidWin().equals(other.getBidWin()))
+            && (this.getBidWinPrice() == null ? other.getBidWinPrice() == null : this.getBidWinPrice().equals(other.getBidWinPrice()))
+            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()));
     }
 
     @Override
@@ -292,6 +379,12 @@ public class StatLr extends StatLrKey {
         result = prime * result + ((getClick() == null) ? 0 : getClick().hashCode());
         result = prime * result + ((getImpr() == null) ? 0 : getImpr().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getBidReq() == null) ? 0 : getBidReq().hashCode());
+        result = prime * result + ((getBidResp() == null) ? 0 : getBidResp().hashCode());
+        result = prime * result + ((getBidRespPrice() == null) ? 0 : getBidRespPrice().hashCode());
+        result = prime * result + ((getBidWin() == null) ? 0 : getBidWin().hashCode());
+        result = prime * result + ((getBidWinPrice() == null) ? 0 : getBidWinPrice().hashCode());
+        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
         return result;
     }
 }
