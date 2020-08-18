@@ -348,7 +348,6 @@ public class MediationController extends BaseController {
             instanceReport.put("apiImpr", Util.getInt(instanceReport, "apiImpr") + Util.getInt(report, "apiImpr"));
             instanceReport.put("cost", Util.getFloat(instanceReport, "cost") + Util.getFloat(report, "cost"));
         }
-        log.info("Report map:" + JSONObject.toJSON(reportMap));
         return reportMap;
     }
 

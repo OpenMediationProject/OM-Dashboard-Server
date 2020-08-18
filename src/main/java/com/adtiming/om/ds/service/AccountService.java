@@ -154,6 +154,7 @@ public class AccountService extends BaseService {
         switch (adNetworkType) {
             case AdMob:
             case Chartboost:
+            case ChartboostBid:
             case IronSource:
             case TencentAd:
             case TikTok: {
@@ -191,7 +192,7 @@ public class AccountService extends BaseService {
                 break;
             }
             default:
-                break;
+                throw new RuntimeException("Not support Adnetwork id " + account.getAdnId());
         }
         List<ReportAdnetworkAccount> accounts = reportAdnetworkAccountMapper.select(accountCriteria);
         if (!CollectionUtils.isEmpty(accounts)) {
@@ -229,9 +230,7 @@ public class AccountService extends BaseService {
         }
 
         account.setCreateTime(new Date());
-        if (account.getStatus() == null) {
-            account.setStatus((byte) -1);
-        }
+        account.setStatus((byte)NormalStatus.Active.ordinal());
         if (account.getPublisherId() == null) {
             account.setPublisherId(publisherId);
         }
@@ -265,7 +264,7 @@ public class AccountService extends BaseService {
                     log.error("Account {} primary key is null, msg {}", JSONObject.toJSON(account), isAdKeyValid.getMsg());
                     return isAdKeyValid;
                 }
-                account.setStatus((byte)-1);
+                account.setStatus((byte)NormalStatus.Active.ordinal());
                 ReportAdnetworkAccount duplicatedAccount = this.getDuplicatedAccount(account);
                 if (duplicatedAccount != null) {
                     String warn = "This Ad Network Account " + duplicatedAccount.getPrimaryKey() + " already exists. " +
@@ -388,6 +387,7 @@ public class AccountService extends BaseService {
                 }
                 break;
             }
+            case ChartboostBid:
             case Chartboost:
                 if (StringUtils.isBlank(account.getUserId())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Chartboost's [User ID] must be not null");
@@ -482,7 +482,7 @@ public class AccountService extends BaseService {
                 break;
             }
             default:
-                return Response.RES_DATA_DOES_NOT_EXISTED;
+                throw new RuntimeException("Not support ad network id " + account.getAdnId());
         }
         return Response.build();
     }

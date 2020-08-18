@@ -192,7 +192,9 @@ public class MediationService extends BaseService {
             JSONArray resultRuleInstances = new JSONArray();
             for (OmPlacementRuleInstance ruleInstance : placementRuleInstances) {
                 JSONObject resultRuleInstance = (JSONObject) JSONObject.toJSON(ruleInstance);
-                resultRuleInstance.put("className", adNetworkMap.get(ruleInstance.getAdnId()).getClassName());
+                if (adNetworkMap.get(ruleInstance.getAdnId()) != null) {
+                    resultRuleInstance.put("className", adNetworkMap.get(ruleInstance.getAdnId()).getClassName());
+                }
                 OmInstanceWithBLOBs instance = instanceMap.get(ruleInstance.getInstanceId());
                 if (instance != null) {
                     resultRuleInstance.put("instanceName", instance.getName());
@@ -231,7 +233,9 @@ public class MediationService extends BaseService {
         JSONArray resultInstances = new JSONArray();
         for (OmInstanceWithBLOBs instance : placementInstances) {
             JSONObject resultInstance = (JSONObject) JSONObject.toJSON(instance);
-            resultInstance.put("className", adNetworkMap.get(instance.getAdnId()).getClassName());
+            if (adNetworkMap.get(instance.getAdnId()) != null) {
+                resultInstance.put("className", adNetworkMap.get(instance.getAdnId()).getClassName());
+            }
             OmPlacementRuleInstance placementRuleInstance = instanceIdKeyRuleInstanceMap.get(instance.getId());
             if (placementRuleInstance != null) {
                 resultInstance.put("priority", placementRuleInstance.getPriority());

@@ -354,6 +354,7 @@ public class AdNetworkService extends BaseService {
             account = accounts.get(0);
             if (!omAdnetworkApp.getRefreshToken().equals(account.getAdnAppToken())) {
                 account.setAdnAppToken(omAdnetworkApp.getRefreshToken());
+                account.setStatus((byte)NormalStatus.Active.ordinal());
                 int result = this.reportAdnetworkAccountMapper.updateByPrimaryKeySelective(account);
                 if (result <= 0) {
                     throw new RuntimeException("Update account " + JSONObject.toJSON(account) + "failed");
