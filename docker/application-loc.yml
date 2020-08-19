@@ -13,7 +13,6 @@ om.adc.domain: http://adc.adtiming.com
 mreport.domain: 
 
 admob:
-  adt:
     client_id: your client id
     client_secret: your client secret
 
