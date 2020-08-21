@@ -5,8 +5,10 @@ import com.adtiming.om.ds.dao.ReportAdnetworkAccountPublisherMapper;
 import com.adtiming.om.ds.dto.AdNetworkType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -173,6 +175,7 @@ public class AccountService extends BaseService {
             }
             case Adtiming:
             case AdColony:
+            case Mint:
             case Tapjoy: {
                 criteria.andAdnAppTokenEqualTo(account.getAdnAppToken());
                 primaryKey = account.getAdnAppToken();
@@ -478,6 +481,12 @@ public class AccountService extends BaseService {
                 }
                 if (StringUtils.isBlank(account.getUserSignature())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Fyber's [Consumer Secret] must be not null");
+                }
+                break;
+            }
+            case Mint:{
+                if (StringUtils.isBlank(account.getAdnAppToken())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "Mint's [App token] must be not null");
                 }
                 break;
             }
