@@ -12,7 +12,7 @@ ENV SERVERNAME "om-ds-server"
 ARG GET_BUILDER_DIR="/data/OM-Dashboard-Server"
 RUN mkdir -p /${SERVERNAME}/log 
 ADD docker-entrypoint.sh /
-ADD application-loc.yml /${SERVERNAME}/
+COPY --from=builder ${GET_BUILDER_DIR}/src/main/resources/application-prod.yml /${SERVERNAME}/application-loc.yml
 COPY --from=builder ${GET_BUILDER_DIR}/target/${SERVERNAME}.jar /${SERVERNAME}/
 WORKDIR /
 RUN chmod +x /docker-entrypoint.sh /${SERVERNAME}/${SERVERNAME}.jar

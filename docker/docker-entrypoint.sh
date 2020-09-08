@@ -89,7 +89,7 @@ do
         fi
         if [[ ${item_name} = "dbaddress" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
-            sed -i "/url/s/127.0.0.1/${!env_var}/g" ${CONFFILE}/application-loc.yml
+            sed -i "/url/s@//\(.*\)/@//${!env_var}/@g" ${CONFFILE}/application-loc.yml
             continue
         fi
         if [[ ${item_name} = "dbname" ]];then
