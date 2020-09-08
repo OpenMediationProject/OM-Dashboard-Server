@@ -129,7 +129,12 @@ public class InstanceService extends BaseService {
      * @return instances
      */
     public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, Integer adNetworkId, Integer instanceId, Integer placementId) {
-        return this.getInstances(pubAppId, adNetworkId, instanceId, placementId, null, null, null);
+        List<Integer> adnIds = null;
+        if (adNetworkId != null){
+            adnIds = new ArrayList<>();
+            adnIds.add(adNetworkId);
+        }
+        return this.getInstances(pubAppId, adnIds, instanceId, placementId, null, null, null);
     }
 
     /**
@@ -172,21 +177,21 @@ public class InstanceService extends BaseService {
      * Select instances
      *
      * @param pubAppId
-     * @param adNetworkId
+     * @param adNetworkIds
      * @param instanceId
      * @param placementId
      * @param status
      * @return instances
      */
-    public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, Integer adNetworkId, Integer instanceId,
+    public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, List<Integer> adNetworkIds, Integer instanceId,
                                                   Integer placementId, NormalStatus status, Byte headBid, Integer adNetworkAppId) {
         OmInstanceCriteria omInstanceCriteria = new OmInstanceCriteria();
         OmInstanceCriteria.Criteria criteria = omInstanceCriteria.createCriteria();
         if (pubAppId != null) {
             criteria.andPubAppIdEqualTo(pubAppId);
         }
-        if (adNetworkId != null) {
-            criteria.andAdnIdEqualTo(adNetworkId);
+        if (adNetworkIds != null) {
+            criteria.andAdnIdIn(adNetworkIds);
         }
         if (instanceId != null) {
             criteria.andIdEqualTo(instanceId);

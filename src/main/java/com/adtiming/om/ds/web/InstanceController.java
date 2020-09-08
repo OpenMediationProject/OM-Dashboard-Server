@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -75,13 +76,20 @@ public class InstanceController extends BaseController {
      * Get select placement instances
      */
     @RequestMapping(value = "/instance/select/list", method = RequestMethod.GET)
-    public Response getSelectInstance(Integer adNetworkId, Integer pubAppId, Integer placementId, Integer instanceId, Byte headBid, Integer adNetworkAppId) {
+    public Response getSelectInstance(String[] adNetworkIds, Integer pubAppId, Integer placementId, Integer instanceId, Byte headBid, Integer adNetworkAppId) {
         try {
+            List<Integer> adnIds = null;
+            if (adNetworkIds != null && adNetworkIds.length > 0) {
+                adnIds = new ArrayList<>();
+                for (String adnId : adNetworkIds) {
+                    adnIds.add(Integer.parseInt(adnId));
+                }
+            }
             NormalStatus instanceStatus = null;
             if (headBid != null) {
                 instanceStatus = NormalStatus.Active;
             }
-            List<OmInstanceWithBLOBs> instances = this.instanceService.getInstances(pubAppId, adNetworkId, instanceId, placementId, instanceStatus, headBid, adNetworkAppId);
+            List<OmInstanceWithBLOBs> instances = this.instanceService.getInstances(pubAppId, adnIds, instanceId, placementId, instanceStatus, headBid, adNetworkAppId);
             JSONArray selects = new JSONArray();
             for (OmInstanceWithBLOBs instance : instances) {
                 JSONObject select = new JSONObject();

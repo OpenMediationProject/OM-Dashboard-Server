@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -163,10 +164,21 @@ public class PlacementController extends BaseController {
      * @param pubAppId
      */
     @RequestMapping(value = "/placement/select/list", method = RequestMethod.GET)
-    public Response getSelectPlacements(Integer pubAppId) {
+    public Response getSelectPlacements(Integer pubAppId, String[] pubAppIds, Integer status) {
         try {
+            List<Integer> appIds = null;
+            if (pubAppIds != null && pubAppIds.length > 0) {
+                appIds = new ArrayList<>();
+                for (String appId : pubAppIds) {
+                    appIds.add(Integer.parseInt(appId));
+                }
+            }
+            NormalStatus normalStatus = NormalStatus.Active;
+            if (status != null){
+                normalStatus = NormalStatus.getStatus(status);
+            }
             JSONArray results = new JSONArray();
-            List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(pubAppId, NormalStatus.Active);
+            List<OmPlacementWithBLOBs> placements = this.placementService.getPlacements(appIds, pubAppId, normalStatus);
             placements.forEach(placement -> {
                 JSONObject result = new JSONObject();
                 result.put("id", placement.getId());

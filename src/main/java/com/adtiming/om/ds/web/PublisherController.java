@@ -84,8 +84,8 @@ public class PublisherController extends BaseController {
             return this.publisherService.createPublisher(omPublisher);
         } catch (Exception e) {
             log.info("Create publisher {} error", JSONObject.toJSONString(omPublisher), e);
+            return Response.failure(Response.CODE_RES_FAILED, e.getMessage());
         }
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create publisher failed!");
     }
 
     /**
@@ -103,8 +103,8 @@ public class PublisherController extends BaseController {
             return this.publisherService.updatePublisher(omPublisher);
         } catch (Exception e) {
             log.error("Update publisher error {}", JSONObject.toJSONString(omPublisher), e);
+            return Response.failure(Response.CODE_RES_FAILED, e.getMessage());
         }
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update publisher failed!");
     }
 
     @RequestMapping(value = "/publisher/account/select/list", method = RequestMethod.GET)
@@ -161,8 +161,8 @@ public class PublisherController extends BaseController {
             return this.accountService.createAccount(account);
         } catch (Exception e) {
             log.error("Create account {} error:", JSONObject.toJSON(account), e);
+            return Response.failure(Response.CODE_RES_FAILED, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
 
     /**
@@ -180,8 +180,8 @@ public class PublisherController extends BaseController {
             return this.accountService.updateAccount(account);
         } catch (Exception e) {
             log.error("Update account {} error:", JSONObject.toJSON(account), e);
+            return Response.failure(Response.CODE_RES_FAILED, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
 
     /**
@@ -199,7 +199,7 @@ public class PublisherController extends BaseController {
             return this.accountService.deleteAccount(accountId);
         } catch (Exception e) {
             log.error("Delete account {} error:", accountId, e);
+            return Response.failure(Response.CODE_RES_FAILED, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
 }

@@ -301,6 +301,9 @@ public class MediationService extends BaseService {
         OmPlacementRule placementRule = this.getPlacementRule(ruleId);
         List<OmPlacementRule> placementRules = this.getPlacementRules(placementRule.getPubAppId(),
                 placementRule.getPlacementId(), SwitchStatus.ON);
+        if (CollectionUtils.isEmpty(placementRules)){
+            return Response.build();
+        }
         int oldPriority = placementRule.getPriority();
         for (OmPlacementRule rule : placementRules) {
             if (rule.getId().equals(ruleId)) {

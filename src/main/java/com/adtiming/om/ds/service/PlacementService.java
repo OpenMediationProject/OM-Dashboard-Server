@@ -76,6 +76,36 @@ public class PlacementService extends BaseService {
     }
 
     /**
+     * Select all placements from database by pubAppId and status
+     *
+     * @param pubAppIds
+     * @param pubAppId
+     * @param status
+     * @return placements
+     */
+    public List<OmPlacementWithBLOBs> getPlacements(List<Integer> pubAppIds, Integer pubAppId, NormalStatus status) {
+        OmPlacementCriteria omPlacementCriteria = new OmPlacementCriteria();
+        OmPlacementCriteria.Criteria criteria = omPlacementCriteria.createCriteria();
+        criteria.andIdGreaterThan(0);
+        if (pubAppId != null) {
+            criteria.andPubAppIdEqualTo(pubAppId);
+        }
+        if (pubAppIds != null) {
+            criteria.andPubAppIdIn(pubAppIds);
+        }
+        if (status != null) {
+            criteria.andStatusEqualTo((byte) status.ordinal());
+        }
+        criteria.andStatusLessThan((byte) NormalStatus.Deleted.ordinal());
+        criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
+        PageHelper.offsetPage(0, 1000);
+        List<OmPlacementWithBLOBs> placements = this.omPlacementMapper.selectWithBLOBs(omPlacementCriteria);
+        this.sortPlacementsByRevenue(placements);
+        return placements;
+    }
+
+    /**
      * Select all placements from database which related to current user
      *
      * @param placementId

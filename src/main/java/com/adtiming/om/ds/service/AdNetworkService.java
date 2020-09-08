@@ -303,6 +303,7 @@ public class AdNetworkService extends BaseService {
                 } else if (!omAdnetworkApp.getRefreshToken().equals(dbAdnApp.getRefreshToken())) {
                     ReportAdnetworkAccount account = this.accountService.getAccount(dbAdnApp.getReportAccountId());
                     account.setAdnAppToken(omAdnetworkApp.getRefreshToken());
+                    account.setStatus((byte)NormalStatus.Active.ordinal());
                     Response response = this.accountService.updateAccount(account);
                     if (response.getCode() != Response.SUCCESS_CODE) {
                         throw new RuntimeException(response.getMsg());
