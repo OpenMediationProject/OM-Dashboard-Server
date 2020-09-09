@@ -2,6 +2,8 @@ package com.adtiming.om.ds.dao;
 
 import com.adtiming.om.ds.model.ReportAdnetworkAccount;
 import com.adtiming.om.ds.model.ReportAdnetworkAccountCriteria;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface ReportAdnetworkAccountMapper {
@@ -20,4 +22,6 @@ public interface ReportAdnetworkAccountMapper {
     int updateByPrimaryKey(ReportAdnetworkAccount record);
 
     List<ReportAdnetworkAccount> selectByDynamic(String whereSql);
+
+    List<ReportAdnetworkAccount> selectWithAppIconByPublisher(@Param("publisherId") Integer publisherId);
 }

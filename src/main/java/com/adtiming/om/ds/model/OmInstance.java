@@ -54,6 +54,10 @@ public class OmInstance {
 
     private Date lastmodify;
 
+    private Integer priority;
+
+    private Integer placementRuleInstanceId;
+
     public Integer getId() {
         return id;
     }
@@ -244,6 +248,22 @@ public class OmInstance {
 
     public void setLastmodify(Date lastmodify) {
         this.lastmodify = lastmodify;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public Integer getPlacementRuleInstanceId() {
+        return placementRuleInstanceId;
+    }
+
+    public void setPlacementRuleInstanceId(Integer placementRuleInstanceId) {
+        this.placementRuleInstanceId = placementRuleInstanceId;
     }
 
     @Override

@@ -576,7 +576,7 @@ public class OmInstanceCriteria {
         }
 
         public Criteria andPlacementKeyEqualTo(String value) {
-            addCriterion("placement_key =", value, "placementKey");
+            addCriterion(" binary placement_key =", value, "placementKey");
             return (Criteria) this;
         }
 

@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -19,20 +20,20 @@ public class StatLrCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -225,6 +226,11 @@ public class StatLrCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andDayHourGreaterThanOrEqualTo(String day, Integer hour) {
+            addCriterion(" (day = '" + day + "' and hour >= " + hour + " or day > '" + day + "') ");
+            return (Criteria) this;
+        }
+
         public Criteria andDayLessThan(Date value) {
             addCriterionForJDBCDate("day <", value, "day");
             return (Criteria) this;
@@ -232,6 +238,11 @@ public class StatLrCriteria {
 
         public Criteria andDayLessThanOrEqualTo(Date value) {
             addCriterionForJDBCDate("day <=", value, "day");
+            return (Criteria) this;
+        }
+
+        public Criteria andDayHourLessThanOrEqualTo(String day, Integer hour) {
+            addCriterion(" (day = '" + day + "' and hour < " + hour + " or day < '" + day + "') ");
             return (Criteria) this;
         }
 
@@ -682,6 +693,66 @@ public class StatLrCriteria {
 
         public Criteria andInstanceIdNotBetween(Integer value1, Integer value2) {
             addCriterion("instance_id not between", value1, value2, "instanceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdIsNull() {
+            addCriterion("scene_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdIsNotNull() {
+            addCriterion("scene_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdEqualTo(Integer value) {
+            addCriterion("scene_id =", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdNotEqualTo(Integer value) {
+            addCriterion("scene_id <>", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdGreaterThan(Integer value) {
+            addCriterion("scene_id >", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("scene_id >=", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdLessThan(Integer value) {
+            addCriterion("scene_id <", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdLessThanOrEqualTo(Integer value) {
+            addCriterion("scene_id <=", value, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdIn(List<Integer> values) {
+            addCriterion("scene_id in", values, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdNotIn(List<Integer> values) {
+            addCriterion("scene_id not in", values, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdBetween(Integer value1, Integer value2) {
+            addCriterion("scene_id between", value1, value2, "sceneId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSceneIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("scene_id not between", value1, value2, "sceneId");
             return (Criteria) this;
         }
 
@@ -1524,6 +1595,366 @@ public class StatLrCriteria {
             addCriterion("create_time not between", value1, value2, "createTime");
             return (Criteria) this;
         }
+
+        public Criteria andBidReqIsNull() {
+            addCriterion("bid_req is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqIsNotNull() {
+            addCriterion("bid_req is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqEqualTo(Integer value) {
+            addCriterion("bid_req =", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqNotEqualTo(Integer value) {
+            addCriterion("bid_req <>", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqGreaterThan(Integer value) {
+            addCriterion("bid_req >", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqGreaterThanOrEqualTo(Integer value) {
+            addCriterion("bid_req >=", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqLessThan(Integer value) {
+            addCriterion("bid_req <", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqLessThanOrEqualTo(Integer value) {
+            addCriterion("bid_req <=", value, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqIn(List<Integer> values) {
+            addCriterion("bid_req in", values, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqNotIn(List<Integer> values) {
+            addCriterion("bid_req not in", values, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqBetween(Integer value1, Integer value2) {
+            addCriterion("bid_req between", value1, value2, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidReqNotBetween(Integer value1, Integer value2) {
+            addCriterion("bid_req not between", value1, value2, "bidReq");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespIsNull() {
+            addCriterion("bid_resp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespIsNotNull() {
+            addCriterion("bid_resp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespEqualTo(Integer value) {
+            addCriterion("bid_resp =", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespNotEqualTo(Integer value) {
+            addCriterion("bid_resp <>", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespGreaterThan(Integer value) {
+            addCriterion("bid_resp >", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespGreaterThanOrEqualTo(Integer value) {
+            addCriterion("bid_resp >=", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespLessThan(Integer value) {
+            addCriterion("bid_resp <", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespLessThanOrEqualTo(Integer value) {
+            addCriterion("bid_resp <=", value, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespIn(List<Integer> values) {
+            addCriterion("bid_resp in", values, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespNotIn(List<Integer> values) {
+            addCriterion("bid_resp not in", values, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespBetween(Integer value1, Integer value2) {
+            addCriterion("bid_resp between", value1, value2, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespNotBetween(Integer value1, Integer value2) {
+            addCriterion("bid_resp not between", value1, value2, "bidResp");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceIsNull() {
+            addCriterion("bid_resp_price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceIsNotNull() {
+            addCriterion("bid_resp_price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceEqualTo(BigDecimal value) {
+            addCriterion("bid_resp_price =", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceNotEqualTo(BigDecimal value) {
+            addCriterion("bid_resp_price <>", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceGreaterThan(BigDecimal value) {
+            addCriterion("bid_resp_price >", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("bid_resp_price >=", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceLessThan(BigDecimal value) {
+            addCriterion("bid_resp_price <", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("bid_resp_price <=", value, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceIn(List<BigDecimal> values) {
+            addCriterion("bid_resp_price in", values, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceNotIn(List<BigDecimal> values) {
+            addCriterion("bid_resp_price not in", values, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("bid_resp_price between", value1, value2, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidRespPriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("bid_resp_price not between", value1, value2, "bidRespPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinIsNull() {
+            addCriterion("bid_win is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinIsNotNull() {
+            addCriterion("bid_win is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinEqualTo(Integer value) {
+            addCriterion("bid_win =", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinNotEqualTo(Integer value) {
+            addCriterion("bid_win <>", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinGreaterThan(Integer value) {
+            addCriterion("bid_win >", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinGreaterThanOrEqualTo(Integer value) {
+            addCriterion("bid_win >=", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinLessThan(Integer value) {
+            addCriterion("bid_win <", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinLessThanOrEqualTo(Integer value) {
+            addCriterion("bid_win <=", value, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinIn(List<Integer> values) {
+            addCriterion("bid_win in", values, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinNotIn(List<Integer> values) {
+            addCriterion("bid_win not in", values, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinBetween(Integer value1, Integer value2) {
+            addCriterion("bid_win between", value1, value2, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinNotBetween(Integer value1, Integer value2) {
+            addCriterion("bid_win not between", value1, value2, "bidWin");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceIsNull() {
+            addCriterion("bid_win_price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceIsNotNull() {
+            addCriterion("bid_win_price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceEqualTo(BigDecimal value) {
+            addCriterion("bid_win_price =", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceNotEqualTo(BigDecimal value) {
+            addCriterion("bid_win_price <>", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceGreaterThan(BigDecimal value) {
+            addCriterion("bid_win_price >", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("bid_win_price >=", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceLessThan(BigDecimal value) {
+            addCriterion("bid_win_price <", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("bid_win_price <=", value, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceIn(List<BigDecimal> values) {
+            addCriterion("bid_win_price in", values, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceNotIn(List<BigDecimal> values) {
+            addCriterion("bid_win_price not in", values, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("bid_win_price between", value1, value2, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidWinPriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("bid_win_price not between", value1, value2, "bidWinPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidIsNull() {
+            addCriterion("bid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidIsNotNull() {
+            addCriterion("bid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidEqualTo(Byte value) {
+            addCriterion("bid =", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotEqualTo(Byte value) {
+            addCriterion("bid <>", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidGreaterThan(Byte value) {
+            addCriterion("bid >", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidGreaterThanOrEqualTo(Byte value) {
+            addCriterion("bid >=", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidLessThan(Byte value) {
+            addCriterion("bid <", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidLessThanOrEqualTo(Byte value) {
+            addCriterion("bid <=", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidIn(List<Byte> values) {
+            addCriterion("bid in", values, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotIn(List<Byte> values) {
+            addCriterion("bid not in", values, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidBetween(Byte value1, Byte value2) {
+            addCriterion("bid between", value1, value2, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotBetween(Byte value1, Byte value2) {
+            addCriterion("bid not between", value1, value2, "bid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
@@ -1549,6 +1980,38 @@ public class StatLrCriteria {
         private boolean listValue;
 
         private String typeHandler;
+
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
 
         protected Criterion(String condition) {
             super();
@@ -1584,38 +2047,6 @@ public class StatLrCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

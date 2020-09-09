@@ -15,7 +15,7 @@ public interface OmDictMapper {
 
     int insertSelective(OmDict record);
 
-    List<OmDict> selectByExampleWithBLOBs(OmDictCriteria example);
+    List<OmDict> selectWithBLOBs(OmDictCriteria example);
 
     List<OmDict> selectByExample(OmDictCriteria example);
 

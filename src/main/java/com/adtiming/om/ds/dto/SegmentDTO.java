@@ -3,6 +3,8 @@
 
 package com.adtiming.om.ds.dto;
 
+import com.adtiming.om.ds.model.OmInstanceWithBLOBs;
+
 import java.math.BigDecimal;
 
 /**
@@ -50,7 +52,9 @@ public class SegmentDTO {
 
     private Byte gender;
 
-    private String interest;
+    private Integer ageMin;
+
+    private Integer ageMax;
 
     private BigDecimal iapMin;
 
@@ -61,6 +65,10 @@ public class SegmentDTO {
     private Byte channelBow;
 
     private Integer deviceModelType;
+
+    private OmInstanceWithBLOBs[] instances;
+
+    private OmInstanceWithBLOBs[] headerbidding;
 
     public Integer getId() {
         return id;
@@ -238,14 +246,6 @@ public class SegmentDTO {
         this.deviceModelType = deviceModelType;
     }
 
-    public String getInterest() {
-        return interest;
-    }
-
-    public void setInterest(String interest) {
-        this.interest = interest;
-    }
-
     public BigDecimal getIapMin() {
         return iapMin;
     }
@@ -268,5 +268,37 @@ public class SegmentDTO {
 
     public void setChannel(String channel) {
         this.channel = channel;
+    }
+
+    public Integer getAgeMin() {
+        return ageMin;
+    }
+
+    public void setAgeMin(Integer ageMin) {
+        this.ageMin = ageMin;
+    }
+
+    public Integer getAgeMax() {
+        return ageMax;
+    }
+
+    public void setAgeMax(Integer ageMax) {
+        this.ageMax = ageMax;
+    }
+
+    public OmInstanceWithBLOBs[] getInstances() {
+        return instances;
+    }
+
+    public void setInstances(OmInstanceWithBLOBs[] instances) {
+        this.instances = instances;
+    }
+
+    public OmInstanceWithBLOBs[] getHeaderbidding() {
+        return headerbidding;
+    }
+
+    public void setHeaderbidding(OmInstanceWithBLOBs[] headerbidding) {
+        this.headerbidding = headerbidding;
     }
 }

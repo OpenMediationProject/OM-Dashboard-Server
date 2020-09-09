@@ -5,6 +5,7 @@ package com.adtiming.om.ds.dao;
 
 import com.adtiming.om.ds.model.OmPublisher;
 import com.adtiming.om.ds.model.OmPublisherCriteria;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface OmPublisherMapper {
     int updateByPrimaryKeySelective(OmPublisher record);
 
     int updateByPrimaryKey(OmPublisher record);
+
+    List<OmPublisher> selectWithOwnerEmail();
 }

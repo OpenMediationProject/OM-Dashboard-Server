@@ -92,6 +92,7 @@ public class OmShiroConfig {
         filterChainDefinitionMap.put("/finance/pingpong/link/succeed", "anon");
         filterChainDefinitionMap.put("/auth/logout", "logout");
         filterChainDefinitionMap.put("/un_auth", "anon");
+        filterChainDefinitionMap.put("/msg/dict", "anon");
 
         filterChainDefinitionMap.put("/user/info", "authc");
         filterChainDefinitionMap.put("/publisher/app/sort_list", "authc");

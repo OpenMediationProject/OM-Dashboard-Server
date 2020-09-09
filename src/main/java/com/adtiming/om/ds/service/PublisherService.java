@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -64,7 +63,10 @@ public class PublisherService extends BaseService {
 
             List<OmPublisher> publishers = new ArrayList<>();
             if (userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId())) {
-                List<OmPublisher> adminPublishers = this.selectPublishersByOwner(null, status);
+                List<OmPublisher> adminPublishers = this.omPublisherMapper.selectWithOwnerEmail();
+                if (status != null) {
+                    adminPublishers.removeIf(publisher -> publisher.getStatus().intValue() != status.ordinal());
+                }
                 publishers.addAll(adminPublishers);
             } else if (userRoleIdSet.contains(RoleType.ORGANIZATION_OWNER.getId())) {
                 List<OmPublisher> userPublishers = this.selectPublishersByOwner(userId, status);
@@ -135,41 +137,35 @@ public class PublisherService extends BaseService {
      */
     @Transactional
     public Response createPublisher(OmPublisher omPublisher) {
-        try {
-            List<OmPublisher> publishers = this.selectPublisherByName(omPublisher.getName());
-            if (!CollectionUtils.isEmpty(publishers)) {
-                return Response.build(Response.CODE_PARAMETER_ERROR, Response.STATUS_DISABLE, "Name already existed!");
-            }
-            Date currentTime = new Date();
-            if (omPublisher.getOwnerUserId() == null || omPublisher.getOwnerUserId() <= 0) {
-                omPublisher.setOwnerUserId(this.getCurrentUser().getId());
-            }
-            omPublisher.setCreateTime(currentTime);
-            omPublisher.setLastmodify(currentTime);
-            int result = this.omPublisherMapper.insertSelective(omPublisher);
-            if (result > 0) {
-                UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
-                if (umUser == null) {
-                    umUser = addUser(omPublisher);
-                }
-                omPublisher.setOwnerUserId(umUser.getId());
-                result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);
-                if (result <= 0) {
-                    throw new RuntimeException("Update publisher's creator id failed" + JSONObject.toJSONString(omPublisher));
-                }
-                Response response = this.roleService.createUserRole(umUser.getId(), RoleType.ORGANIZATION_OWNER.getId(), omPublisher.getId());
-                if (response.getCode() != Response.SUCCESS_CODE) {
-                    throw new RuntimeException("Create user admin role error when create publisher!");
-                }
-                log.info("Create publisher {} success", omPublisher.getName());
-                return Response.buildSuccess(omPublisher);
-            }
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.info("Create publisher {} error", JSONObject.toJSONString(omPublisher), e);
+        List<OmPublisher> publishers = this.selectPublisherByName(omPublisher.getName());
+        if (!CollectionUtils.isEmpty(publishers)) {
+            return Response.build(Response.CODE_PARAMETER_ERROR, Response.STATUS_DISABLE, "Name already existed!");
         }
-        log.info("Create publisher {} failed", JSONObject.toJSONString(omPublisher));
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create publisher failed!");
+        Date currentTime = new Date();
+        if (omPublisher.getOwnerUserId() == null || omPublisher.getOwnerUserId() <= 0) {
+            omPublisher.setOwnerUserId(this.getCurrentUser().getId());
+        }
+        omPublisher.setCreateTime(currentTime);
+        omPublisher.setLastmodify(currentTime);
+        int result = this.omPublisherMapper.insertSelective(omPublisher);
+        if (result <= 0) {
+            throw new RuntimeException("Create publisher " + JSONObject.toJSON(omPublisher) + " failed");
+        }
+        UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
+        if (umUser == null) {
+            umUser = addUser(omPublisher);
+        }
+        omPublisher.setOwnerUserId(umUser.getId());
+        result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);
+        if (result <= 0) {
+            throw new RuntimeException("Update publisher's creator id failed" + JSONObject.toJSONString(omPublisher));
+        }
+        Response response = this.roleService.createUserRole(umUser.getId(), RoleType.ORGANIZATION_OWNER.getId(), omPublisher.getId());
+        if (response.getCode() != Response.SUCCESS_CODE) {
+            throw new RuntimeException("Create user admin role error when create publisher!");
+        }
+        log.info("Create publisher {} success", omPublisher.getName());
+        return Response.buildSuccess(omPublisher);
     }
 
     /**
@@ -177,17 +173,10 @@ public class PublisherService extends BaseService {
      *
      * @param omPublisher
      */
-    @Transactional
     public Response updatePublisher(OmPublisher omPublisher) {
-        try {
-            OmPublisher dbPublisher = this.omPublisherMapper.selectByPrimaryKey(omPublisher.getId());
-            UmUser currentUser = this.getCurrentUser();
-            if (currentUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId() && omPublisher.getEmail() != null
-                    && !dbPublisher.getEmail().equals(omPublisher.getEmail())) {
-                log.error("Organization owner can not update organization's owner email");
-                return Response.RES_PARAMETER_ERROR;
-            }
-
+        OmPublisher dbPublisher = this.omPublisherMapper.selectByPrimaryKey(omPublisher.getId());
+        UmUser currentUser = this.getCurrentUser();
+        if (currentUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
             if (omPublisher.getEmail() != null && !StringUtils.isEmpty(omPublisher.getEmail())
                     && !StringUtils.isEmpty(dbPublisher.getEmail()) && !omPublisher.getEmail().equals(dbPublisher.getEmail())) {
                 UmUser umUser = this.userService.getUserInfoByEmail(omPublisher.getEmail());
@@ -198,18 +187,13 @@ public class PublisherService extends BaseService {
             } else {
                 omPublisher.setOwnerUserId(dbPublisher.getOwnerUserId());
             }
-            omPublisher.setLastmodify(new Date());
-            int result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);
-            if (result > 0) {
-                log.info("Update publisher {} success", omPublisher.getName());
-                return Response.build();
-            }
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("Update publisher error {}", JSONObject.toJSONString(omPublisher), e);
         }
-        log.error("Update publisher {} failed", omPublisher.getName());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update publisher failed!");
+        omPublisher.setLastmodify(new Date());
+        int result = this.omPublisherMapper.updateByPrimaryKeySelective(omPublisher);
+        if (result <= 0) {
+            throw new RuntimeException("Update publisher " + JSONObject.toJSON(omPublisher) + " failed!");
+        }
+        return Response.build();
     }
 
     private UmUser addUser(OmPublisher omPublisher) {

@@ -20,20 +20,20 @@ public class StatAdnetworkCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -806,6 +806,66 @@ public class StatAdnetworkCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andBidIsNull() {
+            addCriterion("bid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidIsNotNull() {
+            addCriterion("bid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidEqualTo(Byte value) {
+            addCriterion("bid =", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotEqualTo(Byte value) {
+            addCriterion("bid <>", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidGreaterThan(Byte value) {
+            addCriterion("bid >", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidGreaterThanOrEqualTo(Byte value) {
+            addCriterion("bid >=", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidLessThan(Byte value) {
+            addCriterion("bid <", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidLessThanOrEqualTo(Byte value) {
+            addCriterion("bid <=", value, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidIn(List<Byte> values) {
+            addCriterion("bid in", values, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotIn(List<Byte> values) {
+            addCriterion("bid not in", values, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidBetween(Byte value1, Byte value2) {
+            addCriterion("bid between", value1, value2, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBidNotBetween(Byte value1, Byte value2) {
+            addCriterion("bid not between", value1, value2, "bid");
+            return (Criteria) this;
+        }
+
         public Criteria andAbtIsNull() {
             addCriterion("abt is null");
             return (Criteria) this;
@@ -863,6 +923,136 @@ public class StatAdnetworkCriteria {
 
         public Criteria andAbtNotBetween(Byte value1, Byte value2) {
             addCriterion("abt not between", value1, value2, "abt");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIsNull() {
+            addCriterion("currency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIsNotNull() {
+            addCriterion("currency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyEqualTo(String value) {
+            addCriterion("currency =", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotEqualTo(String value) {
+            addCriterion("currency <>", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyGreaterThan(String value) {
+            addCriterion("currency >", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyGreaterThanOrEqualTo(String value) {
+            addCriterion("currency >=", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLessThan(String value) {
+            addCriterion("currency <", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLessThanOrEqualTo(String value) {
+            addCriterion("currency <=", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyLike(String value) {
+            addCriterion("currency like", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotLike(String value) {
+            addCriterion("currency not like", value, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyIn(List<String> values) {
+            addCriterion("currency in", values, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotIn(List<String> values) {
+            addCriterion("currency not in", values, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyBetween(String value1, String value2) {
+            addCriterion("currency between", value1, value2, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrencyNotBetween(String value1, String value2) {
+            addCriterion("currency not between", value1, value2, "currency");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateIsNull() {
+            addCriterion("exchange_rate is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateIsNotNull() {
+            addCriterion("exchange_rate is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateEqualTo(BigDecimal value) {
+            addCriterion("exchange_rate =", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateNotEqualTo(BigDecimal value) {
+            addCriterion("exchange_rate <>", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateGreaterThan(BigDecimal value) {
+            addCriterion("exchange_rate >", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("exchange_rate >=", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateLessThan(BigDecimal value) {
+            addCriterion("exchange_rate <", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("exchange_rate <=", value, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateIn(List<BigDecimal> values) {
+            addCriterion("exchange_rate in", values, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateNotIn(List<BigDecimal> values) {
+            addCriterion("exchange_rate not in", values, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("exchange_rate between", value1, value2, "exchangeRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andExchangeRateNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("exchange_rate not between", value1, value2, "exchangeRate");
             return (Criteria) this;
         }
 
@@ -926,6 +1116,66 @@ public class StatAdnetworkCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andCostOriIsNull() {
+            addCriterion("cost_ori is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriIsNotNull() {
+            addCriterion("cost_ori is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriEqualTo(BigDecimal value) {
+            addCriterion("cost_ori =", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriNotEqualTo(BigDecimal value) {
+            addCriterion("cost_ori <>", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriGreaterThan(BigDecimal value) {
+            addCriterion("cost_ori >", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("cost_ori >=", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriLessThan(BigDecimal value) {
+            addCriterion("cost_ori <", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("cost_ori <=", value, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriIn(List<BigDecimal> values) {
+            addCriterion("cost_ori in", values, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriNotIn(List<BigDecimal> values) {
+            addCriterion("cost_ori not in", values, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("cost_ori between", value1, value2, "costOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andCostOriNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("cost_ori not between", value1, value2, "costOri");
+            return (Criteria) this;
+        }
+
         public Criteria andRevenueIsNull() {
             addCriterion("revenue is null");
             return (Criteria) this;
@@ -986,6 +1236,66 @@ public class StatAdnetworkCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andRevenueOriIsNull() {
+            addCriterion("revenue_ori is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriIsNotNull() {
+            addCriterion("revenue_ori is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriEqualTo(BigDecimal value) {
+            addCriterion("revenue_ori =", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriNotEqualTo(BigDecimal value) {
+            addCriterion("revenue_ori <>", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriGreaterThan(BigDecimal value) {
+            addCriterion("revenue_ori >", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("revenue_ori >=", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriLessThan(BigDecimal value) {
+            addCriterion("revenue_ori <", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("revenue_ori <=", value, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriIn(List<BigDecimal> values) {
+            addCriterion("revenue_ori in", values, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriNotIn(List<BigDecimal> values) {
+            addCriterion("revenue_ori not in", values, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("revenue_ori between", value1, value2, "revenueOri");
+            return (Criteria) this;
+        }
+
+        public Criteria andRevenueOriNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("revenue_ori not between", value1, value2, "revenueOri");
+            return (Criteria) this;
+        }
+
         public Criteria andApiRequestIsNull() {
             addCriterion("api_request is null");
             return (Criteria) this;
@@ -996,52 +1306,52 @@ public class StatAdnetworkCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestEqualTo(BigDecimal value) {
+        public Criteria andApiRequestEqualTo(Integer value) {
             addCriterion("api_request =", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestNotEqualTo(BigDecimal value) {
+        public Criteria andApiRequestNotEqualTo(Integer value) {
             addCriterion("api_request <>", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestGreaterThan(BigDecimal value) {
+        public Criteria andApiRequestGreaterThan(Integer value) {
             addCriterion("api_request >", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestGreaterThanOrEqualTo(BigDecimal value) {
+        public Criteria andApiRequestGreaterThanOrEqualTo(Integer value) {
             addCriterion("api_request >=", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestLessThan(BigDecimal value) {
+        public Criteria andApiRequestLessThan(Integer value) {
             addCriterion("api_request <", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestLessThanOrEqualTo(BigDecimal value) {
+        public Criteria andApiRequestLessThanOrEqualTo(Integer value) {
             addCriterion("api_request <=", value, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestIn(List<BigDecimal> values) {
+        public Criteria andApiRequestIn(List<Integer> values) {
             addCriterion("api_request in", values, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestNotIn(List<BigDecimal> values) {
+        public Criteria andApiRequestNotIn(List<Integer> values) {
             addCriterion("api_request not in", values, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestBetween(BigDecimal value1, BigDecimal value2) {
+        public Criteria andApiRequestBetween(Integer value1, Integer value2) {
             addCriterion("api_request between", value1, value2, "apiRequest");
             return (Criteria) this;
         }
 
-        public Criteria andApiRequestNotBetween(BigDecimal value1, BigDecimal value2) {
+        public Criteria andApiRequestNotBetween(Integer value1, Integer value2) {
             addCriterion("api_request not between", value1, value2, "apiRequest");
             return (Criteria) this;
         }
@@ -1596,6 +1906,136 @@ public class StatAdnetworkCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andAdnAccountKeyIsNull() {
+            addCriterion("adn_account_key is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyIsNotNull() {
+            addCriterion("adn_account_key is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyEqualTo(String value) {
+            addCriterion("adn_account_key =", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyNotEqualTo(String value) {
+            addCriterion("adn_account_key <>", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyGreaterThan(String value) {
+            addCriterion("adn_account_key >", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("adn_account_key >=", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyLessThan(String value) {
+            addCriterion("adn_account_key <", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyLessThanOrEqualTo(String value) {
+            addCriterion("adn_account_key <=", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyLike(String value) {
+            addCriterion("adn_account_key like", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyNotLike(String value) {
+            addCriterion("adn_account_key not like", value, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyIn(List<String> values) {
+            addCriterion("adn_account_key in", values, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyNotIn(List<String> values) {
+            addCriterion("adn_account_key not in", values, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyBetween(String value1, String value2) {
+            addCriterion("adn_account_key between", value1, value2, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andAdnAccountKeyNotBetween(String value1, String value2) {
+            addCriterion("adn_account_key not between", value1, value2, "adnAccountKey");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdIsNull() {
+            addCriterion("report_account_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdIsNotNull() {
+            addCriterion("report_account_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdEqualTo(Integer value) {
+            addCriterion("report_account_id =", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdNotEqualTo(Integer value) {
+            addCriterion("report_account_id <>", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdGreaterThan(Integer value) {
+            addCriterion("report_account_id >", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("report_account_id >=", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdLessThan(Integer value) {
+            addCriterion("report_account_id <", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdLessThanOrEqualTo(Integer value) {
+            addCriterion("report_account_id <=", value, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdIn(List<Integer> values) {
+            addCriterion("report_account_id in", values, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdNotIn(List<Integer> values) {
+            addCriterion("report_account_id not in", values, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdBetween(Integer value1, Integer value2) {
+            addCriterion("report_account_id between", value1, value2, "reportAccountId");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportAccountIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("report_account_id not between", value1, value2, "reportAccountId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -1741,6 +2181,38 @@ public class StatAdnetworkCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -1775,38 +2247,6 @@ public class StatAdnetworkCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class StatLr extends StatLrKey {
@@ -20,33 +21,51 @@ public class StatLr extends StatLrKey {
 
     private Integer instanceId;
 
+    private Integer sceneId;
+
     private Integer adnId;
 
     private Byte abt;
 
-    private Long waterfallRequest;
+    private Integer waterfallRequest;
 
-    private Long waterfallFilled;
+    private Integer waterfallFilled;
 
-    private Long instanceRequest;
+    private Integer instanceRequest;
 
-    private Long instanceFilled;
+    private Integer instanceFilled;
 
-    private Long videoStart;
+    private Integer videoStart;
 
-    private Long videoComplete;
+    private Integer videoComplete;
 
-    private Long calledShow;
+    private Integer calledShow;
 
-    private Long isReadyTrue;
+    private Integer isReadyTrue;
 
-    private Long isReadyFalse;
+    private Integer isReadyFalse;
 
-    private Long click;
+    private Integer click;
 
-    private Long impr;
+    private Integer impr;
+
+    private Integer mediationClick;
+
+    private Integer mediationImpr;
 
     private Date createTime;
+
+    private Integer bidReq;
+
+    private Integer bidResp;
+
+    private BigDecimal bidRespPrice;
+
+    private Integer bidWin;
+
+    private BigDecimal bidWinPrice;
+
+    private Byte bid;
 
     public Byte getHour() {
         return hour;
@@ -104,6 +123,14 @@ public class StatLr extends StatLrKey {
         this.instanceId = instanceId;
     }
 
+    public Integer getSceneId() {
+        return sceneId;
+    }
+
+    public void setSceneId(Integer sceneId) {
+        this.sceneId = sceneId;
+    }
+
     public Integer getAdnId() {
         return adnId;
     }
@@ -120,91 +147,91 @@ public class StatLr extends StatLrKey {
         this.abt = abt;
     }
 
-    public Long getWaterfallRequest() {
+    public Integer getWaterfallRequest() {
         return waterfallRequest;
     }
 
-    public void setWaterfallRequest(Long waterfallRequest) {
+    public void setWaterfallRequest(Integer waterfallRequest) {
         this.waterfallRequest = waterfallRequest;
     }
 
-    public Long getWaterfallFilled() {
+    public Integer getWaterfallFilled() {
         return waterfallFilled;
     }
 
-    public void setWaterfallFilled(Long waterfallFilled) {
+    public void setWaterfallFilled(Integer waterfallFilled) {
         this.waterfallFilled = waterfallFilled;
     }
 
-    public Long getInstanceRequest() {
+    public Integer getInstanceRequest() {
         return instanceRequest;
     }
 
-    public void setInstanceRequest(Long instanceRequest) {
+    public void setInstanceRequest(Integer instanceRequest) {
         this.instanceRequest = instanceRequest;
     }
 
-    public Long getInstanceFilled() {
+    public Integer getInstanceFilled() {
         return instanceFilled;
     }
 
-    public void setInstanceFilled(Long instanceFilled) {
+    public void setInstanceFilled(Integer instanceFilled) {
         this.instanceFilled = instanceFilled;
     }
 
-    public Long getVideoStart() {
+    public Integer getVideoStart() {
         return videoStart;
     }
 
-    public void setVideoStart(Long videoStart) {
+    public void setVideoStart(Integer videoStart) {
         this.videoStart = videoStart;
     }
 
-    public Long getVideoComplete() {
+    public Integer getVideoComplete() {
         return videoComplete;
     }
 
-    public void setVideoComplete(Long videoComplete) {
+    public void setVideoComplete(Integer videoComplete) {
         this.videoComplete = videoComplete;
     }
 
-    public Long getCalledShow() {
+    public Integer getCalledShow() {
         return calledShow;
     }
 
-    public void setCalledShow(Long calledShow) {
+    public void setCalledShow(Integer calledShow) {
         this.calledShow = calledShow;
     }
 
-    public Long getIsReadyTrue() {
+    public Integer getIsReadyTrue() {
         return isReadyTrue;
     }
 
-    public void setIsReadyTrue(Long isReadyTrue) {
+    public void setIsReadyTrue(Integer isReadyTrue) {
         this.isReadyTrue = isReadyTrue;
     }
 
-    public Long getIsReadyFalse() {
+    public Integer getIsReadyFalse() {
         return isReadyFalse;
     }
 
-    public void setIsReadyFalse(Long isReadyFalse) {
+    public void setIsReadyFalse(Integer isReadyFalse) {
         this.isReadyFalse = isReadyFalse;
     }
 
-    public Long getClick() {
+    public Integer getClick() {
         return click;
     }
 
-    public void setClick(Long click) {
+    public void setClick(Integer click) {
         this.click = click;
     }
 
-    public Long getImpr() {
+    public Integer getImpr() {
         return impr;
     }
 
-    public void setImpr(Long impr) {
+    public void setImpr(Integer impr) {
         this.impr = impr;
     }
 
@@ -214,6 +241,70 @@ public class StatLr extends StatLrKey {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getBidReq() {
+        return bidReq;
+    }
+
+    public void setBidReq(Integer bidReq) {
+        this.bidReq = bidReq;
+    }
+
+    public Integer getBidResp() {
+        return bidResp;
+    }
+
+    public void setBidResp(Integer bidResp) {
+        this.bidResp = bidResp;
+    }
+
+    public BigDecimal getBidRespPrice() {
+        return bidRespPrice;
+    }
+
+    public void setBidRespPrice(BigDecimal bidRespPrice) {
+        this.bidRespPrice = bidRespPrice;
+    }
+
+    public Integer getBidWin() {
+        return bidWin;
+    }
+
+    public void setBidWin(Integer bidWin) {
+        this.bidWin = bidWin;
+    }
+
+    public BigDecimal getBidWinPrice() {
+        return bidWinPrice;
+    }
+
+    public void setBidWinPrice(BigDecimal bidWinPrice) {
+        this.bidWinPrice = bidWinPrice;
+    }
+
+    public Byte getBid() {
+        return bid;
+    }
+
+    public void setBid(Byte bid) {
+        this.bid = bid;
+    }
+
+    public Integer getMediationClick() {
+        return mediationClick;
+    }
+
+    public void setMediationClick(Integer mediationClick) {
+        this.mediationClick = mediationClick;
+    }
+
+    public Integer getMediationImpr() {
+        return mediationImpr;
+    }
+
+    public void setMediationImpr(Integer mediationImpr) {
+        this.mediationImpr = mediationImpr;
     }
 
     @Override
@@ -229,28 +320,35 @@ public class StatLr extends StatLrKey {
         }
         StatLr other = (StatLr) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
-                && (this.getHour() == null ? other.getHour() == null : this.getHour().equals(other.getHour()))
-                && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
-                && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
-                && (this.getInstanceId() == null ? other.getInstanceId() == null : this.getInstanceId().equals(other.getInstanceId()))
-                && (this.getAdnId() == null ? other.getAdnId() == null : this.getAdnId().equals(other.getAdnId()))
-                && (this.getAbt() == null ? other.getAbt() == null : this.getAbt().equals(other.getAbt()))
-                && (this.getWaterfallRequest() == null ? other.getWaterfallRequest() == null : this.getWaterfallRequest().equals(other.getWaterfallRequest()))
-                && (this.getWaterfallFilled() == null ? other.getWaterfallFilled() == null : this.getWaterfallFilled().equals(other.getWaterfallFilled()))
-                && (this.getInstanceRequest() == null ? other.getInstanceRequest() == null : this.getInstanceRequest().equals(other.getInstanceRequest()))
-                && (this.getInstanceFilled() == null ? other.getInstanceFilled() == null : this.getInstanceFilled().equals(other.getInstanceFilled()))
-                && (this.getVideoStart() == null ? other.getVideoStart() == null : this.getVideoStart().equals(other.getVideoStart()))
-                && (this.getVideoComplete() == null ? other.getVideoComplete() == null : this.getVideoComplete().equals(other.getVideoComplete()))
-                && (this.getCalledShow() == null ? other.getCalledShow() == null : this.getCalledShow().equals(other.getCalledShow()))
-                && (this.getIsReadyTrue() == null ? other.getIsReadyTrue() == null : this.getIsReadyTrue().equals(other.getIsReadyTrue()))
-                && (this.getIsReadyFalse() == null ? other.getIsReadyFalse() == null : this.getIsReadyFalse().equals(other.getIsReadyFalse()))
-                && (this.getClick() == null ? other.getClick() == null : this.getClick().equals(other.getClick()))
-                && (this.getImpr() == null ? other.getImpr() == null : this.getImpr().equals(other.getImpr()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
+            && (this.getHour() == null ? other.getHour() == null : this.getHour().equals(other.getHour()))
+            && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
+            && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
+            && (this.getInstanceId() == null ? other.getInstanceId() == null : this.getInstanceId().equals(other.getInstanceId()))
+            && (this.getSceneId() == null ? other.getSceneId() == null : this.getSceneId().equals(other.getSceneId()))
+            && (this.getAdnId() == null ? other.getAdnId() == null : this.getAdnId().equals(other.getAdnId()))
+            && (this.getAbt() == null ? other.getAbt() == null : this.getAbt().equals(other.getAbt()))
+            && (this.getWaterfallRequest() == null ? other.getWaterfallRequest() == null : this.getWaterfallRequest().equals(other.getWaterfallRequest()))
+            && (this.getWaterfallFilled() == null ? other.getWaterfallFilled() == null : this.getWaterfallFilled().equals(other.getWaterfallFilled()))
+            && (this.getInstanceRequest() == null ? other.getInstanceRequest() == null : this.getInstanceRequest().equals(other.getInstanceRequest()))
+            && (this.getInstanceFilled() == null ? other.getInstanceFilled() == null : this.getInstanceFilled().equals(other.getInstanceFilled()))
+            && (this.getVideoStart() == null ? other.getVideoStart() == null : this.getVideoStart().equals(other.getVideoStart()))
+            && (this.getVideoComplete() == null ? other.getVideoComplete() == null : this.getVideoComplete().equals(other.getVideoComplete()))
+            && (this.getCalledShow() == null ? other.getCalledShow() == null : this.getCalledShow().equals(other.getCalledShow()))
+            && (this.getIsReadyTrue() == null ? other.getIsReadyTrue() == null : this.getIsReadyTrue().equals(other.getIsReadyTrue()))
+            && (this.getIsReadyFalse() == null ? other.getIsReadyFalse() == null : this.getIsReadyFalse().equals(other.getIsReadyFalse()))
+            && (this.getClick() == null ? other.getClick() == null : this.getClick().equals(other.getClick()))
+            && (this.getImpr() == null ? other.getImpr() == null : this.getImpr().equals(other.getImpr()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getBidReq() == null ? other.getBidReq() == null : this.getBidReq().equals(other.getBidReq()))
+            && (this.getBidResp() == null ? other.getBidResp() == null : this.getBidResp().equals(other.getBidResp()))
+            && (this.getBidRespPrice() == null ? other.getBidRespPrice() == null : this.getBidRespPrice().equals(other.getBidRespPrice()))
+            && (this.getBidWin() == null ? other.getBidWin() == null : this.getBidWin().equals(other.getBidWin()))
+            && (this.getBidWinPrice() == null ? other.getBidWinPrice() == null : this.getBidWinPrice().equals(other.getBidWinPrice()))
+            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()));
     }
 
     @Override
@@ -266,6 +364,7 @@ public class StatLr extends StatLrKey {
         result = prime * result + ((getPubAppId() == null) ? 0 : getPubAppId().hashCode());
         result = prime * result + ((getPlacementId() == null) ? 0 : getPlacementId().hashCode());
         result = prime * result + ((getInstanceId() == null) ? 0 : getInstanceId().hashCode());
+        result = prime * result + ((getSceneId() == null) ? 0 : getSceneId().hashCode());
         result = prime * result + ((getAdnId() == null) ? 0 : getAdnId().hashCode());
         result = prime * result + ((getAbt() == null) ? 0 : getAbt().hashCode());
         result = prime * result + ((getWaterfallRequest() == null) ? 0 : getWaterfallRequest().hashCode());
@@ -280,6 +379,12 @@ public class StatLr extends StatLrKey {
         result = prime * result + ((getClick() == null) ? 0 : getClick().hashCode());
         result = prime * result + ((getImpr() == null) ? 0 : getImpr().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getBidReq() == null) ? 0 : getBidReq().hashCode());
+        result = prime * result + ((getBidResp() == null) ? 0 : getBidResp().hashCode());
+        result = prime * result + ((getBidRespPrice() == null) ? 0 : getBidRespPrice().hashCode());
+        result = prime * result + ((getBidWin() == null) ? 0 : getBidWin().hashCode());
+        result = prime * result + ((getBidWinPrice() == null) ? 0 : getBidWinPrice().hashCode());
+        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
         return result;
     }
 }

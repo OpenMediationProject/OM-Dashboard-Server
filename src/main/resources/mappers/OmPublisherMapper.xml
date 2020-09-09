@@ -356,4 +356,37 @@
       lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectWithOwnerEmail" resultMap="BaseResultMap">
+    SELECT
+    om_publisher.id,
+    om_publisher.name,
+    om_publisher.nickname,
+    om_publisher.status,
+    om_publisher.verify_status,
+    om_publisher.domain,
+    om_publisher.descn,
+    om_publisher.contacts,
+    om_publisher.revenue_sharing,
+    om_publisher.im_type,
+    om_publisher.publisher_manager,
+    om_publisher.account_manager,
+    om_publisher.token,
+    om_publisher.token_create_time,
+    om_publisher.address,
+    user.email,
+    om_publisher.country,
+    om_publisher.phone,
+    om_publisher.skype,
+    om_publisher.wechat_qq,
+    om_publisher.facebook_account,
+    om_publisher.owner_user_id,
+    om_publisher.create_time,
+    om_publisher.lastmodify
+    FROM
+    om_publisher
+    LEFT JOIN
+    um_user user ON om_publisher.owner_user_id = user.id
+    WHERE
+    user.status = 1
+  </select>
 </mapper>

@@ -25,13 +25,23 @@ public class StatAdnetwork extends StatAdnetworkKey {
 
     private Integer instanceId;
 
+    private Byte bid;
+
     private Byte abt;
+
+    private String currency;
+
+    private BigDecimal exchangeRate;
 
     private BigDecimal cost;
 
+    private BigDecimal costOri;
+
     private BigDecimal revenue;
 
-    private BigDecimal apiRequest;
+    private BigDecimal revenueOri;
+
+    private Integer apiRequest;
 
     private Integer apiFilled;
 
@@ -50,6 +60,10 @@ public class StatAdnetwork extends StatAdnetworkKey {
     private Byte category;
 
     private String accountName;
+
+    private String adnAccountKey;
+
+    private Integer reportAccountId;
 
     private Date createTime;
 
@@ -127,12 +141,36 @@ public class StatAdnetwork extends StatAdnetworkKey {
         this.instanceId = instanceId;
     }
 
+    public Byte getBid() {
+        return bid;
+    }
+
+    public void setBid(Byte bid) {
+        this.bid = bid;
+    }
+
     public Byte getAbt() {
         return abt;
     }
 
     public void setAbt(Byte abt) {
         this.abt = abt;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency == null ? null : currency.trim();
+    }
+
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 
     public BigDecimal getCost() {
@@ -143,6 +181,14 @@ public class StatAdnetwork extends StatAdnetworkKey {
         this.cost = cost;
     }
 
+    public BigDecimal getCostOri() {
+        return costOri;
+    }
+
+    public void setCostOri(BigDecimal costOri) {
+        this.costOri = costOri;
+    }
+
     public BigDecimal getRevenue() {
         return revenue;
     }
@@ -151,11 +197,19 @@ public class StatAdnetwork extends StatAdnetworkKey {
         this.revenue = revenue;
     }
 
-    public BigDecimal getApiRequest() {
+    public BigDecimal getRevenueOri() {
+        return revenueOri;
+    }
+
+    public void setRevenueOri(BigDecimal revenueOri) {
+        this.revenueOri = revenueOri;
+    }
+
+    public Integer getApiRequest() {
         return apiRequest;
     }
 
-    public void setApiRequest(BigDecimal apiRequest) {
+    public void setApiRequest(Integer apiRequest) {
         this.apiRequest = apiRequest;
     }
 
@@ -231,6 +285,22 @@ public class StatAdnetwork extends StatAdnetworkKey {
         this.accountName = accountName == null ? null : accountName.trim();
     }
 
+    public String getAdnAccountKey() {
+        return adnAccountKey;
+    }
+
+    public void setAdnAccountKey(String adnAccountKey) {
+        this.adnAccountKey = adnAccountKey == null ? null : adnAccountKey.trim();
+    }
+
+    public Integer getReportAccountId() {
+        return reportAccountId;
+    }
+
+    public void setReportAccountId(Integer reportAccountId) {
+        this.reportAccountId = reportAccountId;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -260,31 +330,38 @@ public class StatAdnetwork extends StatAdnetworkKey {
         }
         StatAdnetwork other = (StatAdnetwork) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
-                && (this.getHour() == null ? other.getHour() == null : this.getHour().equals(other.getHour()))
-                && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
-                && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
-                && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
-                && (this.getAdnId() == null ? other.getAdnId() == null : this.getAdnId().equals(other.getAdnId()))
-                && (this.getInstanceId() == null ? other.getInstanceId() == null : this.getInstanceId().equals(other.getInstanceId()))
-                && (this.getAbt() == null ? other.getAbt() == null : this.getAbt().equals(other.getAbt()))
-                && (this.getCost() == null ? other.getCost() == null : this.getCost().equals(other.getCost()))
-                && (this.getRevenue() == null ? other.getRevenue() == null : this.getRevenue().equals(other.getRevenue()))
-                && (this.getApiRequest() == null ? other.getApiRequest() == null : this.getApiRequest().equals(other.getApiRequest()))
-                && (this.getApiFilled() == null ? other.getApiFilled() == null : this.getApiFilled().equals(other.getApiFilled()))
-                && (this.getApiClick() == null ? other.getApiClick() == null : this.getApiClick().equals(other.getApiClick()))
-                && (this.getApiImpr() == null ? other.getApiImpr() == null : this.getApiImpr().equals(other.getApiImpr()))
-                && (this.getApiVideoStart() == null ? other.getApiVideoStart() == null : this.getApiVideoStart().equals(other.getApiVideoStart()))
-                && (this.getApiVideoComplete() == null ? other.getApiVideoComplete() == null : this.getApiVideoComplete().equals(other.getApiVideoComplete()))
-                && (this.getAccountId() == null ? other.getAccountId() == null : this.getAccountId().equals(other.getAccountId()))
-                && (this.getAccountOwner() == null ? other.getAccountOwner() == null : this.getAccountOwner().equals(other.getAccountOwner()))
-                && (this.getCategory() == null ? other.getCategory() == null : this.getCategory().equals(other.getCategory()))
-                && (this.getAccountName() == null ? other.getAccountName() == null : this.getAccountName().equals(other.getAccountName()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
+            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
+            && (this.getHour() == null ? other.getHour() == null : this.getHour().equals(other.getHour()))
+            && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
+            && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
+            && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
+            && (this.getAdnId() == null ? other.getAdnId() == null : this.getAdnId().equals(other.getAdnId()))
+            && (this.getInstanceId() == null ? other.getInstanceId() == null : this.getInstanceId().equals(other.getInstanceId()))
+            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()))
+            && (this.getAbt() == null ? other.getAbt() == null : this.getAbt().equals(other.getAbt()))
+            && (this.getCurrency() == null ? other.getCurrency() == null : this.getCurrency().equals(other.getCurrency()))
+            && (this.getExchangeRate() == null ? other.getExchangeRate() == null : this.getExchangeRate().equals(other.getExchangeRate()))
+            && (this.getCost() == null ? other.getCost() == null : this.getCost().equals(other.getCost()))
+            && (this.getCostOri() == null ? other.getCostOri() == null : this.getCostOri().equals(other.getCostOri()))
+            && (this.getRevenue() == null ? other.getRevenue() == null : this.getRevenue().equals(other.getRevenue()))
+            && (this.getRevenueOri() == null ? other.getRevenueOri() == null : this.getRevenueOri().equals(other.getRevenueOri()))
+            && (this.getApiRequest() == null ? other.getApiRequest() == null : this.getApiRequest().equals(other.getApiRequest()))
+            && (this.getApiFilled() == null ? other.getApiFilled() == null : this.getApiFilled().equals(other.getApiFilled()))
+            && (this.getApiClick() == null ? other.getApiClick() == null : this.getApiClick().equals(other.getApiClick()))
+            && (this.getApiImpr() == null ? other.getApiImpr() == null : this.getApiImpr().equals(other.getApiImpr()))
+            && (this.getApiVideoStart() == null ? other.getApiVideoStart() == null : this.getApiVideoStart().equals(other.getApiVideoStart()))
+            && (this.getApiVideoComplete() == null ? other.getApiVideoComplete() == null : this.getApiVideoComplete().equals(other.getApiVideoComplete()))
+            && (this.getAccountId() == null ? other.getAccountId() == null : this.getAccountId().equals(other.getAccountId()))
+            && (this.getAccountOwner() == null ? other.getAccountOwner() == null : this.getAccountOwner().equals(other.getAccountOwner()))
+            && (this.getCategory() == null ? other.getCategory() == null : this.getCategory().equals(other.getCategory()))
+            && (this.getAccountName() == null ? other.getAccountName() == null : this.getAccountName().equals(other.getAccountName()))
+            && (this.getAdnAccountKey() == null ? other.getAdnAccountKey() == null : this.getAdnAccountKey().equals(other.getAdnAccountKey()))
+            && (this.getReportAccountId() == null ? other.getReportAccountId() == null : this.getReportAccountId().equals(other.getReportAccountId()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
 
     @Override
@@ -302,9 +379,14 @@ public class StatAdnetwork extends StatAdnetworkKey {
         result = prime * result + ((getAdType() == null) ? 0 : getAdType().hashCode());
         result = prime * result + ((getAdnId() == null) ? 0 : getAdnId().hashCode());
         result = prime * result + ((getInstanceId() == null) ? 0 : getInstanceId().hashCode());
+        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
         result = prime * result + ((getAbt() == null) ? 0 : getAbt().hashCode());
+        result = prime * result + ((getCurrency() == null) ? 0 : getCurrency().hashCode());
+        result = prime * result + ((getExchangeRate() == null) ? 0 : getExchangeRate().hashCode());
         result = prime * result + ((getCost() == null) ? 0 : getCost().hashCode());
+        result = prime * result + ((getCostOri() == null) ? 0 : getCostOri().hashCode());
         result = prime * result + ((getRevenue() == null) ? 0 : getRevenue().hashCode());
+        result = prime * result + ((getRevenueOri() == null) ? 0 : getRevenueOri().hashCode());
         result = prime * result + ((getApiRequest() == null) ? 0 : getApiRequest().hashCode());
         result = prime * result + ((getApiFilled() == null) ? 0 : getApiFilled().hashCode());
         result = prime * result + ((getApiClick() == null) ? 0 : getApiClick().hashCode());
@@ -315,6 +397,8 @@ public class StatAdnetwork extends StatAdnetworkKey {
         result = prime * result + ((getAccountOwner() == null) ? 0 : getAccountOwner().hashCode());
         result = prime * result + ((getCategory() == null) ? 0 : getCategory().hashCode());
         result = prime * result + ((getAccountName() == null) ? 0 : getAccountName().hashCode());
+        result = prime * result + ((getAdnAccountKey() == null) ? 0 : getAdnAccountKey().hashCode());
+        result = prime * result + ((getReportAccountId() == null) ? 0 : getReportAccountId().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastmodify() == null) ? 0 : getLastmodify().hashCode());
         return result;

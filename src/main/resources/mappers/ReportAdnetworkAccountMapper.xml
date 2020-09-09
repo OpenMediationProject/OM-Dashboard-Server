@@ -310,4 +310,49 @@
     from report_adnetwork_account
     where ${whereSql}
   </select>
+  <select id="selectWithAppIconByPublisher" resultMap="BaseResultMap">
+    SELECT
+    account.id,
+    account.publisher_id,
+    account.adn_id,
+    account.adn_account_name,
+    account.adn_api_key,
+    account.adn_app_id,
+    account.adn_app_token,
+    account.auth_key,
+    account.auth_type,
+    account.user_id,
+    account.user_signature AS user_signature,
+    account.adn_account_owner,
+    (CASE
+    WHEN
+    (pub_app.icon IS NULL
+    OR pub_app.icon = '')
+    AND pub_app.plat = 0
+    THEN
+    '/iOS-40.svg'
+    WHEN
+    (pub_app.icon IS NULL
+    OR pub_app.icon = '')
+    AND pub_app.plat = 1
+    THEN
+    '/Android-40.svg'
+    ELSE pub_app.icon
+    END) AS icon,
+    account.status,
+    account.create_time,
+    account.currency
+    FROM
+    report_adnetwork_account AS account
+    LEFT JOIN
+    report_adnetwork_account_publisher AS account_publisher ON account.id = account_publisher.report_account_id
+    LEFT JOIN
+    om_adnetwork_app AS adn_app ON account.id = adn_app.report_account_id
+
+    LEFT JOIN
+    om_publisher_app AS pub_app ON adn_app.pub_app_id = pub_app.id
+    WHERE
+    account.status <![CDATA[<]]> 3
+    AND account_publisher.publisher_id = #{publisherId}
+  </select>
 </mapper>

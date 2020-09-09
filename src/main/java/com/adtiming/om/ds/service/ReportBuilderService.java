@@ -44,7 +44,7 @@ public class ReportBuilderService extends BaseService {
         if (publisherId != null) {
             criteria.andPublisherIdEqualTo(publisherId);
         }
-        criteria.andPublisherIdIn(this.getPublisherIdsOfCurrentUser());
+        criteria.andPublisherIdEqualTo(this.getCurrentPublisherId());
         return this.omReportBuilderMapper.selectWithBLOBs(reportBuilderCriteria);
     }
 

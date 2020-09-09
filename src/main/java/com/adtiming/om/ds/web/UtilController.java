@@ -6,6 +6,7 @@ package com.adtiming.om.ds.web;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmCountry;
 import com.adtiming.om.ds.model.OmCurrencyExchange;
+import com.adtiming.om.ds.model.OmMessageDict;
 import com.adtiming.om.ds.model.OmSupportDevice;
 import com.adtiming.om.ds.service.CacheService;
 import com.adtiming.om.ds.service.UtilService;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Util interface
@@ -37,6 +39,22 @@ public class UtilController {
 
     @Autowired
     UtilService utilService;
+
+    /**
+     * Get dicts
+     */
+    @RequestMapping(value = "/msg/dict", method = RequestMethod.GET)
+    public Response getMessageDicts() {
+        try {
+            List<OmMessageDict> dicts = this.utilService.getMessageDicts();
+            Map<String, Map<String, String>> dictMap = dicts.stream().collect(
+                    Collectors.groupingBy(OmMessageDict::getPage, Collectors.toMap(OmMessageDict::getMsgKey, OmMessageDict::getValue)));
+            return Response.buildSuccess(dictMap);
+        } catch (Exception e) {
+            log.error("Get message dicts error:", e);
+        }
+        return Response.RES_FAILED;
+    }
 
     /**
      * Get currency list
