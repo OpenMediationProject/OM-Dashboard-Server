@@ -5,7 +5,6 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
-import com.adtiming.om.ds.dto.PublisherAppDTO;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmPlacement;
 import com.adtiming.om.ds.model.OmPublisherApp;
@@ -17,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,9 +45,14 @@ public class PublisherAppController extends BaseController {
      * Get all valid publisher app which related to current user
      */
     @RequestMapping(value = "/publisher/app/list", method = RequestMethod.GET)
-    public Response getPublisherApps() {
+    public Response getPublisherApps(Integer pubAppId) {
         try {
-            List<OmPublisherApp> publisherApps = this.publisherAppService.getPublisherApps();
+            List<Integer> pubAppIds = null;
+            if (pubAppId != null) {
+                pubAppIds = new ArrayList<>(1);
+                pubAppIds.add(pubAppId);
+            }
+            List<OmPublisherApp> publisherApps = this.publisherAppService.getPublisherApps(pubAppIds);
             if (CollectionUtils.isEmpty(publisherApps)) {
                 return Response.buildSuccess(Collections.EMPTY_LIST);
             }
@@ -102,27 +107,51 @@ public class PublisherAppController extends BaseController {
     /**
      * Create a new publisher app, related to current user with publisher_id and company_id
      *
-     * @see PublisherAppDTO
+     * @see OmPublisherApp
      */
     @RequestMapping(value = "/publisher/app/create", method = RequestMethod.POST)
     public Response createPublisherApp(@RequestBody OmPublisherApp omPublisherApp) {
-        if (omPublisherApp.getAppId() == null) {
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (omPublisherApp.getAppId() == null) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            if (!StringUtils.isEmpty(omPublisherApp.getAppId())) {
+                OmPublisherApp sameAppIdOne = this.publisherAppService.getPublisherApp(omPublisherApp.getAppId(), NormalStatus.Active);
+                if (sameAppIdOne != null) {
+                    log.warn("App id {} existed!", omPublisherApp.getAppId());
+                    return Response.build(Response.CODE_RES_DATA_EXISTED, Response.STATUS_DISABLE, "App id existed!");
+                }
+            }
+            return this.publisherAppService.createPublisherApp(omPublisherApp);
+        } catch (Exception e) {
+            log.error("Create publisher app error {} ", JSONObject.toJSONString(omPublisherApp), e);
         }
-        return this.publisherAppService.createPublisherApp(omPublisherApp);
+        return Response.RES_FAILED;
     }
 
     /**
      * Update publisher app's info
      *
-     * @see PublisherAppDTO
+     * @see OmPublisherApp
      */
     @RequestMapping(value = "/publisher/app/update", method = RequestMethod.POST)
-    public Response updatePublisherApp(@RequestBody PublisherAppDTO publisherAppDTO) {
-        if (publisherAppDTO.getId() == null) {
-            return Response.RES_PARAMETER_ERROR;
+    public Response updatePublisherApp(@RequestBody OmPublisherApp omPublisherApp) {
+        try {
+            if (omPublisherApp.getId() == null) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            if (!StringUtils.isEmpty(omPublisherApp.getAppId())) {
+                OmPublisherApp sameAppIdOne = this.publisherAppService.getPublisherApp(omPublisherApp.getAppId(), NormalStatus.Active);
+                if (sameAppIdOne != null) {
+                    log.warn("App id {} existed!", omPublisherApp.getAppId());
+                    return Response.build(Response.CODE_RES_DATA_EXISTED, Response.STATUS_DISABLE, "App id existed!");
+                }
+            }
+            return this.publisherAppService.updatePublisherApp(omPublisherApp);
+        } catch (Exception e) {
+            log.error("updatePublisherApp error {}", JSONObject.toJSONString(omPublisherApp), e);
         }
-        return this.publisherAppService.updatePublisherApp(publisherAppDTO);
+        return Response.RES_FAILED;
     }
 
     /**

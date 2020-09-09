@@ -13,10 +13,15 @@
     <result column="ad_type" jdbcType="TINYINT" property="adType" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="bid" jdbcType="TINYINT" property="bid" />
     <result column="abt" jdbcType="TINYINT" property="abt" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="exchange_rate" jdbcType="DECIMAL" property="exchangeRate" />
     <result column="cost" jdbcType="DECIMAL" property="cost" />
+    <result column="cost_ori" jdbcType="DECIMAL" property="costOri" />
     <result column="revenue" jdbcType="DECIMAL" property="revenue" />
-    <result column="api_request" jdbcType="DECIMAL" property="apiRequest" />
+    <result column="revenue_ori" jdbcType="DECIMAL" property="revenueOri" />
+    <result column="api_request" jdbcType="INTEGER" property="apiRequest" />
     <result column="api_filled" jdbcType="INTEGER" property="apiFilled" />
     <result column="api_click" jdbcType="INTEGER" property="apiClick" />
     <result column="api_impr" jdbcType="INTEGER" property="apiImpr" />
@@ -26,6 +31,8 @@
     <result column="account_owner" jdbcType="TINYINT" property="accountOwner" />
     <result column="category" jdbcType="TINYINT" property="category" />
     <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+    <result column="adn_account_key" jdbcType="VARCHAR" property="adnAccountKey" />
+    <result column="report_account_id" jdbcType="INTEGER" property="reportAccountId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
   </resultMap>
@@ -60,11 +67,12 @@
   </sql>
   <sql id="Base_Column_List">
     id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, ad_type, 
-    adn_id, instance_id, abt, cost, revenue, api_request, api_filled, api_click, api_impr, 
-    api_video_start, api_video_complete, account_id, account_owner, category, account_name, 
+    adn_id, instance_id, bid, abt, currency, exchange_rate, cost, cost_ori, revenue, 
+    revenue_ori, api_request, api_filled, api_click, api_impr, api_video_start, api_video_complete, 
+    account_id, account_owner, category, account_name, adn_account_key, report_account_id, 
     create_time, lastmodify
   </sql>
-  <select id="select" parameterType="com.adtiming.om.ds.model.StatAdnetworkCriteria" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatAdnetworkCriteria" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -97,21 +105,25 @@
     insert into stat_adnetwork (day, hour, country, 
       platform, publisher_id, pub_app_id, 
       placement_id, ad_type, adn_id, 
-      instance_id, abt, cost, 
-      revenue, api_request, api_filled, 
-      api_click, api_impr, api_video_start, 
-      api_video_complete, account_id, account_owner, 
-      category, account_name, create_time, 
-      lastmodify)
+      instance_id, bid, abt, 
+      currency, exchange_rate, cost, 
+      cost_ori, revenue, revenue_ori, 
+      api_request, api_filled, api_click, 
+      api_impr, api_video_start, api_video_complete, 
+      account_id, account_owner, category, 
+      account_name, adn_account_key, report_account_id, 
+      create_time, lastmodify)
     values (#{day,jdbcType=DATE}, #{hour,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, 
       #{platform,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
       #{placementId,jdbcType=INTEGER}, #{adType,jdbcType=TINYINT}, #{adnId,jdbcType=INTEGER}, 
-      #{instanceId,jdbcType=INTEGER}, #{abt,jdbcType=TINYINT}, #{cost,jdbcType=DECIMAL}, 
-      #{revenue,jdbcType=DECIMAL}, #{apiRequest,jdbcType=DECIMAL}, #{apiFilled,jdbcType=INTEGER}, 
-      #{apiClick,jdbcType=INTEGER}, #{apiImpr,jdbcType=INTEGER}, #{apiVideoStart,jdbcType=INTEGER}, 
-      #{apiVideoComplete,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, #{accountOwner,jdbcType=TINYINT}, 
-      #{category,jdbcType=TINYINT}, #{accountName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{lastmodify,jdbcType=TIMESTAMP})
+      #{instanceId,jdbcType=INTEGER}, #{bid,jdbcType=TINYINT}, #{abt,jdbcType=TINYINT}, 
+      #{currency,jdbcType=VARCHAR}, #{exchangeRate,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, 
+      #{costOri,jdbcType=DECIMAL}, #{revenue,jdbcType=DECIMAL}, #{revenueOri,jdbcType=DECIMAL}, 
+      #{apiRequest,jdbcType=INTEGER}, #{apiFilled,jdbcType=INTEGER}, #{apiClick,jdbcType=INTEGER}, 
+      #{apiImpr,jdbcType=INTEGER}, #{apiVideoStart,jdbcType=INTEGER}, #{apiVideoComplete,jdbcType=INTEGER}, 
+      #{accountId,jdbcType=INTEGER}, #{accountOwner,jdbcType=TINYINT}, #{category,jdbcType=TINYINT}, 
+      #{accountName,jdbcType=VARCHAR}, #{adnAccountKey,jdbcType=VARCHAR}, #{reportAccountId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatAdnetwork">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -149,14 +161,29 @@
       <if test="instanceId != null">
         instance_id,
       </if>
+      <if test="bid != null">
+        bid,
+      </if>
       <if test="abt != null">
         abt,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
+      <if test="exchangeRate != null">
+        exchange_rate,
       </if>
       <if test="cost != null">
         cost,
       </if>
+      <if test="costOri != null">
+        cost_ori,
+      </if>
       <if test="revenue != null">
         revenue,
+      </if>
+      <if test="revenueOri != null">
+        revenue_ori,
       </if>
       <if test="apiRequest != null">
         api_request,
@@ -187,6 +214,12 @@
       </if>
       <if test="accountName != null">
         account_name,
+      </if>
+      <if test="adnAccountKey != null">
+        adn_account_key,
+      </if>
+      <if test="reportAccountId != null">
+        report_account_id,
       </if>
       <if test="createTime != null">
         create_time,
@@ -226,17 +259,32 @@
       <if test="instanceId != null">
         #{instanceId,jdbcType=INTEGER},
       </if>
+      <if test="bid != null">
+        #{bid,jdbcType=TINYINT},
+      </if>
       <if test="abt != null">
         #{abt,jdbcType=TINYINT},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeRate != null">
+        #{exchangeRate,jdbcType=DECIMAL},
       </if>
       <if test="cost != null">
         #{cost,jdbcType=DECIMAL},
       </if>
+      <if test="costOri != null">
+        #{costOri,jdbcType=DECIMAL},
+      </if>
       <if test="revenue != null">
         #{revenue,jdbcType=DECIMAL},
       </if>
+      <if test="revenueOri != null">
+        #{revenueOri,jdbcType=DECIMAL},
+      </if>
       <if test="apiRequest != null">
-        #{apiRequest,jdbcType=DECIMAL},
+        #{apiRequest,jdbcType=INTEGER},
       </if>
       <if test="apiFilled != null">
         #{apiFilled,jdbcType=INTEGER},
@@ -264,6 +312,12 @@
       </if>
       <if test="accountName != null">
         #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="adnAccountKey != null">
+        #{adnAccountKey,jdbcType=VARCHAR},
+      </if>
+      <if test="reportAccountId != null">
+        #{reportAccountId,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -303,17 +357,32 @@
       <if test="instanceId != null">
         instance_id = #{instanceId,jdbcType=INTEGER},
       </if>
+      <if test="bid != null">
+        bid = #{bid,jdbcType=TINYINT},
+      </if>
       <if test="abt != null">
         abt = #{abt,jdbcType=TINYINT},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeRate != null">
+        exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
       </if>
       <if test="cost != null">
         cost = #{cost,jdbcType=DECIMAL},
       </if>
+      <if test="costOri != null">
+        cost_ori = #{costOri,jdbcType=DECIMAL},
+      </if>
       <if test="revenue != null">
         revenue = #{revenue,jdbcType=DECIMAL},
       </if>
+      <if test="revenueOri != null">
+        revenue_ori = #{revenueOri,jdbcType=DECIMAL},
+      </if>
       <if test="apiRequest != null">
-        api_request = #{apiRequest,jdbcType=DECIMAL},
+        api_request = #{apiRequest,jdbcType=INTEGER},
       </if>
       <if test="apiFilled != null">
         api_filled = #{apiFilled,jdbcType=INTEGER},
@@ -342,6 +411,12 @@
       <if test="accountName != null">
         account_name = #{accountName,jdbcType=VARCHAR},
       </if>
+      <if test="adnAccountKey != null">
+        adn_account_key = #{adnAccountKey,jdbcType=VARCHAR},
+      </if>
+      <if test="reportAccountId != null">
+        report_account_id = #{reportAccountId,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -363,10 +438,15 @@
       ad_type = #{adType,jdbcType=TINYINT},
       adn_id = #{adnId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
+      bid = #{bid,jdbcType=TINYINT},
       abt = #{abt,jdbcType=TINYINT},
+      currency = #{currency,jdbcType=VARCHAR},
+      exchange_rate = #{exchangeRate,jdbcType=DECIMAL},
       cost = #{cost,jdbcType=DECIMAL},
+      cost_ori = #{costOri,jdbcType=DECIMAL},
       revenue = #{revenue,jdbcType=DECIMAL},
-      api_request = #{apiRequest,jdbcType=DECIMAL},
+      revenue_ori = #{revenueOri,jdbcType=DECIMAL},
+      api_request = #{apiRequest,jdbcType=INTEGER},
       api_filled = #{apiFilled,jdbcType=INTEGER},
       api_click = #{apiClick,jdbcType=INTEGER},
       api_impr = #{apiImpr,jdbcType=INTEGER},
@@ -376,6 +456,8 @@
       account_owner = #{accountOwner,jdbcType=TINYINT},
       category = #{category,jdbcType=TINYINT},
       account_name = #{accountName,jdbcType=VARCHAR},
+      adn_account_key = #{adnAccountKey,jdbcType=VARCHAR},
+      report_account_id = #{reportAccountId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
@@ -435,6 +517,9 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_only_adn')">
+      case when bid = 0 then adn_id else -1 end as adn_id,
+    </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
@@ -452,6 +537,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_accountOwner')">
       account_owner,
+    </if>
+    <if test="_parameter.containsKey('dimension_bid')">
+      bid,
     </if>
     sum(api_request) as api_request,sum(api_filled) as api_filled,sum(api_click) as api_click, sum(api_impr) as api_impr,
     sum(api_video_start) as api_video_start,sum(api_video_complete) as api_video_complete, sum(revenue) as revenue,
@@ -482,6 +570,9 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_only_adn')">
+      case when bid = 0 then adn_id else -1 end,
+    </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
@@ -499,6 +590,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_accountOwner')">
       account_owner,
+    </if>
+    <if test="_parameter.containsKey('dimension_bid')">
+      bid,
     </if>
     null
     <if test="_parameter.containsKey('orderByClause')">

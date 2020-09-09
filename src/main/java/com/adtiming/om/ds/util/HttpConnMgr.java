@@ -26,30 +26,23 @@ import java.security.cert.X509Certificate;
 /**
  * @description http conn mgr
  */
-public class HttpConnMgr extends Thread {
+public class HttpConnMgr {
 
     private static final Logger logger = LogManager.getLogger();
     private static final int HTTP_CONNECTION_TIMEOUT = 5000;
-    private static final int HTTP_REQUEST_TIMEOUT = 5000;
-    private static final int SOCKET_TIMEOUT = 5000;
+    private static final int HTTP_REQUEST_TIMEOUT = 30000;
+    private static final int SOCKET_TIMEOUT = 30000;
     public static RequestConfig requestConfig = RequestConfig.custom()
             .setConnectionRequestTimeout(HTTP_CONNECTION_TIMEOUT)
             .setConnectTimeout(HTTP_REQUEST_TIMEOUT)
             .setSocketTimeout(SOCKET_TIMEOUT)
             .build();
     public static PoolingHttpClientConnectionManager httpClientPoolMgr = null;
-    public static HttpConnMgr httpConnMgr = null;
     private static HttpClient httpsClient;
     private static HttpClient httpClient;
     private static SSLContext sslcontext = createSSLContext();
     private static SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-            sslcontext, new HostnameVerifier() {
-        @Override
-        public boolean verify(String paramString,
-                              SSLSession paramSSLSession) {
-            return true;
-        }
-    });
+            sslcontext, (paramString, paramSSLSession) -> true);
 
     static {
         init();
@@ -78,8 +71,6 @@ public class HttpConnMgr extends Thread {
             httpClientPoolMgr.setMaxTotal(10000000);
             httpClientPoolMgr.setDefaultMaxPerRoute(50000);
 
-            httpConnMgr = new HttpConnMgr();
-            httpConnMgr.start();
             httpsClient = createSSLInsecureClient();
             httpClient = createHttpClient();
         } catch (Exception e) {

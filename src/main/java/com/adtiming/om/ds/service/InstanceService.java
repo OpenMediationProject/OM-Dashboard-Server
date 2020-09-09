@@ -15,11 +15,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Placement Manager
@@ -62,6 +62,14 @@ public class InstanceService extends BaseService {
             instances.removeIf(instance -> instance.getId().equals(instanceId));
         }
         return !CollectionUtils.isEmpty(instances);
+    }
+
+    public Map<Integer, List<OmInstanceWithBLOBs>> getPlacementInstancesMap(Integer pubAppId) {
+        List<OmInstanceWithBLOBs> instances = this.getInstances(pubAppId, NormalStatus.Active);
+        if (CollectionUtils.isEmpty(instances)) {
+            return new HashMap<>();
+        }
+        return instances.stream().collect(Collectors.groupingBy(OmInstanceWithBLOBs::getPlacementId, Collectors.toList()));
     }
 
     /**
@@ -121,7 +129,12 @@ public class InstanceService extends BaseService {
      * @return instances
      */
     public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, Integer adNetworkId, Integer instanceId, Integer placementId) {
-        return this.getInstances(pubAppId, adNetworkId, instanceId, placementId, null, null, null);
+        List<Integer> adnIds = null;
+        if (adNetworkId != null){
+            adnIds = new ArrayList<>();
+            adnIds.add(adNetworkId);
+        }
+        return this.getInstances(pubAppId, adnIds, instanceId, placementId, null, null, null);
     }
 
     /**
@@ -164,21 +177,21 @@ public class InstanceService extends BaseService {
      * Select instances
      *
      * @param pubAppId
-     * @param adNetworkId
+     * @param adNetworkIds
      * @param instanceId
      * @param placementId
      * @param status
      * @return instances
      */
-    public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, Integer adNetworkId, Integer instanceId,
+    public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, List<Integer> adNetworkIds, Integer instanceId,
                                                   Integer placementId, NormalStatus status, Byte headBid, Integer adNetworkAppId) {
         OmInstanceCriteria omInstanceCriteria = new OmInstanceCriteria();
         OmInstanceCriteria.Criteria criteria = omInstanceCriteria.createCriteria();
         if (pubAppId != null) {
             criteria.andPubAppIdEqualTo(pubAppId);
         }
-        if (adNetworkId != null) {
-            criteria.andAdnIdEqualTo(adNetworkId);
+        if (adNetworkIds != null) {
+            criteria.andAdnIdIn(adNetworkIds);
         }
         if (instanceId != null) {
             criteria.andIdEqualTo(instanceId);
@@ -224,10 +237,23 @@ public class InstanceService extends BaseService {
      * @return instances
      */
     public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId) {
+        return this.getInstances(pubAppId, null);
+    }
+
+    /**
+     * Select instances
+     *
+     * @param pubAppId
+     * @return instances
+     */
+    public List<OmInstanceWithBLOBs> getInstances(Integer pubAppId, NormalStatus status) {
         OmInstanceCriteria omInstanceCriteria = new OmInstanceCriteria();
         OmInstanceCriteria.Criteria criteria = omInstanceCriteria.createCriteria();
         criteria.andPubAppIdEqualTo(pubAppId);
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
+        if (status != null) {
+            criteria.andStatusEqualTo((byte) status.ordinal());
+        }
         List<OmInstanceWithBLOBs> instances = this.omInstanceMapper.select(omInstanceCriteria);
         log.info("Select instance size: {}", instances.size());
         return instances;
@@ -241,14 +267,12 @@ public class InstanceService extends BaseService {
     public List<OmInstanceWithBLOBs> getInstancesByStatus(Integer pubAppId, NormalStatus status) {
         OmInstanceCriteria omInstanceCriteria = new OmInstanceCriteria();
         OmInstanceCriteria.Criteria criteria = omInstanceCriteria.createCriteria();
-
         if (pubAppId != null) {
             criteria.andPubAppIdEqualTo(pubAppId);
         }
         if (status != null) {
             criteria.andStatusEqualTo((byte) status.ordinal());
         }
-
         criteria.andPubAppIdIn(this.getAppIdsOfCurrentUser());
         List<OmInstanceWithBLOBs> instances = this.omInstanceMapper.select(omInstanceCriteria);
         log.info("Select app instance size: {}", instances.size());
@@ -261,32 +285,26 @@ public class InstanceService extends BaseService {
      * @param omInstance
      */
     public Response createInstance(OmInstanceWithBLOBs omInstance) {
-        try {
-            OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(omInstance.getPlacementId());
-            if (placement == null) {
-                log.error("Placement id {} do not existed!", omInstance.getPlacementId());
-                return Response.RES_DATA_EXISTED;
-            }
-
-            if (isPlacementKeyDuplicated(omInstance.getAdnId(), placement.getPubAppId(), omInstance.getPlacementKey(), null)) {
-                log.error("It already has active PlacementKey {} instance {}", omInstance.getPlacementKey(), JSONObject.toJSON(omInstance));
-                return Response.RES_DATA_EXISTED;
-            }
-
-            Date currentTime = new Date();
-            omInstance.setCreateTime(currentTime);
-            omInstance.setLastmodify(currentTime);
-            omInstance.setStatus((byte) NormalStatus.Pending.ordinal());
-            int result = this.omInstanceMapper.insertSelective(omInstance);
-            if (result > 0) {
-                log.info("Create instance {} success", omInstance.getId());
-                return Response.buildSuccess(omInstance);
-            }
-        } catch (Exception e) {
-            log.error("Create instance {} error", JSONObject.toJSONString(omInstance), e);
+        OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(omInstance.getPlacementId());
+        if (placement == null) {
+            log.error("Placement id {} do not existed!", omInstance.getPlacementId());
+            return Response.RES_DATA_EXISTED;
         }
-        log.error("Create instance {} failed", JSONObject.toJSONString(omInstance));
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create instance failed!");
+        if (isPlacementKeyDuplicated(omInstance.getAdnId(), placement.getPubAppId(), omInstance.getPlacementKey(), null)) {
+            log.error("It already has active PlacementKey {} instance {}", omInstance.getPlacementKey(), JSONObject.toJSON(omInstance));
+            return Response.RES_DATA_EXISTED;
+        }
+        Date currentTime = new Date();
+        omInstance.setCreateTime(currentTime);
+        omInstance.setLastmodify(currentTime);
+        if (omInstance.getStatus() == null) {
+            omInstance.setStatus((byte) NormalStatus.Pending.ordinal());
+        }
+        int result = this.omInstanceMapper.insertSelective(omInstance);
+        if (result <= 0) {
+            throw new RuntimeException("Create instance " + JSONObject.toJSON(omInstance) + " success");
+        }
+        return Response.buildSuccess(omInstance);
     }
 
     /**
@@ -296,36 +314,30 @@ public class InstanceService extends BaseService {
      * @param status
      */
     public Response updateInstanceStatus(Integer instanceId, NormalStatus status) {
-        try {
-            OmInstanceWithBLOBs instance = this.omInstanceMapper.selectByPrimaryKey(instanceId);
-            if (instance == null) {
-                return Response.RES_PARAMETER_ERROR;
-            }
-            OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(instance.getPlacementId());
-            if (placement == null) {
-                log.warn("Placement id {} do not existed!", instance.getPlacementId());
-                return Response.RES_DATA_EXISTED;
-            }
-
+        OmInstanceWithBLOBs instance = this.omInstanceMapper.selectByPrimaryKey(instanceId);
+        if (instance == null) {
+            return Response.RES_PARAMETER_ERROR;
+        }
+        OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(instance.getPlacementId());
+        if (placement == null) {
+            log.warn("Placement id {} do not existed!", instance.getPlacementId());
+            return Response.RES_DATA_EXISTED;
+        }
+        if (NormalStatus.Active.equals(status)) {
             boolean isPlacementKeyDuplicated = isPlacementKeyDuplicated(instance.getAdnId(), placement.getPubAppId(),
                     instance.getPlacementKey(), instance.getId());
-            if (NormalStatus.Active.equals(status) && isPlacementKeyDuplicated) {
-                log.error("It already has active PlacementKey {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
-                return Response.RES_DATA_EXISTED;
+            if (isPlacementKeyDuplicated) {
+                log.warn("It already has active placement key {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
+                return Response.failure(Response.CODE_RES_DATA_EXISTED, "Placement key" + instance.getPlacementKey() + " already existed");
             }
-
-            instance.setStatus((byte) status.ordinal());
-            instance.setLastmodify(new Date());
-            int result = this.omInstanceMapper.updateByPrimaryKeySelective(instance);
-            if (result > 0) {
-                log.info("Update instance {} status {} successfully", instanceId, status);
-                return Response.build();
-            }
-        } catch (Exception e) {
-            log.error("Update instance {} status {} error:", instanceId, status, e);
         }
-        log.error("Update instance {} status {} failed", instanceId, status);
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update instance status failed!");
+        instance.setStatus((byte) status.ordinal());
+        instance.setLastmodify(new Date());
+        int result = this.omInstanceMapper.updateByPrimaryKeySelective(instance);
+        if (result <= 0) {
+            throw new RuntimeException("Update instance " + instanceId + " status " + status + " failed!");
+        }
+        return Response.build();
     }
 
     /**
@@ -335,43 +347,37 @@ public class InstanceService extends BaseService {
      */
     @Transactional
     public Response updateInstance(OmInstanceWithBLOBs omInstance) {
-        try {
-            OmInstanceWithBLOBs instance = omInstanceMapper.selectByPrimaryKey(omInstance.getId());
-            if (instance == null) {
-                return Response.RES_PARAMETER_ERROR;
-            }
-            OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(instance.getPlacementId());
-            if (placement == null) {
-                log.warn("Placement id {} do not existed!", instance.getPlacementId());
-                return Response.RES_DATA_EXISTED;
-            }
-
-            boolean isPlacementKeyDuplicated = isPlacementKeyDuplicated(instance.getAdnId(), placement.getPubAppId(),
-                    instance.getPlacementKey(), instance.getId());
-            if (isPlacementKeyDuplicated) {
-                log.error("It already has active PlacementKey {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
-                return Response.RES_DATA_EXISTED;
-            }
-            int result = this.omInstanceMapper.updateByPrimaryKeySelective(omInstance);
-            if (result > 0) {
-                instancePlacementKeyChange(instance, omInstance);
-                log.info("Update instance {} success", omInstance.getId());
-                return Response.build();
-            }
-        } catch (Exception e) {
-            log.error("Update instance error {}", JSONObject.toJSONString(omInstance), e);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        OmInstanceWithBLOBs instance = omInstanceMapper.selectByPrimaryKey(omInstance.getId());
+        if (instance == null) {
+            return Response.RES_PARAMETER_ERROR;
         }
-        log.error("Update instance {} failed", omInstance.getId());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update instance failed!");
+        if (!instance.getHbStatus().equals(omInstance.getHbStatus())){
+            return Response.RES_CAN_NOT_CHANGE;
+        }
+        OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(instance.getPlacementId());
+        if (placement == null) {
+            log.warn("Placement id {} do not existed!", instance.getPlacementId());
+            return Response.RES_DATA_EXISTED;
+        }
+
+        boolean isPlacementKeyDuplicated = isPlacementKeyDuplicated(instance.getAdnId(), placement.getPubAppId(),
+                instance.getPlacementKey(), instance.getId());
+        if (isPlacementKeyDuplicated) {
+            log.error("It already has active PlacementKey {} instance {}", instance.getPlacementKey(), JSONObject.toJSON(instance));
+            return Response.RES_DATA_EXISTED;
+        }
+        int result = this.omInstanceMapper.updateByPrimaryKeySelective(omInstance);
+        if (result <= 0) {
+            throw new RuntimeException("Update instance " + omInstance.getId() + " failed!");
+        }
+        instancePlacementKeyChange(instance, omInstance);
+        return Response.build();
     }
 
+    @Transactional
     private void instancePlacementKeyChange(OmInstance oldInstance, OmInstance newInstance) {
-        //when status is on and placementKey changed
-        if (StringUtils.isNotBlank(oldInstance.getPlacementKey())
-                && StringUtils.isNotBlank(newInstance.getPlacementKey())
-                && Util.byteToInt(oldInstance.getStatus()) == 1
-                && Util.byteToInt(newInstance.getStatus()) == 1) {
+        if (StringUtils.isNotBlank(oldInstance.getPlacementKey()) && StringUtils.isNotBlank(newInstance.getPlacementKey())
+                && !oldInstance.getPlacementKey().equals(newInstance.getPlacementKey())) {
             OmAdnetworkApp adnApp = omAdnetworkAppMapper.selectByPrimaryKey(oldInstance.getAdnAppId());
             if (adnApp != null && StringUtils.isNotBlank(adnApp.getAdnAppKey())) {
                 OmInstanceChangeCriteria omInstanceChangeCriteria = new OmInstanceChangeCriteria();
@@ -379,6 +385,7 @@ public class InstanceService extends BaseService {
                 criteria.andPlacementKeyIn(
                         Arrays.asList(oldInstance.getPlacementKey(), newInstance.getPlacementKey()));
                 criteria.andIdEqualTo(oldInstance.getId());
+                criteria.andPubAppIdEqualTo(oldInstance.getPubAppId());
                 List<OmInstanceChange> oldPlacementKeys = omInstanceChangeMapper.selectByExample(omInstanceChangeCriteria);
                 //
                 if (!oldPlacementKeys.isEmpty()) {
@@ -386,7 +393,10 @@ public class InstanceService extends BaseService {
                         OmInstanceChangeKey placementKey = new OmInstanceChangeKey();
                         placementKey.setId(omInstanceChange.getId());
                         placementKey.setPlacementKey(omInstanceChange.getPlacementKey());
-                        omInstanceChangeMapper.deleteByPrimaryKey(placementKey);
+                        int result = omInstanceChangeMapper.deleteByPrimaryKey(placementKey);
+                        if (result <= 0) {
+                            throw new RuntimeException("Delete instance change " + JSONObject.toJSON(omInstanceChange) + " failed!");
+                        }
                     }
                 }
                 OmInstanceChange omInstanceChange = new OmInstanceChange();
@@ -401,8 +411,12 @@ public class InstanceService extends BaseService {
                 omInstanceChange.setAccountId(adnApp.getAccountId());
                 omInstanceChange.setAccountOwner(adnApp.getAccountOwner());
                 omInstanceChange.setAbTestMode(oldInstance.getAbTestMode());
+                omInstanceChange.setStatus(oldInstance.getStatus());
                 //insert into om_instance_change
-                omInstanceChangeMapper.insertSelective(omInstanceChange);
+                int result = omInstanceChangeMapper.insertSelective(omInstanceChange);
+                if (result <= 0) {
+                    throw new RuntimeException("Insert instance change " + JSONObject.toJSON(omInstanceChange) + " failed!");
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ public class ReportService extends BaseService {
     private StatAdnetworkMapper statAdnetworkMapper;
 
     @Autowired
-    private FileNameService fileNameService;
+    private FieldNameService fieldNameService;
 
     /**
      * Get dau lr revenue reports
@@ -56,8 +56,34 @@ public class ReportService extends BaseService {
     public Response getReport(ReportConditionDTO reportConditionDTO, Set<String> reportTypeSet) {
         try {
             this.handleDataPermissions(reportConditionDTO);
+            Set<String> dimensionSet = new HashSet<>();
+            if (reportConditionDTO.getDimension() != null && reportConditionDTO.getDimension().length > 0) {
+                Collections.addAll(dimensionSet, reportConditionDTO.getDimension());
+            }
+
+            if (dimensionSet.contains("adType") && !dimensionSet.contains("placementId")) {
+                dimensionSet.add("placementId");
+                String[] dimension = new String[dimensionSet.size() + 1];
+                dimensionSet.toArray(dimension);
+                reportConditionDTO.setDimension(dimension);
+                dimensionSet.remove("placementId");
+            }
+
+            if (dimensionSet.contains("instanceId")) {
+                dimensionSet.add("bid");
+                String[] dimension = new String[dimensionSet.size() + 1];
+                dimensionSet.toArray(dimension);
+                reportConditionDTO.setDimension(dimension);
+            }
+
+            boolean isAdType = false;
+            if (dimensionSet.contains("adType")) {
+                isAdType = true;
+                dimensionSet.remove("adType");
+            }
+
             List<JSONObject> resultReport = new ArrayList<>();
-            if (reportTypeSet.contains("api")) {
+            if (reportTypeSet.contains("api") && !dimensionSet.contains("sceneId")) {
                 List<StatAdnetwork> statAdnetworks = this.getAdNetworkReport(reportConditionDTO);
                 statAdnetworks.forEach(statAdnetwork -> {
                     resultReport.add((JSONObject) JSONObject.toJSON(statAdnetwork));
@@ -71,7 +97,7 @@ public class ReportService extends BaseService {
                 });
             }
 
-            if (reportTypeSet.contains("dau")) {
+            if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
                 List<StatDau> statDaus = this.getDauReport(reportConditionDTO);
                 statDaus.forEach(statDau -> {
                     JSONObject resultStatDau = (JSONObject) JSONObject.toJSON(statDau);
@@ -79,36 +105,66 @@ public class ReportService extends BaseService {
                 });
             }
 
-            Map<String, List<JSONObject>> reportMap = resultReport.stream().collect(
-                    Collectors.groupingBy(report -> {
-                        List keys = new ArrayList();
-                        String[] getDimensions = reportConditionDTO.getDimension();
-                        if (getDimensions != null && getDimensions.length > 0) {
-                            for (String dim : reportConditionDTO.getDimension()) {
-                                keys.add(report.get(dim));
-                            }
-                        }
-                        return StringUtils.join(keys.toArray(), ",");
-                    }));
-
-            List<JSONObject> results = new ArrayList<>(reportMap.size());
-            reportMap.forEach((k, v) ->
-                    results.add(v.stream().reduce((result, ele) -> {
-                        result.putAll(ele);
-                        return result;
-                    }).get())
-            );
-            results.forEach(result -> {
-                if (result.containsKey("day") && result.get("day") != null) {
-                    result.put("day", Util.getYYYYMMDD(result.getDate("day")));
-                }
-            });
-            fileNameService.fillName(results);
+            if (isAdType) {
+                this.fieldNameService.fillPlacementAdType(resultReport);
+                dimensionSet.add("adType");
+            }
+            List<JSONObject> results = this.businessMapReduce(resultReport, reportConditionDTO, dimensionSet);
+            this.fieldNameService.fillName(results);
             return Response.buildSuccess(results);
         } catch (Exception e) {
-            log.error("getReport_error {} ", JSONObject.toJSONString(reportConditionDTO), e);
+            log.error("Get report error {} ", JSONObject.toJSONString(reportConditionDTO), e);
         }
         return Response.RES_FAILED;
+    }
+
+    private List<JSONObject> businessMapReduce(List<JSONObject> resultReport, ReportConditionDTO reportConditionDTO, Set<String> dimensionSet) {
+        Map<String, List<JSONObject>> reportMap = resultReport.stream().collect(
+                Collectors.groupingBy(report -> {
+                    List keys = new ArrayList();
+                    if (!CollectionUtils.isEmpty(dimensionSet)) {
+                        for (String dim : dimensionSet) {
+                            keys.add(report.get(dim));
+                        }
+                    }
+                    return StringUtils.join(keys.toArray(), ",");
+                }));
+
+        List<JSONObject> results = new ArrayList<>(reportMap.size());
+        reportMap.forEach((k, v) ->
+                results.add(v.stream().reduce((result, report) -> {
+                    result.put("cost", Util.getFloat(result, "cost") + Util.getFloat(report, "cost"));
+                    result.put("dau", Util.getInt(result, "dau") + Util.getInt(report, "dau"));
+                    result.put("deu", Util.getInt(result, "deu") + Util.getInt(report, "deu"));
+                    result.put("instanceRequest", Util.getInt(result, "instanceRequest") + Util.getInt(report, "instanceRequest"));
+                    result.put("instanceFilled", Util.getInt(result, "instanceFilled") + Util.getInt(report, "instanceFilled"));
+                    result.put("apiClick", Util.getInt(result, "apiClick") + Util.getInt(report, "apiClick"));
+                    result.put("apiImpr", Util.getInt(result, "apiImpr") + Util.getInt(report, "apiImpr"));
+                    result.put("waterfallRequest", Util.getInt(result, "waterfallRequest") + Util.getInt(report, "waterfallRequest"));
+                    result.put("waterfallFilled", Util.getInt(result, "waterfallFilled") + Util.getInt(report, "waterfallFilled"));
+                    result.put("apiFilled", Util.getInt(result, "apiFilled") + Util.getInt(report, "apiFilled"));
+                    result.put("apiRequest", Util.getInt(result, "apiRequest") + Util.getInt(report, "apiRequest"));
+                    result.put("videoStart", Util.getInt(result, "videoStart") + Util.getInt(report, "videoStart"));
+                    result.put("videoComplete", Util.getInt(result, "videoComplete") + Util.getInt(report, "videoComplete"));
+                    result.put("isReadyTrue", Util.getInt(result, "isReadyTrue") + Util.getInt(report, "isReadyTrue"));
+                    result.put("isReadyFalse", Util.getInt(result, "isReadyFalse") + Util.getInt(report, "isReadyFalse"));
+                    result.put("mediationImpr", Util.getInt(result, "mediationImpr") + Util.getInt(report, "mediationImpr"));
+                    result.put("mediationClick", Util.getInt(result, "mediationClick") + Util.getInt(report, "mediationClick"));
+
+                    result.put("bidReq", Util.getInt(result, "bidReq") + Util.getInt(report, "bidReq"));
+                    result.put("bidResp", Util.getInt(result, "bidResp") + Util.getInt(report, "bidResp"));
+                    result.put("bidRespPrice", Util.getFloat(result, "bidRespPrice") + Util.getFloat(report, "bidRespPrice"));
+                    result.put("bidWin", Util.getInt(result, "bidWin") + Util.getInt(report, "bidWin"));
+                    result.put("bidWinPrice", Util.getFloat(result, "bidWinPrice") + Util.getFloat(report, "bidWinPrice"));
+                    return result;
+                }).get())
+        );
+        results.forEach(result -> {
+            if (result.containsKey("day") && result.get("day") != null) {
+                result.put("day", Util.getYYYYMMDD(result.getDate("day")));
+            }
+        });
+        return results;
     }
 
     /**
@@ -117,7 +173,6 @@ public class ReportService extends BaseService {
      * @param pubAppId
      */
     public Response getDashboardHeadRevenue(Integer pubAppId) {
-
         JSONObject resultRevenue = new JSONObject();
         String yesterday = Util.getYYYYMMDD(DateUtils.addDays(new Date(), -1));
         Double yesterdayRevenue = this.getRevenue(yesterday, yesterday, pubAppId);
@@ -136,7 +191,6 @@ public class ReportService extends BaseService {
         String lastMonthEnd = Util.getYYYYMMDD(Util.getLastMonthLastDay());
         Double lastMonthRevenue = this.getRevenue(lastMonthBegin, lastMonthEnd, pubAppId);
         resultRevenue.put("lastMonthRevenue", lastMonthRevenue);
-
         return Response.buildSuccess(resultRevenue);
     }
 
@@ -293,6 +347,13 @@ public class ReportService extends BaseService {
                 conditionMap.put("dimension_" + dimension, dimension);
             }
         }
+        if (conditionMap.size() == 3 && conditionMap.containsKey("dimension_adnId") && conditionMap.containsKey("dimension_day")
+                && conditionMap.containsKey("dimension_hour") ||
+                conditionMap.size() == 2 && conditionMap.containsKey("dimension_adnId") && conditionMap.containsKey("dimension_day")
+                || conditionMap.size() == 1 && conditionMap.containsKey("dimension_adnId")){
+            conditionMap.put("dimension_only_adn", "dimension_only_adn");
+            conditionMap.remove("dimension_adnId");
+        }
         return conditionMap;
     }
 
@@ -302,28 +363,9 @@ public class ReportService extends BaseService {
      * @param reportConditionDTO
      */
     private void handleDataPermissions(ReportConditionDTO reportConditionDTO) {
-        List<Integer> currentUserPublisherIds = this.getPublisherIdsOfCurrentUser();
-        Set<Integer> currentUserPublisherIdSet = new HashSet<>(currentUserPublisherIds);
-        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
-        if (!CollectionUtils.isEmpty(publisherIds)) {
-            Iterator iterator = publisherIds.iterator();
-            while (iterator.hasNext()) {
-                if (!currentUserPublisherIdSet.contains(iterator.next())) {
-                    iterator.remove();
-                }
-            }
-            if (!CollectionUtils.isEmpty(publisherIds)) {
-                Integer[] publisherIdArr = new Integer[publisherIds.size()];
-                publisherIds.toArray(publisherIdArr);
-                reportConditionDTO.setPublisherId(publisherIdArr);
-            } else {
-                reportConditionDTO.setPublisherId(null);
-            }
-        } else {
-            Integer[] publisherIdArr = new Integer[currentUserPublisherIds.size()];
-            currentUserPublisherIds.toArray(publisherIdArr);
-            reportConditionDTO.setPublisherId(publisherIdArr);
-        }
+        Integer[] publisherIdArr = new Integer[1];
+        publisherIdArr[0] = this.getCurrentPublisherId();
+        reportConditionDTO.setPublisherId(publisherIdArr);
 
         List<Integer> appIdsOfCurrentUser = this.getAppIdsOfCurrentUser();
         Set<Integer> appIdsOfCurrentUserSet = new HashSet<>(appIdsOfCurrentUser);
@@ -398,8 +440,16 @@ public class ReportService extends BaseService {
         Map<String, Object> conditionMap = this.buildConditionMap(reportConditionDTO);
         StatLrCriteria statLrCriteria = new StatLrCriteria();
         StatLrCriteria.Criteria criteria = statLrCriteria.createCriteria();
-        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
-        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+        if (reportConditionDTO.getHourBegin() != null) {
+            criteria.andDayHourGreaterThanOrEqualTo(reportConditionDTO.getDateBegin(), reportConditionDTO.getHourBegin());
+        } else {
+            criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        }
+        if (reportConditionDTO.getHourEnd() != null){
+            criteria.andDayHourLessThanOrEqualTo(reportConditionDTO.getDateEnd(), reportConditionDTO.getHourEnd());
+        } else {
+            criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+        }
 
         List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
         if (!CollectionUtils.isEmpty(publisherIds)) {
@@ -431,6 +481,11 @@ public class ReportService extends BaseService {
             criteria.andInstanceIdIn(instanceIds);
         }
 
+        List<Integer> sceneIds = Util.buildIntegerList(reportConditionDTO.getSceneId());
+        if (!CollectionUtils.isEmpty(sceneIds)) {
+            criteria.andSceneIdIn(sceneIds);
+        }
+
         List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());
         if (!CollectionUtils.isEmpty(adnIds)) {
             criteria.andAdnIdIn(adnIds);
@@ -440,14 +495,18 @@ public class ReportService extends BaseService {
         if (!CollectionUtils.isEmpty(abts)) {
             criteria.andAbtIn(abts);
         }
-        statLrCriteria.setOrderByClause(" day desc ");
+
+        List<Byte> bids = Util.buildByteList(reportConditionDTO.getBid());
+        if (!CollectionUtils.isEmpty(bids)) {
+            criteria.andBidIn(bids);
+        }
+
         if (!CollectionUtils.isEmpty(statLrCriteria.getOredCriteria())) {
             conditionMap.put("summaryWhereClause", statLrCriteria.getOredCriteria());
         }
-        conditionMap.put("orderByClause", statLrCriteria.getOrderByClause());
-        List<StatLr> statDauSummary = this.statLrMapper.selectSummary(conditionMap);
-        log.info("Get LR summary size {} condition {}", statDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
-        return statDauSummary;
+        List<StatLr> statLrSummary = this.statLrMapper.selectSummary(conditionMap);
+        log.info("Get LR summary size {} condition {}", statLrSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statLrSummary;
     }
 
     /**
@@ -501,6 +560,12 @@ public class ReportService extends BaseService {
         if (!CollectionUtils.isEmpty(abts)) {
             criteria.andAbtIn(abts);
         }
+
+        List<Byte> bids = Util.buildByteList(reportConditionDTO.getBid());
+        if (!CollectionUtils.isEmpty(bids)) {
+            criteria.andBidIn(bids);
+        }
+
         statAdnetworkCriteria.setOrderByClause(" day desc ");
         if (!CollectionUtils.isEmpty(statAdnetworkCriteria.getOredCriteria())) {
             conditionMap.put("summaryWhereClause", statAdnetworkCriteria.getOredCriteria());
@@ -510,5 +575,4 @@ public class ReportService extends BaseService {
         log.info("Get adNetwork summary size {} condition {}", statAdNetworkSummary.size(), JSONObject.toJSONString(reportConditionDTO));
         return statAdNetworkSummary;
     }
-
 }

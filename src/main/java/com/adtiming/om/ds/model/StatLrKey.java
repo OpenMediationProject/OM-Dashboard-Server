@@ -39,7 +39,7 @@ public class StatLrKey {
         }
         StatLrKey other = (StatLrKey) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()));
+            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()));
     }
 
     @Override

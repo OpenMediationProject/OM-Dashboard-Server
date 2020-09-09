@@ -8,6 +8,8 @@
     <result column="frequency" jdbcType="INTEGER" property="frequency" />
     <result column="con_type" jdbcType="TINYINT" property="conType" />
     <result column="gender" jdbcType="TINYINT" property="gender" />
+    <result column="age_min" jdbcType="INTEGER" property="ageMin" />
+    <result column="age_max" jdbcType="INTEGER" property="ageMax" />
     <result column="interest" jdbcType="VARCHAR" property="interest" />
     <result column="iap_min" jdbcType="DECIMAL" property="iapMin" />
     <result column="iap_max" jdbcType="DECIMAL" property="iapMax" />
@@ -55,8 +57,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, placement_id, countries, frequency, con_type, gender, interest, iap_min, iap_max, 
-    channel, channel_bow, model_type, priority, status, create_time, lastmodify
+    id, placement_id, countries, frequency, con_type, gender, age_min, age_max, interest, 
+    iap_min, iap_max, channel, channel_bow, model_type, priority, status, create_time, 
+    lastmodify
   </sql>
   <sql id="Blob_Column_List">
     brand_whitelist, brand_blacklist, model_whitelist, model_blacklist
@@ -108,19 +111,21 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into om_placement_rule_segment (placement_id, countries, frequency, 
-      con_type, gender, interest, 
-      iap_min, iap_max, channel, 
-      channel_bow, model_type, priority, 
-      status, create_time, lastmodify, 
-      brand_whitelist, brand_blacklist, 
-      model_whitelist, model_blacklist)
+      con_type, gender, age_min, 
+      age_max, interest, iap_min, 
+      iap_max, channel, channel_bow, 
+      model_type, priority, status, 
+      create_time, lastmodify, brand_whitelist, 
+      brand_blacklist, model_whitelist, 
+      model_blacklist)
     values (#{placementId,jdbcType=INTEGER}, #{countries,jdbcType=VARCHAR}, #{frequency,jdbcType=INTEGER}, 
-      #{conType,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{interest,jdbcType=VARCHAR}, 
-      #{iapMin,jdbcType=DECIMAL}, #{iapMax,jdbcType=DECIMAL}, #{channel,jdbcType=VARCHAR}, 
-      #{channelBow,jdbcType=TINYINT}, #{modelType,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, 
-      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
-      #{brandWhitelist,jdbcType=LONGVARCHAR}, #{brandBlacklist,jdbcType=LONGVARCHAR}, 
-      #{modelWhitelist,jdbcType=LONGVARCHAR}, #{modelBlacklist,jdbcType=LONGVARCHAR})
+      #{conType,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{ageMin,jdbcType=INTEGER}, 
+      #{ageMax,jdbcType=INTEGER}, #{interest,jdbcType=VARCHAR}, #{iapMin,jdbcType=DECIMAL}, 
+      #{iapMax,jdbcType=DECIMAL}, #{channel,jdbcType=VARCHAR}, #{channelBow,jdbcType=TINYINT}, 
+      #{modelType,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, #{brandWhitelist,jdbcType=LONGVARCHAR}, 
+      #{brandBlacklist,jdbcType=LONGVARCHAR}, #{modelWhitelist,jdbcType=LONGVARCHAR}, 
+      #{modelBlacklist,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -142,6 +147,12 @@
       </if>
       <if test="gender != null">
         gender,
+      </if>
+      <if test="ageMin != null">
+        age_min,
+      </if>
+      <if test="ageMax != null">
+        age_max,
       </if>
       <if test="interest != null">
         interest,
@@ -201,6 +212,12 @@
       </if>
       <if test="gender != null">
         #{gender,jdbcType=TINYINT},
+      </if>
+      <if test="ageMin != null">
+        #{ageMin,jdbcType=INTEGER},
+      </if>
+      <if test="ageMax != null">
+        #{ageMax,jdbcType=INTEGER},
       </if>
       <if test="interest != null">
         #{interest,jdbcType=VARCHAR},
@@ -264,6 +281,12 @@
       <if test="gender != null">
         gender = #{gender,jdbcType=TINYINT},
       </if>
+      <if test="ageMin != null">
+        age_min = #{ageMin,jdbcType=INTEGER},
+      </if>
+      <if test="ageMax != null">
+        age_max = #{ageMax,jdbcType=INTEGER},
+      </if>
       <if test="interest != null">
         interest = #{interest,jdbcType=VARCHAR},
       </if>
@@ -316,6 +339,8 @@
       frequency = #{frequency,jdbcType=INTEGER},
       con_type = #{conType,jdbcType=TINYINT},
       gender = #{gender,jdbcType=TINYINT},
+      age_min = #{ageMin,jdbcType=INTEGER},
+      age_max = #{ageMax,jdbcType=INTEGER},
       interest = #{interest,jdbcType=VARCHAR},
       iap_min = #{iapMin,jdbcType=DECIMAL},
       iap_max = #{iapMax,jdbcType=DECIMAL},
@@ -339,6 +364,8 @@
       frequency = #{frequency,jdbcType=INTEGER},
       con_type = #{conType,jdbcType=TINYINT},
       gender = #{gender,jdbcType=TINYINT},
+      age_min = #{ageMin,jdbcType=INTEGER},
+      age_max = #{ageMax,jdbcType=INTEGER},
       interest = #{interest,jdbcType=VARCHAR},
       iap_min = #{iapMin,jdbcType=DECIMAL},
       iap_max = #{iapMax,jdbcType=DECIMAL},

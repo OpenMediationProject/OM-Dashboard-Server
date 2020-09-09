@@ -18,6 +18,8 @@ public enum AdNetworkType {
     Mintegral(14),
     IronSource(15),
     MyTarget(16),
+    ChartboostBid(17),
+    Mint(18),
     Fyber(30);
 
     private int value;
@@ -60,10 +62,14 @@ public enum AdNetworkType {
                 return IronSource;
             case 16:
                 return MyTarget;
+            case 17:
+                return ChartboostBid;
+            case 18:
+                return Mint;
             case 30:
                 return Fyber;
             default:
-                return null;
+                throw new RuntimeException("Not support ad network type:" + adNetworkType);
         }
     }
 }

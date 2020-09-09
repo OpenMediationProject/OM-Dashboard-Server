@@ -98,7 +98,7 @@ public class CacheService {
         reportConditionDTO.setDateEnd(Util.getYYYYMMDD(new Date()));
         reportConditionDTO.setDimension(dimensions);
         List<StatAdnetwork> statAdNetworks = this.reportService.getAdNetworkReport(reportConditionDTO);
-        log.info("Cache service select statAdNetwork size {} dimensions", statAdNetworks.size(), dimensions);
+        log.info("Cache service select statAdNetwork size {} dimensions {}", statAdNetworks.size(), dimensions);
         return statAdNetworks;
     }
 

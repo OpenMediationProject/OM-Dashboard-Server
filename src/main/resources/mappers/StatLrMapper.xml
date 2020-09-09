@@ -11,20 +11,29 @@
     <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
     <result column="placement_id" jdbcType="INTEGER" property="placementId" />
     <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="abt" jdbcType="TINYINT" property="abt" />
-    <result column="waterfall_request" jdbcType="BIGINT" property="waterfallRequest" />
-    <result column="waterfall_filled" jdbcType="BIGINT" property="waterfallFilled" />
-    <result column="instance_request" jdbcType="BIGINT" property="instanceRequest" />
-    <result column="instance_filled" jdbcType="BIGINT" property="instanceFilled" />
-    <result column="video_start" jdbcType="BIGINT" property="videoStart" />
-    <result column="video_complete" jdbcType="BIGINT" property="videoComplete" />
-    <result column="called_show" jdbcType="BIGINT" property="calledShow" />
-    <result column="is_ready_true" jdbcType="BIGINT" property="isReadyTrue" />
-    <result column="is_ready_false" jdbcType="BIGINT" property="isReadyFalse" />
-    <result column="click" jdbcType="BIGINT" property="click" />
-    <result column="impr" jdbcType="BIGINT" property="impr" />
+    <result column="waterfall_request" jdbcType="INTEGER" property="waterfallRequest" />
+    <result column="waterfall_filled" jdbcType="INTEGER" property="waterfallFilled" />
+    <result column="instance_request" jdbcType="INTEGER" property="instanceRequest" />
+    <result column="instance_filled" jdbcType="INTEGER" property="instanceFilled" />
+    <result column="video_start" jdbcType="INTEGER" property="videoStart" />
+    <result column="video_complete" jdbcType="INTEGER" property="videoComplete" />
+    <result column="called_show" jdbcType="INTEGER" property="calledShow" />
+    <result column="is_ready_true" jdbcType="INTEGER" property="isReadyTrue" />
+    <result column="is_ready_false" jdbcType="INTEGER" property="isReadyFalse" />
+    <result column="click" jdbcType="INTEGER" property="click" />
+    <result column="impr" jdbcType="INTEGER" property="impr" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="bid_req" jdbcType="INTEGER" property="bidReq" />
+    <result column="bid_resp" jdbcType="INTEGER" property="bidResp" />
+    <result column="bid_resp_price" jdbcType="DECIMAL" property="bidRespPrice" />
+    <result column="bid_win" jdbcType="INTEGER" property="bidWin" />
+    <result column="bid_win_price" jdbcType="DECIMAL" property="bidWinPrice" />
+    <result column="bid" jdbcType="TINYINT" property="bid" />
+    <result column="mediation_click" jdbcType="INTEGER" property="mediationClick" />
+    <result column="mediation_impr" jdbcType="INTEGER" property="mediationImpr" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -57,9 +66,9 @@
   </sql>
   <sql id="Base_Column_List">
     id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, instance_id, 
-    adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
+    scene_id, adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
     video_start, video_complete, called_show, is_ready_true, is_ready_false, click, impr, 
-    create_time
+    create_time, bid_req, bid_resp, bid_resp_price, bid_win, bid_win_price, bid
   </sql>
   <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatLrCriteria" resultMap="BaseResultMap">
     select
@@ -93,20 +102,24 @@
     </selectKey>
     insert into stat_lr (day, hour, country, 
       platform, publisher_id, pub_app_id, 
-      placement_id, instance_id, adn_id, 
-      abt, waterfall_request, waterfall_filled, 
-      instance_request, instance_filled, video_start, 
-      video_complete, called_show, is_ready_true, 
-      is_ready_false, click, impr, 
-      create_time)
+      placement_id, instance_id, scene_id, 
+      adn_id, abt, waterfall_request, 
+      waterfall_filled, instance_request, instance_filled, 
+      video_start, video_complete, called_show, 
+      is_ready_true, is_ready_false, click, 
+      impr, create_time, bid_req, 
+      bid_resp, bid_resp_price, bid_win, 
+      bid_win_price, bid)
     values (#{day,jdbcType=DATE}, #{hour,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, 
       #{platform,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
-      #{placementId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, 
-      #{abt,jdbcType=TINYINT}, #{waterfallRequest,jdbcType=INTEGER}, #{waterfallFilled,jdbcType=INTEGER}, 
-      #{instanceRequest,jdbcType=INTEGER}, #{instanceFilled,jdbcType=INTEGER}, #{videoStart,jdbcType=INTEGER}, 
-      #{videoComplete,jdbcType=INTEGER}, #{calledShow,jdbcType=INTEGER}, #{isReadyTrue,jdbcType=INTEGER}, 
-      #{isReadyFalse,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, #{impr,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      #{placementId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER}, 
+      #{adnId,jdbcType=INTEGER}, #{abt,jdbcType=TINYINT}, #{waterfallRequest,jdbcType=INTEGER}, 
+      #{waterfallFilled,jdbcType=INTEGER}, #{instanceRequest,jdbcType=INTEGER}, #{instanceFilled,jdbcType=INTEGER}, 
+      #{videoStart,jdbcType=INTEGER}, #{videoComplete,jdbcType=INTEGER}, #{calledShow,jdbcType=INTEGER}, 
+      #{isReadyTrue,jdbcType=INTEGER}, #{isReadyFalse,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, 
+      #{impr,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{bidReq,jdbcType=INTEGER}, 
+      #{bidResp,jdbcType=INTEGER}, #{bidRespPrice,jdbcType=DECIMAL}, #{bidWin,jdbcType=INTEGER}, 
+      #{bidWinPrice,jdbcType=DECIMAL}, #{bid,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatLr">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -137,6 +150,9 @@
       </if>
       <if test="instanceId != null">
         instance_id,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
       </if>
       <if test="adnId != null">
         adn_id,
@@ -180,6 +196,24 @@
       <if test="createTime != null">
         create_time,
       </if>
+      <if test="bidReq != null">
+        bid_req,
+      </if>
+      <if test="bidResp != null">
+        bid_resp,
+      </if>
+      <if test="bidRespPrice != null">
+        bid_resp_price,
+      </if>
+      <if test="bidWin != null">
+        bid_win,
+      </if>
+      <if test="bidWinPrice != null">
+        bid_win_price,
+      </if>
+      <if test="bid != null">
+        bid,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="day != null">
@@ -205,6 +239,9 @@
       </if>
       <if test="instanceId != null">
         #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
       </if>
       <if test="adnId != null">
         #{adnId,jdbcType=INTEGER},
@@ -248,6 +285,24 @@
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="bidReq != null">
+        #{bidReq,jdbcType=INTEGER},
+      </if>
+      <if test="bidResp != null">
+        #{bidResp,jdbcType=INTEGER},
+      </if>
+      <if test="bidRespPrice != null">
+        #{bidRespPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bidWin != null">
+        #{bidWin,jdbcType=INTEGER},
+      </if>
+      <if test="bidWinPrice != null">
+        #{bidWinPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bid != null">
+        #{bid,jdbcType=TINYINT},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.StatLr">
@@ -273,6 +328,9 @@
       </if>
       <if test="instanceId != null">
         instance_id = #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
       </if>
       <if test="adnId != null">
         adn_id = #{adnId,jdbcType=INTEGER},
@@ -316,6 +374,24 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="bidReq != null">
+        bid_req = #{bidReq,jdbcType=INTEGER},
+      </if>
+      <if test="bidResp != null">
+        bid_resp = #{bidResp,jdbcType=INTEGER},
+      </if>
+      <if test="bidRespPrice != null">
+        bid_resp_price = #{bidRespPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bidWin != null">
+        bid_win = #{bidWin,jdbcType=INTEGER},
+      </if>
+      <if test="bidWinPrice != null">
+        bid_win_price = #{bidWinPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bid != null">
+        bid = #{bid,jdbcType=TINYINT},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
       and day = #{day,jdbcType=DATE}
@@ -329,6 +405,7 @@
       pub_app_id = #{pubAppId,jdbcType=INTEGER},
       placement_id = #{placementId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
+      scene_id = #{sceneId,jdbcType=INTEGER},
       adn_id = #{adnId,jdbcType=INTEGER},
       abt = #{abt,jdbcType=TINYINT},
       waterfall_request = #{waterfallRequest,jdbcType=INTEGER},
@@ -342,7 +419,13 @@
       is_ready_false = #{isReadyFalse,jdbcType=INTEGER},
       click = #{click,jdbcType=INTEGER},
       impr = #{impr,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      bid_req = #{bidReq,jdbcType=INTEGER},
+      bid_resp = #{bidResp,jdbcType=INTEGER},
+      bid_resp_price = #{bidRespPrice,jdbcType=DECIMAL},
+      bid_win = #{bidWin,jdbcType=INTEGER},
+      bid_win_price = #{bidWinPrice,jdbcType=DECIMAL},
+      bid = #{bid,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
       and day = #{day,jdbcType=DATE}
   </update>
@@ -400,6 +483,12 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_sceneId')">
+      scene_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_only_adn')">
+      case when bid = 0 then adn_id else -1 end as adn_id,
+    </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
@@ -409,11 +498,16 @@
     <if test="_parameter.containsKey('dimension_hour')">
       hour,
     </if>
+    <if test="_parameter.containsKey('dimension_bid')">
+      bid,
+    </if>
     sum(waterfall_request) as waterfall_request,sum(waterfall_filled) as waterfall_filled,
-    sum(instance_request) as instance_request, sum(instance_filled) as instance_filled,
+    sum(instance_request + bid_req) as instance_request, sum(instance_filled + bid_resp) as instance_filled,
     sum(video_start) as video_start,sum(video_complete) as video_complete,sum(called_show) as called_show,
     sum(is_ready_true) as is_ready_true,sum(is_ready_false) as is_ready_false,
-    sum(click) as click,sum(impr) as impr
+    sum(click) as click,sum(impr) as impr, sum(click) as mediation_click, sum(impr) as mediation_impr,
+    sum(bid_req) as bid_req, sum(bid_resp) as bid_resp, sum(bid_resp_price) as bid_resp_price,
+    sum(bid_win) as bid_win, sum(bid_win_price) as bid_win_price
     from stat_lr
     <if test="_parameter.containsKey('summaryWhereClause')">
       <include refid="Summary_Where_Clause" />
@@ -440,6 +534,12 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_sceneId')">
+      scene_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_only_adn')">
+      case when bid = 0 then adn_id else -1 end,
+    </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
@@ -448,6 +548,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_hour')">
       hour,
+    </if>
+    <if test="_parameter.containsKey('dimension_bid')">
+      bid,
     </if>
     null
     <if test="_parameter.containsKey('orderByClause')">

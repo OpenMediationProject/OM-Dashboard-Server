@@ -61,6 +61,8 @@ public class OmPlacement {
 
     private String osvMin;
 
+    private OmPlacementScene[] scenes;
+
     public Integer getId() {
         return id;
     }
@@ -275,6 +277,14 @@ public class OmPlacement {
 
     public void setOsvMin(String osvMin) {
         this.osvMin = osvMin == null ? null : osvMin.trim();
+    }
+
+    public OmPlacementScene[] getScenes() {
+        return scenes;
+    }
+
+    public void setScenes(OmPlacementScene[] scenes) {
+        this.scenes = scenes;
     }
 
     @Override
