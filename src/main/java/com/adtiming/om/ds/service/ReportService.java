@@ -92,9 +92,15 @@ public class ReportService extends BaseService {
 
             if (reportTypeSet.contains("lr")) {
                 List<StatLr> statLrs = this.getLrReport(reportConditionDTO);
-                statLrs.forEach(statLr -> {
+                for (StatLr statLr : statLrs){
+                    if (dimensionSet.contains("adnId") && statLr.getAdnId() == 0) {
+                        continue;
+                    }
+                    if (dimensionSet.contains("instanceId") && statLr.getInstanceId() == 0) {
+                        continue;
+                    }
                     resultReport.add((JSONObject) JSONObject.toJSON(statLr));
-                });
+                }
             }
 
             if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
