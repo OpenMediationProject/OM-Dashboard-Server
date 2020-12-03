@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.CpCreativeMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.CpCreative">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="campaign_id" jdbcType="INTEGER" property="campaignId" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="weight" jdbcType="TINYINT" property="weight" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="auditor" jdbcType="VARCHAR" property="auditor" />
+    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="audit_memo" jdbcType="VARCHAR" property="auditMemo" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="play_url" jdbcType="VARCHAR" property="playUrl" />
+    <result column="template" jdbcType="INTEGER" property="template" />
+    <result column="endcard_template" jdbcType="INTEGER" property="endcardTemplate" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.CpCreative">
+    <result column="descn" jdbcType="LONGVARCHAR" property="descn" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, campaign_id, publisher_id, name, type, weight, title, auditor, audit_time, audit_memo, 
+    status, play_url, template, endcard_template, lastmodify, create_time
+  </sql>
+  <sql id="Blob_Column_List">
+    descn
+  </sql>
+  <select id="selectWithBLOBs" parameterType="com.adtiming.om.ds.model.CpCreativeCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cp_creative
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.CpCreativeCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cp_creative
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cp_creative
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cp_creative
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.CpCreative">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_creative (campaign_id, publisher_id, name, 
+      type, weight, title, 
+      auditor, audit_time, audit_memo, 
+      status, play_url, template, 
+      endcard_template, lastmodify, create_time, 
+      descn)
+    values (#{campaignId,jdbcType=INTEGER}, #{publisherId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{weight,jdbcType=TINYINT}, #{title,jdbcType=VARCHAR}, 
+      #{auditor,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, #{auditMemo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{playUrl,jdbcType=VARCHAR}, #{template,jdbcType=INTEGER}, 
+      #{endcardTemplate,jdbcType=INTEGER}, #{lastmodify,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{descn,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.CpCreative">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_creative
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="campaignId != null">
+        campaign_id,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="auditor != null">
+        auditor,
+      </if>
+      <if test="auditTime != null">
+        audit_time,
+      </if>
+      <if test="auditMemo != null">
+        audit_memo,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="playUrl != null">
+        play_url,
+      </if>
+      <if test="template != null">
+        template,
+      </if>
+      <if test="endcardTemplate != null">
+        endcard_template,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="campaignId != null">
+        #{campaignId,jdbcType=INTEGER},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=TINYINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null">
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null">
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditMemo != null">
+        #{auditMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="playUrl != null">
+        #{playUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="template != null">
+        #{template,jdbcType=INTEGER},
+      </if>
+      <if test="endcardTemplate != null">
+        #{endcardTemplate,jdbcType=INTEGER},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.CpCreative">
+    update cp_creative
+    <set>
+      <if test="campaignId != null">
+        campaign_id = #{campaignId,jdbcType=INTEGER},
+      </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=TINYINT},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null">
+        auditor = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null">
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditMemo != null">
+        audit_memo = #{auditMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="playUrl != null">
+        play_url = #{playUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="template != null">
+        template = #{template,jdbcType=INTEGER},
+      </if>
+      <if test="endcardTemplate != null">
+        endcard_template = #{endcardTemplate,jdbcType=INTEGER},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.CpCreative">
+    update cp_creative
+    set campaign_id = #{campaignId,jdbcType=INTEGER},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      weight = #{weight,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      audit_memo = #{auditMemo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      play_url = #{playUrl,jdbcType=VARCHAR},
+      template = #{template,jdbcType=INTEGER},
+      endcard_template = #{endcardTemplate,jdbcType=INTEGER},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      descn = #{descn,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.CpCreative">
+    update cp_creative
+    set campaign_id = #{campaignId,jdbcType=INTEGER},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      weight = #{weight,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      audit_memo = #{auditMemo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      play_url = #{playUrl,jdbcType=VARCHAR},
+      template = #{template,jdbcType=INTEGER},
+      endcard_template = #{endcardTemplate,jdbcType=INTEGER},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

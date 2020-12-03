@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,10 +22,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ReportTest extends BaseCommonTests {
 
     @Autowired
-    ReportService reportService;
+    FieldNameService fieldNameService;
 
     @Autowired
-    FieldNameService fieldNameService;
+    ReportService reportService;
+
+    @Test
+    public void testGetLtvData() throws Exception {
+        MultiValueMap<String, String> ps = new LinkedMultiValueMap<>();
+        List<String> dateBegin = new ArrayList<>();
+        dateBegin.add("2020-05-14");
+        ps.put("dateBegin",dateBegin);
+        List<String> dateEnd = new ArrayList<>();
+        dateEnd.add("2020-05-21");
+        ps.put("dateEnd",dateEnd);
+        ps.put("granularity", Arrays.asList("day"));
+        ps.put("dimensions", Arrays.asList("retention_day", "base_date"));
+        this.doPost("/report/ltv?ps=queryPaymentType=IAA&dimensions=retention_day&dimensions=base_date&dimensions=retention_day&dateBegin=2020-10-20&dateEnd=2020-11-02&granularity=day", ps);
+    }
 
     @Test
     public void testGetDashboardHeadRevenues() throws Exception {
@@ -75,13 +93,19 @@ public class ReportTest extends BaseCommonTests {
     @Test
     public void testGetDauSummary() throws Exception {
         ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
-        reportConditionDTO.setDateBegin("2020-02-15");
-        reportConditionDTO.setDateEnd("2020-02-22");
-        Integer[] publisherIds = new Integer[]{1, 2};
-        reportConditionDTO.setPublisherId(publisherIds);
-        String[] dimensions = new String[]{"publisherId"};
+        reportConditionDTO.setDateBegin("2020-12-01");
+        reportConditionDTO.setDateEnd("2020-12-02");
+        String[] dimensions = new String[]{"day","adnId"};
+//        dimensions = new String[]{"day","instanceId"};
+//        dimensions = new String[]{"day","placementId"};
+//        dimensions = new String[]{"day","placementId", "adnId"};
         reportConditionDTO.setDimension(dimensions);
-        this.doPost("/report/dau/list", reportConditionDTO);
+        Set<String> dimensionSet = new HashSet<>();
+        if (reportConditionDTO.getDimension() != null && reportConditionDTO.getDimension().length > 0) {
+            Collections.addAll(dimensionSet, reportConditionDTO.getDimension());
+        }
+        reportConditionDTO.setDimensionSet(dimensionSet);
+        this.reportService.getDeuReport(reportConditionDTO);
     }
 
     @Test

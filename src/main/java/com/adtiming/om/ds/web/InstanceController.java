@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.web;
 
+import com.adtiming.om.ds.dto.AdNetworkType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmAdnetwork;
@@ -181,15 +182,20 @@ public class InstanceController extends BaseController {
      * @see OmInstanceWithBLOBs
      */
     @RequestMapping(value = "/instance/update", method = RequestMethod.POST)
-    public Response updateInstance(@RequestBody OmInstanceWithBLOBs omInstanceWithBLOBs) {
+    public Response updateInstance(@RequestBody OmInstanceWithBLOBs instance) {
         try {
-            if (omInstanceWithBLOBs.getId() == null || omInstanceWithBLOBs.getId() <= 0) {
+            if (instance.getId() == null || instance.getId() <= 0) {
                 log.error("It must have valid id");
                 return Response.RES_PARAMETER_ERROR;
             }
-            return this.instanceService.updateInstance(omInstanceWithBLOBs);
+            if (instance.getAdnId() != null && instance.getAdnId() != AdNetworkType.CrossPromotion.ordinal()
+                    && StringUtils.isBlank(instance.getPlacementKey())) {
+                log.warn("Placement key can not empty");
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.instanceService.updateInstance(instance);
         } catch (Exception e) {
-            log.error("Update instance error {}", JSONObject.toJSONString(omInstanceWithBLOBs), e);
+            log.error("Update instance error {}", JSONObject.toJSONString(instance), e);
         }
         return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update instance failed!");
     }

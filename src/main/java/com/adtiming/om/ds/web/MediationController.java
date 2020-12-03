@@ -336,10 +336,10 @@ public class MediationController extends BaseController {
             return reportMap;
         }
         List<JSONObject> reports = (List<JSONObject>) reportResponse.getData();
-        for (JSONObject report : reports){
+        for (JSONObject report : reports) {
             String instanceId = report.getString("instanceId");
             JSONObject instanceReport = reportMap.get(instanceId);
-            if (instanceReport == null){
+            if (instanceReport == null) {
                 instanceReport = new JSONObject();
                 reportMap.put(instanceId, instanceReport);
             }

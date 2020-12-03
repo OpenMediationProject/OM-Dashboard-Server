@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.CpMaterialMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.CpMaterial">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="md5sum" jdbcType="VARCHAR" property="md5sum" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="mime_type" jdbcType="VARCHAR" property="mimeType" />
+    <result column="width" jdbcType="SMALLINT" property="width" />
+    <result column="height" jdbcType="SMALLINT" property="height" />
+    <result column="size" jdbcType="INTEGER" property="size" />
+    <result column="video_duration" jdbcType="INTEGER" property="videoDuration" />
+    <result column="auditor" jdbcType="VARCHAR" property="auditor" />
+    <result column="audit_time" jdbcType="TIMESTAMP" property="auditTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, publisher_id, name, md5sum, type, url, mime_type, width, height, size, video_duration, 
+    auditor, audit_time, status, lastmodify, create_time
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.CpMaterialCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cp_material
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cp_material
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cp_material
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.CpMaterial">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_material (publisher_id, name, md5sum, 
+      type, url, mime_type, 
+      width, height, size, 
+      video_duration, auditor, audit_time, 
+      status, lastmodify, create_time)
+    values (#{publisherId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{md5sum,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{url,jdbcType=VARCHAR}, #{mimeType,jdbcType=VARCHAR}, 
+      #{width,jdbcType=SMALLINT}, #{height,jdbcType=SMALLINT}, #{size,jdbcType=INTEGER}, 
+      #{videoDuration,jdbcType=INTEGER}, #{auditor,jdbcType=VARCHAR}, #{auditTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT}, #{lastmodify,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.CpMaterial">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_material
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="md5sum != null">
+        md5sum,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="mimeType != null">
+        mime_type,
+      </if>
+      <if test="width != null">
+        width,
+      </if>
+      <if test="height != null">
+        height,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="videoDuration != null">
+        video_duration,
+      </if>
+      <if test="auditor != null">
+        auditor,
+      </if>
+      <if test="auditTime != null">
+        audit_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="md5sum != null">
+        #{md5sum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="mimeType != null">
+        #{mimeType,jdbcType=VARCHAR},
+      </if>
+      <if test="width != null">
+        #{width,jdbcType=SMALLINT},
+      </if>
+      <if test="height != null">
+        #{height,jdbcType=SMALLINT},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=INTEGER},
+      </if>
+      <if test="videoDuration != null">
+        #{videoDuration,jdbcType=INTEGER},
+      </if>
+      <if test="auditor != null">
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null">
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.CpMaterial">
+    update cp_material
+    <set>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="md5sum != null">
+        md5sum = #{md5sum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="mimeType != null">
+        mime_type = #{mimeType,jdbcType=VARCHAR},
+      </if>
+      <if test="width != null">
+        width = #{width,jdbcType=SMALLINT},
+      </if>
+      <if test="height != null">
+        height = #{height,jdbcType=SMALLINT},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=INTEGER},
+      </if>
+      <if test="videoDuration != null">
+        video_duration = #{videoDuration,jdbcType=INTEGER},
+      </if>
+      <if test="auditor != null">
+        auditor = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditTime != null">
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.CpMaterial">
+    update cp_material
+    set publisher_id = #{publisherId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      md5sum = #{md5sum,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      url = #{url,jdbcType=VARCHAR},
+      mime_type = #{mimeType,jdbcType=VARCHAR},
+      width = #{width,jdbcType=SMALLINT},
+      height = #{height,jdbcType=SMALLINT},
+      size = #{size,jdbcType=INTEGER},
+      video_duration = #{videoDuration,jdbcType=INTEGER},
+      auditor = #{auditor,jdbcType=VARCHAR},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

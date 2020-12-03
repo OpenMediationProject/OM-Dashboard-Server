@@ -3,10 +3,18 @@
 
 package com.adtiming.om.ds.dto;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Set;
+
 /**
  * Created by ruandianbo on 20-2-18.
  */
 public class ReportConditionDTO {
+
+    protected static final Logger log = LogManager.getLogger();
 
     private String dateBegin;
 
@@ -39,6 +47,10 @@ public class ReportConditionDTO {
     private Byte[] abt;
 
     private Byte[] bid;
+
+    private Integer[] creativeId;
+
+    Set<String> dimensionSet;
 
     public String getDateBegin() {
         return dateBegin;
@@ -166,5 +178,21 @@ public class ReportConditionDTO {
 
     public void setBid(Byte[] bid) {
         this.bid = bid;
+    }
+
+    public Integer[] getCreativeId() {
+        return creativeId;
+    }
+
+    public void setCreativeId(Integer[] creativeId) {
+        this.creativeId = creativeId;
+    }
+
+    public Set<String> getDimensionSet() {
+        return dimensionSet;
+    }
+
+    public void setDimensionSet(Set<String> dimensionSet) {
+        this.dimensionSet = dimensionSet;
     }
 }

@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.CpCampaignMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.CpCampaign">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ska_campaign_id" jdbcType="TINYINT" property="skaCampaignId" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="app_name" jdbcType="VARCHAR" property="appName" />
+    <result column="preview_url" jdbcType="VARCHAR" property="previewUrl" />
+    <result column="platform" jdbcType="TINYINT" property="platform" />
+    <result column="billing_type" jdbcType="TINYINT" property="billingType" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="daily_cap" jdbcType="INTEGER" property="dailyCap" />
+    <result column="daily_budget" jdbcType="DECIMAL" property="dailyBudget" />
+    <result column="max_bidprice" jdbcType="DECIMAL" property="maxBidprice" />
+    <result column="bidprice" jdbcType="DECIMAL" property="bidprice" />
+    <result column="impr_cap" jdbcType="INTEGER" property="imprCap" />
+    <result column="impr_freq" jdbcType="INTEGER" property="imprFreq" />
+    <result column="ad_domain" jdbcType="VARCHAR" property="adDomain" />
+    <result column="click_url" jdbcType="VARCHAR" property="clickUrl" />
+    <result column="impr_url" jdbcType="VARCHAR" property="imprUrl" />
+    <result column="click_tk_urls" jdbcType="VARCHAR" property="clickTkUrls" />
+    <result column="impr_tk_urls" jdbcType="VARCHAR" property="imprTkUrls" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="run_status" jdbcType="TINYINT" property="runStatus" />
+    <result column="last_reason" jdbcType="VARCHAR" property="lastReason" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.CpCampaign">
+    <result column="remark" jdbcType="LONGVARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, ska_campaign_id, publisher_id, type, name, app_id, app_name, preview_url, platform, 
+    billing_type, price, daily_cap, daily_budget, max_bidprice, bidprice, impr_cap, impr_freq, 
+    ad_domain, click_url, impr_url, click_tk_urls, impr_tk_urls, start_time, end_time, 
+    status, run_status, last_reason, lastmodify, create_time
+  </sql>
+  <sql id="Blob_Column_List">
+    remark
+  </sql>
+  <select id="selectWithBLOBs" parameterType="com.adtiming.om.ds.model.CpCampaignCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cp_campaign
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.CpCampaignCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cp_campaign
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cp_campaign
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cp_campaign
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.CpCampaign">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_campaign (ska_campaign_id, publisher_id, type, 
+      name, app_id, app_name, 
+      preview_url, platform, billing_type, 
+      price, daily_cap, daily_budget, 
+      max_bidprice, bidprice, impr_cap, 
+      impr_freq, ad_domain, click_url, 
+      impr_url, click_tk_urls, impr_tk_urls, 
+      start_time, end_time, status, 
+      run_status, last_reason, lastmodify, 
+      create_time, remark)
+    values (#{skaCampaignId,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{type,jdbcType=TINYINT}, 
+      #{name,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, #{appName,jdbcType=VARCHAR}, 
+      #{previewUrl,jdbcType=VARCHAR}, #{platform,jdbcType=TINYINT}, #{billingType,jdbcType=TINYINT}, 
+      #{price,jdbcType=DECIMAL}, #{dailyCap,jdbcType=INTEGER}, #{dailyBudget,jdbcType=DECIMAL}, 
+      #{maxBidprice,jdbcType=DECIMAL}, #{bidprice,jdbcType=DECIMAL}, #{imprCap,jdbcType=INTEGER}, 
+      #{imprFreq,jdbcType=INTEGER}, #{adDomain,jdbcType=VARCHAR}, #{clickUrl,jdbcType=VARCHAR}, 
+      #{imprUrl,jdbcType=VARCHAR}, #{clickTkUrls,jdbcType=VARCHAR}, #{imprTkUrls,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
+      #{runStatus,jdbcType=TINYINT}, #{lastReason,jdbcType=VARCHAR}, #{lastmodify,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.CpCampaign">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into cp_campaign
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="skaCampaignId != null">
+        ska_campaign_id,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="appName != null">
+        app_name,
+      </if>
+      <if test="previewUrl != null">
+        preview_url,
+      </if>
+      <if test="platform != null">
+        platform,
+      </if>
+      <if test="billingType != null">
+        billing_type,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="dailyCap != null">
+        daily_cap,
+      </if>
+      <if test="dailyBudget != null">
+        daily_budget,
+      </if>
+      <if test="maxBidprice != null">
+        max_bidprice,
+      </if>
+      <if test="bidprice != null">
+        bidprice,
+      </if>
+      <if test="imprCap != null">
+        impr_cap,
+      </if>
+      <if test="imprFreq != null">
+        impr_freq,
+      </if>
+      <if test="adDomain != null">
+        ad_domain,
+      </if>
+      <if test="clickUrl != null">
+        click_url,
+      </if>
+      <if test="imprUrl != null">
+        impr_url,
+      </if>
+      <if test="clickTkUrls != null">
+        click_tk_urls,
+      </if>
+      <if test="imprTkUrls != null">
+        impr_tk_urls,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="runStatus != null">
+        run_status,
+      </if>
+      <if test="lastReason != null">
+        last_reason,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="skaCampaignId != null">
+        #{skaCampaignId,jdbcType=TINYINT},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appName != null">
+        #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="previewUrl != null">
+        #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="billingType != null">
+        #{billingType,jdbcType=TINYINT},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="dailyCap != null">
+        #{dailyCap,jdbcType=INTEGER},
+      </if>
+      <if test="dailyBudget != null">
+        #{dailyBudget,jdbcType=DECIMAL},
+      </if>
+      <if test="maxBidprice != null">
+        #{maxBidprice,jdbcType=DECIMAL},
+      </if>
+      <if test="bidprice != null">
+        #{bidprice,jdbcType=DECIMAL},
+      </if>
+      <if test="imprCap != null">
+        #{imprCap,jdbcType=INTEGER},
+      </if>
+      <if test="imprFreq != null">
+        #{imprFreq,jdbcType=INTEGER},
+      </if>
+      <if test="adDomain != null">
+        #{adDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="clickUrl != null">
+        #{clickUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="imprUrl != null">
+        #{imprUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="clickTkUrls != null">
+        #{clickTkUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="imprTkUrls != null">
+        #{imprTkUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="runStatus != null">
+        #{runStatus,jdbcType=TINYINT},
+      </if>
+      <if test="lastReason != null">
+        #{lastReason,jdbcType=VARCHAR},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.CpCampaign">
+    update cp_campaign
+    <set>
+      <if test="skaCampaignId != null">
+        ska_campaign_id = #{skaCampaignId,jdbcType=TINYINT},
+      </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appName != null">
+        app_name = #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="previewUrl != null">
+        preview_url = #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null">
+        platform = #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="billingType != null">
+        billing_type = #{billingType,jdbcType=TINYINT},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="dailyCap != null">
+        daily_cap = #{dailyCap,jdbcType=INTEGER},
+      </if>
+      <if test="dailyBudget != null">
+        daily_budget = #{dailyBudget,jdbcType=DECIMAL},
+      </if>
+      <if test="maxBidprice != null">
+        max_bidprice = #{maxBidprice,jdbcType=DECIMAL},
+      </if>
+      <if test="bidprice != null">
+        bidprice = #{bidprice,jdbcType=DECIMAL},
+      </if>
+      <if test="imprCap != null">
+        impr_cap = #{imprCap,jdbcType=INTEGER},
+      </if>
+      <if test="imprFreq != null">
+        impr_freq = #{imprFreq,jdbcType=INTEGER},
+      </if>
+      <if test="adDomain != null">
+        ad_domain = #{adDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="clickUrl != null">
+        click_url = #{clickUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="imprUrl != null">
+        impr_url = #{imprUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="clickTkUrls != null">
+        click_tk_urls = #{clickTkUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="imprTkUrls != null">
+        impr_tk_urls = #{imprTkUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="runStatus != null">
+        run_status = #{runStatus,jdbcType=TINYINT},
+      </if>
+      <if test="lastReason != null">
+        last_reason = #{lastReason,jdbcType=VARCHAR},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.CpCampaign">
+    update cp_campaign
+    set ska_campaign_id = #{skaCampaignId,jdbcType=TINYINT},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      app_name = #{appName,jdbcType=VARCHAR},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      platform = #{platform,jdbcType=TINYINT},
+      billing_type = #{billingType,jdbcType=TINYINT},
+      price = #{price,jdbcType=DECIMAL},
+      daily_cap = #{dailyCap,jdbcType=INTEGER},
+      daily_budget = #{dailyBudget,jdbcType=DECIMAL},
+      max_bidprice = #{maxBidprice,jdbcType=DECIMAL},
+      bidprice = #{bidprice,jdbcType=DECIMAL},
+      impr_cap = #{imprCap,jdbcType=INTEGER},
+      impr_freq = #{imprFreq,jdbcType=INTEGER},
+      ad_domain = #{adDomain,jdbcType=VARCHAR},
+      click_url = #{clickUrl,jdbcType=VARCHAR},
+      impr_url = #{imprUrl,jdbcType=VARCHAR},
+      click_tk_urls = #{clickTkUrls,jdbcType=VARCHAR},
+      impr_tk_urls = #{imprTkUrls,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      run_status = #{runStatus,jdbcType=TINYINT},
+      last_reason = #{lastReason,jdbcType=VARCHAR},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.CpCampaign">
+    update cp_campaign
+    set ska_campaign_id = #{skaCampaignId,jdbcType=TINYINT},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      app_name = #{appName,jdbcType=VARCHAR},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      platform = #{platform,jdbcType=TINYINT},
+      billing_type = #{billingType,jdbcType=TINYINT},
+      price = #{price,jdbcType=DECIMAL},
+      daily_cap = #{dailyCap,jdbcType=INTEGER},
+      daily_budget = #{dailyBudget,jdbcType=DECIMAL},
+      max_bidprice = #{maxBidprice,jdbcType=DECIMAL},
+      bidprice = #{bidprice,jdbcType=DECIMAL},
+      impr_cap = #{imprCap,jdbcType=INTEGER},
+      impr_freq = #{imprFreq,jdbcType=INTEGER},
+      ad_domain = #{adDomain,jdbcType=VARCHAR},
+      click_url = #{clickUrl,jdbcType=VARCHAR},
+      impr_url = #{imprUrl,jdbcType=VARCHAR},
+      click_tk_urls = #{clickTkUrls,jdbcType=VARCHAR},
+      impr_tk_urls = #{imprTkUrls,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=TINYINT},
+      run_status = #{runStatus,jdbcType=TINYINT},
+      last_reason = #{lastReason,jdbcType=VARCHAR},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -33,10 +33,10 @@ public class ReportBuilderService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private OmReportBuilderMapper omReportBuilderMapper;
+    OmReportBuilderMapper omReportBuilderMapper;
 
     @Resource
-    private OmReportBuilderTaskMapper omReportBuilderTaskMapper;
+    OmReportBuilderTaskMapper omReportBuilderTaskMapper;
 
     public List<OmReportBuilderWithBLOBs> getReportBuilders(Integer publisherId) {
         OmReportBuilderCriteria reportBuilderCriteria = new OmReportBuilderCriteria();
@@ -97,7 +97,7 @@ public class ReportBuilderService extends BaseService {
             omReportBuilder.setLastmodify(new Date());
             int result = this.omReportBuilderMapper.updateByPrimaryKeySelective(omReportBuilder);
             if (result > 0) {
-                log.info("Update report builder {} status successfully.", id, status);
+                log.info("Update report builder {} status {} successfully.", id, status);
                 return Response.buildSuccess(id);
             } else {
                 throw new RuntimeException("Delete report builder id " + id + "status " + status + " failed");

@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.OmAppMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.OmApp">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="plat" jdbcType="TINYINT" property="plat" />
+    <result column="app_id" jdbcType="VARCHAR" property="appId" />
+    <result column="other_store_id" jdbcType="VARCHAR" property="otherStoreId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="video_url" jdbcType="VARCHAR" property="videoUrl" />
+    <result column="bundle_id" jdbcType="VARCHAR" property="bundleId" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="sub_category_id1" jdbcType="INTEGER" property="subCategoryId1" />
+    <result column="sub_category_id2" jdbcType="INTEGER" property="subCategoryId2" />
+    <result column="sub_category_id3" jdbcType="INTEGER" property="subCategoryId3" />
+    <result column="preview_url" jdbcType="VARCHAR" property="previewUrl" />
+    <result column="rating_value" jdbcType="DECIMAL" property="ratingValue" />
+    <result column="rating_count" jdbcType="INTEGER" property="ratingCount" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="os_require" jdbcType="VARCHAR" property="osRequire" />
+    <result column="main_lang" jdbcType="VARCHAR" property="mainLang" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="fetched" jdbcType="TINYINT" property="fetched" />
+    <result column="fetch_time" jdbcType="TIMESTAMP" property="fetchTime" />
+    <result column="failed_times" jdbcType="INTEGER" property="failedTimes" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adtiming.om.ds.model.OmAppWithBLOBs">
+    <result column="screenshot_urls" jdbcType="LONGVARCHAR" property="screenshotUrls" />
+    <result column="descn" jdbcType="LONGVARCHAR" property="descn" />
+    <result column="more_descn" jdbcType="LONGVARCHAR" property="moreDescn" />
+    <result column="whatsnew" jdbcType="LONGVARCHAR" property="whatsnew" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, plat, app_id, other_store_id, name, icon, video_url, bundle_id, category, category_id, 
+    sub_category_id1, sub_category_id2, sub_category_id3, preview_url, rating_value, 
+    rating_count, release_time, version, os_require, main_lang, country, fetched, fetch_time, 
+    failed_times, create_time, lastmodify
+  </sql>
+  <sql id="Blob_Column_List">
+    screenshot_urls, descn, more_descn, whatsnew
+  </sql>
+  <select id="selectWithBLOBs" parameterType="com.adtiming.om.ds.model.OmAppCriteria" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_app
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmAppCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from om_app
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from om_app
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from om_app
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmAppWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_app (plat, app_id, other_store_id, 
+      name, icon, video_url, 
+      bundle_id, category, category_id, 
+      sub_category_id1, sub_category_id2, sub_category_id3, 
+      preview_url, rating_value, rating_count, 
+      release_time, version, os_require, 
+      main_lang, country, fetched, 
+      fetch_time, failed_times, create_time, 
+      lastmodify, screenshot_urls, descn, 
+      more_descn, whatsnew)
+    values (#{plat,jdbcType=TINYINT}, #{appId,jdbcType=VARCHAR}, #{otherStoreId,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{videoUrl,jdbcType=VARCHAR}, 
+      #{bundleId,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, 
+      #{subCategoryId1,jdbcType=INTEGER}, #{subCategoryId2,jdbcType=INTEGER}, #{subCategoryId3,jdbcType=INTEGER}, 
+      #{previewUrl,jdbcType=VARCHAR}, #{ratingValue,jdbcType=DECIMAL}, #{ratingCount,jdbcType=INTEGER}, 
+      #{releaseTime,jdbcType=TIMESTAMP}, #{version,jdbcType=VARCHAR}, #{osRequire,jdbcType=VARCHAR}, 
+      #{mainLang,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, #{fetched,jdbcType=TINYINT}, 
+      #{fetchTime,jdbcType=TIMESTAMP}, #{failedTimes,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP}, #{screenshotUrls,jdbcType=LONGVARCHAR}, #{descn,jdbcType=LONGVARCHAR}, 
+      #{moreDescn,jdbcType=LONGVARCHAR}, #{whatsnew,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmAppWithBLOBs">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into om_app
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="plat != null">
+        plat,
+      </if>
+      <if test="appId != null">
+        app_id,
+      </if>
+      <if test="otherStoreId != null">
+        other_store_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="videoUrl != null">
+        video_url,
+      </if>
+      <if test="bundleId != null">
+        bundle_id,
+      </if>
+      <if test="category != null">
+        category,
+      </if>
+      <if test="categoryId != null">
+        category_id,
+      </if>
+      <if test="subCategoryId1 != null">
+        sub_category_id1,
+      </if>
+      <if test="subCategoryId2 != null">
+        sub_category_id2,
+      </if>
+      <if test="subCategoryId3 != null">
+        sub_category_id3,
+      </if>
+      <if test="previewUrl != null">
+        preview_url,
+      </if>
+      <if test="ratingValue != null">
+        rating_value,
+      </if>
+      <if test="ratingCount != null">
+        rating_count,
+      </if>
+      <if test="releaseTime != null">
+        release_time,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="osRequire != null">
+        os_require,
+      </if>
+      <if test="mainLang != null">
+        main_lang,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="fetched != null">
+        fetched,
+      </if>
+      <if test="fetchTime != null">
+        fetch_time,
+      </if>
+      <if test="failedTimes != null">
+        failed_times,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+      <if test="screenshotUrls != null">
+        screenshot_urls,
+      </if>
+      <if test="descn != null">
+        descn,
+      </if>
+      <if test="moreDescn != null">
+        more_descn,
+      </if>
+      <if test="whatsnew != null">
+        whatsnew,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="plat != null">
+        #{plat,jdbcType=TINYINT},
+      </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="otherStoreId != null">
+        #{otherStoreId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null">
+        #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bundleId != null">
+        #{bundleId,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId1 != null">
+        #{subCategoryId1,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId2 != null">
+        #{subCategoryId2,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId3 != null">
+        #{subCategoryId3,jdbcType=INTEGER},
+      </if>
+      <if test="previewUrl != null">
+        #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ratingValue != null">
+        #{ratingValue,jdbcType=DECIMAL},
+      </if>
+      <if test="ratingCount != null">
+        #{ratingCount,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="osRequire != null">
+        #{osRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="mainLang != null">
+        #{mainLang,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="fetched != null">
+        #{fetched,jdbcType=TINYINT},
+      </if>
+      <if test="fetchTime != null">
+        #{fetchTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="failedTimes != null">
+        #{failedTimes,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="screenshotUrls != null">
+        #{screenshotUrls,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="descn != null">
+        #{descn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="moreDescn != null">
+        #{moreDescn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="whatsnew != null">
+        #{whatsnew,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmAppWithBLOBs">
+    update om_app
+    <set>
+      <if test="plat != null">
+        plat = #{plat,jdbcType=TINYINT},
+      </if>
+      <if test="appId != null">
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="otherStoreId != null">
+        other_store_id = #{otherStoreId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null">
+        video_url = #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bundleId != null">
+        bundle_id = #{bundleId,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null">
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId != null">
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId1 != null">
+        sub_category_id1 = #{subCategoryId1,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId2 != null">
+        sub_category_id2 = #{subCategoryId2,jdbcType=INTEGER},
+      </if>
+      <if test="subCategoryId3 != null">
+        sub_category_id3 = #{subCategoryId3,jdbcType=INTEGER},
+      </if>
+      <if test="previewUrl != null">
+        preview_url = #{previewUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ratingValue != null">
+        rating_value = #{ratingValue,jdbcType=DECIMAL},
+      </if>
+      <if test="ratingCount != null">
+        rating_count = #{ratingCount,jdbcType=INTEGER},
+      </if>
+      <if test="releaseTime != null">
+        release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="osRequire != null">
+        os_require = #{osRequire,jdbcType=VARCHAR},
+      </if>
+      <if test="mainLang != null">
+        main_lang = #{mainLang,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="fetched != null">
+        fetched = #{fetched,jdbcType=TINYINT},
+      </if>
+      <if test="fetchTime != null">
+        fetch_time = #{fetchTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="failedTimes != null">
+        failed_times = #{failedTimes,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="screenshotUrls != null">
+        screenshot_urls = #{screenshotUrls,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="descn != null">
+        descn = #{descn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="moreDescn != null">
+        more_descn = #{moreDescn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="whatsnew != null">
+        whatsnew = #{whatsnew,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.adtiming.om.ds.model.OmAppWithBLOBs">
+    update om_app
+    set plat = #{plat,jdbcType=TINYINT},
+      app_id = #{appId,jdbcType=VARCHAR},
+      other_store_id = #{otherStoreId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      video_url = #{videoUrl,jdbcType=VARCHAR},
+      bundle_id = #{bundleId,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      sub_category_id1 = #{subCategoryId1,jdbcType=INTEGER},
+      sub_category_id2 = #{subCategoryId2,jdbcType=INTEGER},
+      sub_category_id3 = #{subCategoryId3,jdbcType=INTEGER},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      rating_value = #{ratingValue,jdbcType=DECIMAL},
+      rating_count = #{ratingCount,jdbcType=INTEGER},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      version = #{version,jdbcType=VARCHAR},
+      os_require = #{osRequire,jdbcType=VARCHAR},
+      main_lang = #{mainLang,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      fetched = #{fetched,jdbcType=TINYINT},
+      fetch_time = #{fetchTime,jdbcType=TIMESTAMP},
+      failed_times = #{failedTimes,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      screenshot_urls = #{screenshotUrls,jdbcType=LONGVARCHAR},
+      descn = #{descn,jdbcType=LONGVARCHAR},
+      more_descn = #{moreDescn,jdbcType=LONGVARCHAR},
+      whatsnew = #{whatsnew,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmApp">
+    update om_app
+    set plat = #{plat,jdbcType=TINYINT},
+      app_id = #{appId,jdbcType=VARCHAR},
+      other_store_id = #{otherStoreId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      video_url = #{videoUrl,jdbcType=VARCHAR},
+      bundle_id = #{bundleId,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      sub_category_id1 = #{subCategoryId1,jdbcType=INTEGER},
+      sub_category_id2 = #{subCategoryId2,jdbcType=INTEGER},
+      sub_category_id3 = #{subCategoryId3,jdbcType=INTEGER},
+      preview_url = #{previewUrl,jdbcType=VARCHAR},
+      rating_value = #{ratingValue,jdbcType=DECIMAL},
+      rating_count = #{ratingCount,jdbcType=INTEGER},
+      release_time = #{releaseTime,jdbcType=TIMESTAMP},
+      version = #{version,jdbcType=VARCHAR},
+      os_require = #{osRequire,jdbcType=VARCHAR},
+      main_lang = #{mainLang,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      fetched = #{fetched,jdbcType=TINYINT},
+      fetch_time = #{fetchTime,jdbcType=TIMESTAMP},
+      failed_times = #{failedTimes,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

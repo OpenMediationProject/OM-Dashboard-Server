@@ -3,10 +3,7 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.OmAdnetworkMapper;
-import com.adtiming.om.ds.dao.OmInstanceMapper;
-import com.adtiming.om.ds.dao.OmPlacementMapper;
-import com.adtiming.om.ds.dao.OmPublisherAppMapper;
+import com.adtiming.om.ds.dao.*;
 import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.MobilePlatformType;
 import com.adtiming.om.ds.model.*;
@@ -30,21 +27,27 @@ public class FieldNameService {
 
     protected static final Logger log = LogManager.getLogger();
 
-    private Map<String, String> idNameMap = new ConcurrentHashMap<>();
+    private final Map<String, String> idNameMap = new ConcurrentHashMap<>();
 
-    private Map<Integer, Integer> placementAdTypeMap = new ConcurrentHashMap<>();
-
-    @Resource
-    private OmAdnetworkMapper omAdnetworkMapper;
+    private final Map<Integer, Integer> placementAdTypeMap = new ConcurrentHashMap<>();
 
     @Resource
-    private OmPublisherAppMapper omPublisherAppMapper;
+    OmAdnetworkMapper omAdnetworkMapper;
 
     @Resource
-    private OmPlacementMapper omPlacementMapper;
+    OmPublisherAppMapper omPublisherAppMapper;
 
     @Resource
-    private OmInstanceMapper omInstanceMapper;
+    OmPlacementMapper omPlacementMapper;
+
+    @Resource
+    OmInstanceMapper omInstanceMapper;
+
+    @Resource
+    CpCampaignMapper cpCampaignMapper;
+
+    @Resource
+    CpCreativeMapper cpCreativeMapper;
 
     /**
      * Init cache when start and per hour
@@ -73,16 +76,24 @@ public class FieldNameService {
             log.info("Init publisherApps size: {}", publisherApps.size());
 
             List<OmPlacement> placements = omPlacementMapper.select(new OmPlacementCriteria());
-            placements.forEach(placement -> {
-                this.idNameMap.put("placementId" + placement.getId(), placement.getName());
-            });
+            placements.forEach(placement -> this.idNameMap.put("placementId" + placement.getId(), placement.getName()));
             log.info("Init placements size: {}", placements.size());
 
             List<OmInstanceWithBLOBs> instances = omInstanceMapper.select(new OmInstanceCriteria());
-            instances.forEach(instance -> {
-                this.idNameMap.put("instanceId" + instance.getId(), instance.getName());
-            });
+            instances.forEach(instance -> this.idNameMap.put("instanceId" + instance.getId(), instance.getName()));
             log.info("Init instances size: {}", instances.size());
+
+            try {
+                List<CpCreative> cpCreatives = this.cpCreativeMapper.selectWithBLOBs(new CpCreativeCriteria());
+                cpCreatives.forEach(creative -> this.idNameMap.put("creativeId" + creative.getId(), creative.getName()));
+                log.info("Init creative size: {}", instances.size());
+
+                List<CpCampaign> cpCampaigns = this.cpCampaignMapper.selectWithBLOBs(new CpCampaignCriteria());
+                cpCampaigns.forEach(campaign -> this.idNameMap.put("campaignId" + campaign.getId(), campaign.getName()));
+                log.info("Init campaign size: {}", instances.size());
+            } catch (Exception e){
+                log.error("Init cross biding field name error:", e);
+            }
         } catch (Exception e) {
             log.error("initIdName error:", e);
         }
@@ -98,6 +109,11 @@ public class FieldNameService {
             Integer pubAppId = result.getInteger("pubAppId");
             if (pubAppId != null) {
                 result.put("pubAppName", this.idNameMap.get("pubAppId" + pubAppId));
+            } else {
+                pubAppId = result.getInteger("publisher_app_id");
+                if (pubAppId != null) {
+                    result.put("appName", this.idNameMap.get("pubAppId" + pubAppId));
+                }
             }
 
             Integer placementId = result.getInteger("placementId");
@@ -111,8 +127,18 @@ public class FieldNameService {
             }
 
             Integer adType = result.getInteger("adType");
-            if (adType != null){
+            if (adType != null) {
                 result.put("adType", AdvertisementType.getAdvertisementType(adType).name());
+            }
+
+            Integer campaignId = result.getInteger("campaignId");
+            if (campaignId != null) {
+                result.put("campaignName", this.idNameMap.get("campaignId" + campaignId));
+            }
+
+            Integer creativeId = result.getInteger("creativeId");
+            if (creativeId != null) {
+                result.put("creativeName", this.idNameMap.get("creativeId" + creativeId));
             }
         });
     }

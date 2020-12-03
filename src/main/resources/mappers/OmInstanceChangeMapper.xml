@@ -51,7 +51,7 @@
     id, placement_key, instance_name, adn_app_id, pub_app_id, placement_id, adn_id, app_key, 
     account_id, account_owner, revenue_sharing, ab_test_mode, status, create_time, lastmodify
   </sql>
-  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.OmInstanceChangeCriteria" resultMap="BaseResultMap">
+  <select id="select" parameterType="com.adtiming.om.ds.model.OmInstanceChangeCriteria" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct

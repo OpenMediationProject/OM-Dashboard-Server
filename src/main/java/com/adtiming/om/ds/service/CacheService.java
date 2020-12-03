@@ -28,10 +28,14 @@ import java.util.*;
 public class CacheService {
 
     public static final int REVENUE_BEFORE_DAYS = 6;
+
     public static final int TOP_COUNTRY_SIZE = 5;
+
     private static final Logger log = LogManager.getLogger();
-    private static List<String> DEFAULT_TOP_REVENUE_COUNTRIES = new ArrayList<>(Arrays.asList("USA", "CAN", "GBR", "AUS", "JPN"));
-    private static Map<String, Double> DEFAULT_TOP_COUNTRY_REVENUES = new HashMap<>();
+
+    private static final List<String> DEFAULT_TOP_REVENUE_COUNTRIES = new ArrayList<>(Arrays.asList("USA", "CAN", "GBR", "AUS", "JPN"));
+
+    private static final Map<String, Double> DEFAULT_TOP_COUNTRY_REVENUES = new HashMap<>();
 
     static {
         for (String topCountry : DEFAULT_TOP_REVENUE_COUNTRIES) {
@@ -46,10 +50,10 @@ public class CacheService {
     private Map<Integer, Map<String, Double>> appIdCountryRevenueMap = new HashMap<>();
 
     @Autowired
-    private ReportService reportService;
+    ReportService reportService;
 
     @Resource
-    private RedisSessionDAO redisSessionDAO;
+    RedisSessionDAO redisSessionDAO;
 
     /**
      * Init cache when start and per hour
@@ -173,13 +177,7 @@ public class CacheService {
                 Collections.sort(sortedRevenueList);
                 Collections.reverse(sortedRevenueList);
                 double fifthBigRevenue = sortedRevenueList.get(TOP_COUNTRY_SIZE);
-                Iterator<Map.Entry<String, Double>> iterator = countryAppRevenueMap.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry<String, Double> entry1 = iterator.next();
-                    if (entry1.getValue() < fifthBigRevenue) {
-                        iterator.remove();
-                    }
-                }
+                countryAppRevenueMap.entrySet().removeIf(entry1 -> entry1.getValue() < fifthBigRevenue);
             } else {
                 List<String> defaultCountries = new ArrayList<>(DEFAULT_TOP_REVENUE_COUNTRIES);
                 Collections.shuffle(defaultCountries);

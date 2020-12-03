@@ -8,9 +8,11 @@ import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -29,7 +31,7 @@ public class RoleService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private UmRoleMapper umRoleMapper;
+    UmRoleMapper umRoleMapper;
 
     public List<UmRole> getRolesByUser(Integer userId) {
         return umRoleMapper.getUserRoles(userId);
@@ -38,9 +40,7 @@ public class RoleService extends BaseService {
     public Set<Integer> getUserRoleIdSet(Integer userId) {
         List<UmRole> roles = this.getRolesByUser(userId);
         Set<Integer> userRoleIdSet = new HashSet<>();
-        roles.forEach(role -> {
-            userRoleIdSet.add(role.getId());
-        });
+        roles.forEach(role -> userRoleIdSet.add(role.getId()));
         return userRoleIdSet;
     }
 
@@ -68,6 +68,18 @@ public class RoleService extends BaseService {
         return this.umRoleMapper.selectByPrimaryKey(roleId);
     }
 
+    public UmUserRole getRolesByPublisherUser(Integer userId, Integer publisherId) {
+        UmUserRoleCriteria roleCriteria = new UmUserRoleCriteria();
+        UmUserRoleCriteria.Criteria criteria = roleCriteria.createCriteria();
+        criteria.andPubIdEqualTo(publisherId);
+        criteria.andUserIdEqualTo(userId);
+        List<UmUserRole> umUserRoles = umUserRoleMapper.select(roleCriteria);
+        if (!CollectionUtils.isEmpty(umUserRoles)){
+            return umUserRoles.get(0);
+        }
+        return null;
+    }
+
     /**
      * Build user app role database object, and insert into database
      *
@@ -75,41 +87,47 @@ public class RoleService extends BaseService {
      * @param roleId
      */
     public Response createUserRole(Integer userId, Integer roleId, Integer pubId) {
-        try {
-            UmUserRole umUserRole = new UmUserRole();
-            umUserRole.setUserId(userId);
-            umUserRole.setRoleId(roleId);
-            umUserRole.setPubId(pubId);
-            UmUserRole dbUmUserRole = this.umUserRoleMapper.selectByPrimaryKey(umUserRole);
-            if (dbUmUserRole != null) {
-                return Response.buildSuccess(dbUmUserRole);
-            }
-            Date currentTime = new Date();
-            umUserRole.setCreateTime(currentTime);
-            int result = this.umUserRoleMapper.insertSelective(umUserRole);
-            if (result > 0) {
-                log.info("Create user role {} success", JSONObject.toJSONString(umUserRole));
-                return Response.buildSuccess(umUserRole);
-            } else {
-                throw new RuntimeException("Create user " + userId + " role id " + roleId + " failed");
-            }
-        } catch (Exception e) {
-            log.info("Create user {} role {} error", userId, roleId, e);
+        UmUserRole umUserRole = new UmUserRole();
+        umUserRole.setUserId(userId);
+        umUserRole.setRoleId(roleId);
+        umUserRole.setPubId(pubId);
+        UmUserRole dbUmUserRole = this.umUserRoleMapper.selectByPrimaryKey(umUserRole);
+        if (dbUmUserRole != null) {
+            throw new RuntimeException("User account already exists.");
         }
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create user role failed!");
+        UmUserRole userPublisherRole = this.getRolesByPublisherUser(userId, pubId);
+        if (userPublisherRole != null){
+            throw new RuntimeException("User account already exists.");
+        }
+        Date currentTime = new Date();
+        umUserRole.setCreateTime(currentTime);
+        int result = this.umUserRoleMapper.insertSelective(umUserRole);
+        if (result <= 0) {
+            throw new RuntimeException("Create user " + userId + " role id " + roleId + " failed");
+        }
+        log.info("Create user role {} success", JSONObject.toJSONString(umUserRole));
+        return Response.buildSuccess(umUserRole);
     }
 
+    @Transactional
     public void deleteUserRolePublisher(Integer userId, Integer pubId) {
         List<UmUserRole> umUserRoles = this.getUserRoles(userId, pubId);
         for (UmUserRole umUserRole : umUserRoles) {
-            this.deleteUserRole(umUserRole);
+            int result = this.deleteUserRole(umUserRole);
+            if (result <= 0) {
+                throw new RuntimeException("Delete UmUserRole " + JSONObject.toJSON(umUserRole) + " failed!");
+            }
         }
     }
 
+    @Transactional
     public void deleteUserRoles(Integer userId) {
         List<UmUserRole> umUserRoles = this.getUserRoles(userId);
         for (UmUserRole umUserRole : umUserRoles) {
-            this.deleteUserRole(umUserRole);
+            int result = this.deleteUserRole(umUserRole);
+            if (result <= 0) {
+                throw new RuntimeException("Delete UmUserRole " + JSONObject.toJSON(umUserRole) + " failed!");
+            }
         }
     }
 

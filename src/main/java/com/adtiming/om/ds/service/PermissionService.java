@@ -32,10 +32,10 @@ public class PermissionService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private UmPermissionMapper umPermissionMapper;
+    UmPermissionMapper umPermissionMapper;
 
     @Resource
-    private UmRolePermissionMapper umRolePermissionMapper;
+    UmRolePermissionMapper umRolePermissionMapper;
 
     public List<UmPermission> getPermissionsByUser(Integer userId) {
         return umPermissionMapper.getUserPermissions(userId);
@@ -68,7 +68,7 @@ public class PermissionService extends BaseService {
     public JSONArray buildRolePermissions(List<UmPermission> permissions) {
         try {
             Map<Integer, List<UmPermission>> userParentPermissionsMap = permissions.stream()
-                    .collect(Collectors.groupingBy(m -> m.getPid(), Collectors.toList()));
+                    .collect(Collectors.groupingBy(UmPermission::getPid, Collectors.toList()));
             List<UmPermission> permPermissions = this.getPermPermissions();
             JSONArray resultPermissions = new JSONArray();
             for (UmPermission permission : permPermissions) {
@@ -148,7 +148,7 @@ public class PermissionService extends BaseService {
         UmRolePermissionCriteria.Criteria criteria = umRolePermissionCriteria.createCriteria();
         criteria.andRoleIdIn(roleIds);
         List<UmRolePermission> rolePermissions = umRolePermissionMapper.select(umRolePermissionCriteria);
-        return rolePermissions.stream().collect(Collectors.groupingBy(m -> m.getRoleId(), Collectors.toList()));
+        return rolePermissions.stream().collect(Collectors.groupingBy(UmRolePermissionKey::getRoleId, Collectors.toList()));
     }
 
     /**
@@ -168,8 +168,7 @@ public class PermissionService extends BaseService {
         UmPermissionCriteria umPermissionCriteria = new UmPermissionCriteria();
         UmPermissionCriteria.Criteria criteria = umPermissionCriteria.createCriteria();
         criteria.andPidEqualTo(permissionId);
-        List<UmPermission> subPermissions = this.umPermissionMapper.selectWithBLOBs(umPermissionCriteria);
-        return subPermissions;
+        return this.umPermissionMapper.selectWithBLOBs(umPermissionCriteria);
     }
 
     /**

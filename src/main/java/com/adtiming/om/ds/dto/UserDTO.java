@@ -16,6 +16,8 @@ public class UserDTO {
 
     private String password;
 
+    private Integer creatorId;
+
     public String getEmail() {
         return email;
     }
@@ -46,5 +48,13 @@ public class UserDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(Integer creatorId) {
+        this.creatorId = creatorId;
     }
 }

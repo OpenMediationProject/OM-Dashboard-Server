@@ -37,19 +37,19 @@ public class MediationService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Autowired
-    private AdNetworkService adNetworkService;
+    AdNetworkService adNetworkService;
 
     @Autowired
-    private InstanceService instanceService;
+    InstanceService instanceService;
 
     @Resource
-    private OmPlacementRuleMapper omPlacementRuleMapper;
+    OmPlacementRuleMapper omPlacementRuleMapper;
 
     @Resource
-    private OmPlacementRuleInstanceMapper omPlacementRuleInstanceMapper;
+    OmPlacementRuleInstanceMapper omPlacementRuleInstanceMapper;
 
     @Resource
-    private OmPlacementRuleSegmentMapper omPlacementRuleSegmentMapper;
+    OmPlacementRuleSegmentMapper omPlacementRuleSegmentMapper;
 
     /**
      * Save mediation by instances
@@ -95,11 +95,11 @@ public class MediationService extends BaseService {
                         ruleMediation.setPriority(priority++);
                     }
 
-                    int result = 0;
-                    List<OmPlacementRuleInstance> dbRuleMediations = this.getPlacementRuleInstances(ruleMediation.getRuleId(),
+                    int result;
+                    List<OmPlacementRuleInstance> dbRuleMediationList = this.getPlacementRuleInstances(ruleMediation.getRuleId(),
                             ruleMediation.getAdnId(), ruleMediation.getInstanceId());
-                    if (!CollectionUtils.isEmpty(dbRuleMediations)) {
-                        ruleMediation.setId(dbRuleMediations.get(0).getId());
+                    if (!CollectionUtils.isEmpty(dbRuleMediationList)) {
+                        ruleMediation.setId(dbRuleMediationList.get(0).getId());
                         result = this.omPlacementRuleInstanceMapper.updateByPrimaryKeySelective(ruleMediation);
                     } else {
                         result = this.omPlacementRuleInstanceMapper.insertSelective(ruleMediation);
@@ -148,7 +148,7 @@ public class MediationService extends BaseService {
         }
         List<OmPlacementRuleInstance> ruleInstances = getPlacementRuleInstances(ruleIds);
         Map<Integer, List<OmPlacementRuleInstance>> ruleInstancesMap = ruleInstances.stream()
-                .collect(Collectors.groupingBy(m -> m.getRuleId(), Collectors.toList()));
+                .collect(Collectors.groupingBy(OmPlacementRuleInstance::getRuleId, Collectors.toList()));
         Map<Integer, OmPlacementRuleSegmentWithBLOBs> placementRuleSegmentMap = getPlacementRuleSegmentMap(segmentIds, countries);
 
         JSONArray resultRules = new JSONArray();
@@ -301,7 +301,7 @@ public class MediationService extends BaseService {
         OmPlacementRule placementRule = this.getPlacementRule(ruleId);
         List<OmPlacementRule> placementRules = this.getPlacementRules(placementRule.getPubAppId(),
                 placementRule.getPlacementId(), SwitchStatus.ON);
-        if (CollectionUtils.isEmpty(placementRules)){
+        if (CollectionUtils.isEmpty(placementRules)) {
             return Response.build();
         }
         int oldPriority = placementRule.getPriority();
@@ -580,7 +580,7 @@ public class MediationService extends BaseService {
      */
     public List<OmPlacementRuleInstance> getPlacementRuleInstances(List<Integer> ruleIds) {
         if (CollectionUtils.isEmpty(ruleIds)) {
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         }
         OmPlacementRuleInstanceCriteria omPlacementRuleInstanceCriteria = new OmPlacementRuleInstanceCriteria();
         OmPlacementRuleInstanceCriteria.Criteria criteria = omPlacementRuleInstanceCriteria.createCriteria();
@@ -598,10 +598,8 @@ public class MediationService extends BaseService {
      */
     public Map<Integer, OmPlacementRuleInstance> getRuleMediationMap(Integer ruleId) {
         Map<Integer, OmPlacementRuleInstance> ruleMediationMap = new HashMap<>();
-        List<OmPlacementRuleInstance> ruleMediations = this.getPlacementRuleInstances(ruleId, null, null);
-        ruleMediations.forEach(ruleMediation -> {
-            ruleMediationMap.put(ruleMediation.getId(), ruleMediation);
-        });
+        List<OmPlacementRuleInstance> ruleMediationList = this.getPlacementRuleInstances(ruleId, null, null);
+        ruleMediationList.forEach(ruleMediation -> ruleMediationMap.put(ruleMediation.getId(), ruleMediation));
         return ruleMediationMap;
     }
 
@@ -613,7 +611,7 @@ public class MediationService extends BaseService {
      */
     public Map<Integer, OmPlacementRuleInstance> getInstanceIdKeyRuleInstanceMap(List<OmInstanceWithBLOBs> placementInstances, Integer ruleId) {
         if (CollectionUtils.isEmpty(placementInstances)) {
-            return Collections.EMPTY_MAP;
+            return new HashMap<>();
         }
         List<Integer> instanceIds = new ArrayList<>();
         for (OmInstanceWithBLOBs instance : placementInstances) {
@@ -795,7 +793,7 @@ public class MediationService extends BaseService {
         } catch (Exception e) {
             log.error("Get placement rule segments error {}", JSONObject.toJSONString(segmentIds), e);
         }
-        return Collections.EMPTY_MAP;
+        return new HashMap<>();
     }
 
     /**

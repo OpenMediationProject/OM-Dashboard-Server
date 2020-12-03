@@ -66,9 +66,7 @@ public class AccountService extends BaseService {
             return new ArrayList<>();
         }
         List<Integer> accountIds = new ArrayList<>();
-        reportAdnetworkAccountPublishers.forEach(reportAdnetworkAccountPublisher -> {
-            accountIds.add(reportAdnetworkAccountPublisher.getReportAccountId());
-        });
+        reportAdnetworkAccountPublishers.forEach(reportAdnetworkAccountPublisher -> accountIds.add(reportAdnetworkAccountPublisher.getReportAccountId()));
         ReportAdnetworkAccountCriteria accountCriteria = new ReportAdnetworkAccountCriteria();
         ReportAdnetworkAccountCriteria.Criteria criteria = accountCriteria.createCriteria();
         if (adnId != null) {
@@ -89,9 +87,7 @@ public class AccountService extends BaseService {
             return new ArrayList<>();
         }
         List<Integer> accountIds = new ArrayList<>();
-        reportAdnetworkAccountPublishers.forEach(reportAdnetworkAccountPublisher -> {
-            accountIds.add(reportAdnetworkAccountPublisher.getReportAccountId());
-        });
+        reportAdnetworkAccountPublishers.forEach(reportAdnetworkAccountPublisher -> accountIds.add(reportAdnetworkAccountPublisher.getReportAccountId()));
         ReportAdnetworkAccountCriteria accountCriteria = new ReportAdnetworkAccountCriteria();
         ReportAdnetworkAccountCriteria.Criteria criteria = accountCriteria.createCriteria();
         criteria.andIdIn(accountIds);
@@ -211,7 +207,7 @@ public class AccountService extends BaseService {
         if (account.getAdnId() == AdNetworkType.AdMob.ordinal() && account.getAuthType() == 2) {
             Response response = admobService.getAdmobPublisherId(account.getAdnApiKey(),
                     account.getUserSignature(), account.getAdnAppToken());
-            if (response.getCode() != Response.SUCCESS_CODE){
+            if (response.getCode() != Response.SUCCESS_CODE) {
                 return response;
             }
             account.setUserId(response.getData().toString());
@@ -233,7 +229,7 @@ public class AccountService extends BaseService {
         }
 
         account.setCreateTime(new Date());
-        account.setStatus((byte)NormalStatus.Active.ordinal());
+        account.setStatus((byte) NormalStatus.Active.ordinal());
         if (account.getPublisherId() == null) {
             account.setPublisherId(publisherId);
         }
@@ -267,7 +263,7 @@ public class AccountService extends BaseService {
                     log.error("Account {} primary key is null, msg {}", JSONObject.toJSON(account), isAdKeyValid.getMsg());
                     return isAdKeyValid;
                 }
-                account.setStatus((byte)NormalStatus.Active.ordinal());
+                account.setStatus((byte) NormalStatus.Active.ordinal());
                 ReportAdnetworkAccount duplicatedAccount = this.getDuplicatedAccount(account);
                 if (duplicatedAccount != null) {
                     String warn = "This Ad Network Account " + duplicatedAccount.getPrimaryKey() + " already exists. " +
@@ -484,7 +480,7 @@ public class AccountService extends BaseService {
                 }
                 break;
             }
-            case Mint:{
+            case Mint: {
                 if (StringUtils.isBlank(account.getAdnAppToken())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Mint's [App token] must be not null");
                 }

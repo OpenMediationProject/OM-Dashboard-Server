@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ruandianbo on 20-2-5.
@@ -20,6 +22,13 @@ public class Util {
     public static final String SPLIT_SYMBOL = "\n";
 
     protected static final Logger log = LogManager.getLogger();
+
+    private static Pattern countryCodePattern = Pattern.compile("[A-Z]{2,3}");
+
+    public static boolean isCountryCode(String country) {
+        Matcher a = countryCodePattern.matcher(country);
+        return a.find();
+    }
 
     /**
      * Check to add include/exclude type for white/black list
@@ -154,6 +163,18 @@ public class Util {
     public static String getYYYYMMDD(Date date) {
         try {
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+            String result = f.format(date);
+
+            return result;
+        } catch (Exception e) {
+            log.error("Get day error {}", date, e);
+        }
+        return null;
+    }
+
+    public static String getNumYYYYMMDD(Date date) {
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
             String result = f.format(date);
 
             return result;

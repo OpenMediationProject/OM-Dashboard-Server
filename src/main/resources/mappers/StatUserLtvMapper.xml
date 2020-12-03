@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.StatUserLtvMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.StatUserLtv">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="day" jdbcType="DATE" property="day" />
+    <result column="base_date" jdbcType="DATE" property="baseDate" />
+    <result column="retention_day" jdbcType="INTEGER" property="retentionDay" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="user_cnt_new" jdbcType="BIGINT" property="userCntNew" />
+    <result column="user_cnt_old" jdbcType="BIGINT" property="userCntOld" />
+    <result column="retention_cnt_new" jdbcType="BIGINT" property="retentionCntNew" />
+    <result column="retention_cnt_old" jdbcType="BIGINT" property="retentionCntOld" />
+    <result column="mediation_value_new" jdbcType="DECIMAL" property="mediationValueNew" />
+    <result column="mediation_value_old" jdbcType="DECIMAL" property="mediationValueOld" />
+    <result column="iap_value_new" jdbcType="DECIMAL" property="iapValueNew" />
+    <result column="iap_value_old" jdbcType="DECIMAL" property="iapValueOld" />
+    <result column="total_value_new" jdbcType="DECIMAL" property="totalValueNew" />
+    <result column="total_value_old" jdbcType="DECIMAL" property="totalValueOld" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, day, base_date, retention_day, country, publisher_id, pub_app_id, user_cnt_new, 
+    user_cnt_old, retention_cnt_new, retention_cnt_old, mediation_value_new, mediation_value_old, 
+    iap_value_new, iap_value_old, total_value_new, total_value_old, create_time
+  </sql>
+  <select id="select" parameterType="com.adtiming.om.ds.model.StatUserLtvCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from stat_user_ltv
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stat_user_ltv
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from stat_user_ltv
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.StatUserLtv">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_user_ltv (day, base_date, retention_day, 
+      country, publisher_id, pub_app_id, 
+      user_cnt_new, user_cnt_old, retention_cnt_new, 
+      retention_cnt_old, mediation_value_new, mediation_value_old, 
+      iap_value_new, iap_value_old, total_value_new, 
+      total_value_old, create_time)
+    values (#{day,jdbcType=DATE}, #{baseDate,jdbcType=DATE}, #{retentionDay,jdbcType=INTEGER}, 
+      #{country,jdbcType=VARCHAR}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
+      #{userCntNew,jdbcType=BIGINT}, #{userCntOld,jdbcType=BIGINT}, #{retentionCntNew,jdbcType=BIGINT}, 
+      #{retentionCntOld,jdbcType=BIGINT}, #{mediationValueNew,jdbcType=DECIMAL}, #{mediationValueOld,jdbcType=DECIMAL}, 
+      #{iapValueNew,jdbcType=DECIMAL}, #{iapValueOld,jdbcType=DECIMAL}, #{totalValueNew,jdbcType=DECIMAL}, 
+      #{totalValueOld,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatUserLtv">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_user_ltv
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        day,
+      </if>
+      <if test="baseDate != null">
+        base_date,
+      </if>
+      <if test="retentionDay != null">
+        retention_day,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="userCntNew != null">
+        user_cnt_new,
+      </if>
+      <if test="userCntOld != null">
+        user_cnt_old,
+      </if>
+      <if test="retentionCntNew != null">
+        retention_cnt_new,
+      </if>
+      <if test="retentionCntOld != null">
+        retention_cnt_old,
+      </if>
+      <if test="mediationValueNew != null">
+        mediation_value_new,
+      </if>
+      <if test="mediationValueOld != null">
+        mediation_value_old,
+      </if>
+      <if test="iapValueNew != null">
+        iap_value_new,
+      </if>
+      <if test="iapValueOld != null">
+        iap_value_old,
+      </if>
+      <if test="totalValueNew != null">
+        total_value_new,
+      </if>
+      <if test="totalValueOld != null">
+        total_value_old,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        #{day,jdbcType=DATE},
+      </if>
+      <if test="baseDate != null">
+        #{baseDate,jdbcType=DATE},
+      </if>
+      <if test="retentionDay != null">
+        #{retentionDay,jdbcType=INTEGER},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="userCntNew != null">
+        #{userCntNew,jdbcType=BIGINT},
+      </if>
+      <if test="userCntOld != null">
+        #{userCntOld,jdbcType=BIGINT},
+      </if>
+      <if test="retentionCntNew != null">
+        #{retentionCntNew,jdbcType=BIGINT},
+      </if>
+      <if test="retentionCntOld != null">
+        #{retentionCntOld,jdbcType=BIGINT},
+      </if>
+      <if test="mediationValueNew != null">
+        #{mediationValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="mediationValueOld != null">
+        #{mediationValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="iapValueNew != null">
+        #{iapValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="iapValueOld != null">
+        #{iapValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValueNew != null">
+        #{totalValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValueOld != null">
+        #{totalValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.StatUserLtv">
+    update stat_user_ltv
+    <set>
+      <if test="day != null">
+        day = #{day,jdbcType=DATE},
+      </if>
+      <if test="baseDate != null">
+        base_date = #{baseDate,jdbcType=DATE},
+      </if>
+      <if test="retentionDay != null">
+        retention_day = #{retentionDay,jdbcType=INTEGER},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="userCntNew != null">
+        user_cnt_new = #{userCntNew,jdbcType=BIGINT},
+      </if>
+      <if test="userCntOld != null">
+        user_cnt_old = #{userCntOld,jdbcType=BIGINT},
+      </if>
+      <if test="retentionCntNew != null">
+        retention_cnt_new = #{retentionCntNew,jdbcType=BIGINT},
+      </if>
+      <if test="retentionCntOld != null">
+        retention_cnt_old = #{retentionCntOld,jdbcType=BIGINT},
+      </if>
+      <if test="mediationValueNew != null">
+        mediation_value_new = #{mediationValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="mediationValueOld != null">
+        mediation_value_old = #{mediationValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="iapValueNew != null">
+        iap_value_new = #{iapValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="iapValueOld != null">
+        iap_value_old = #{iapValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValueNew != null">
+        total_value_new = #{totalValueNew,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValueOld != null">
+        total_value_old = #{totalValueOld,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatUserLtv">
+    update stat_user_ltv
+    set day = #{day,jdbcType=DATE},
+      base_date = #{baseDate,jdbcType=DATE},
+      retention_day = #{retentionDay,jdbcType=INTEGER},
+      country = #{country,jdbcType=VARCHAR},
+      publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      user_cnt_new = #{userCntNew,jdbcType=BIGINT},
+      user_cnt_old = #{userCntOld,jdbcType=BIGINT},
+      retention_cnt_new = #{retentionCntNew,jdbcType=BIGINT},
+      retention_cnt_old = #{retentionCntOld,jdbcType=BIGINT},
+      mediation_value_new = #{mediationValueNew,jdbcType=DECIMAL},
+      mediation_value_old = #{mediationValueOld,jdbcType=DECIMAL},
+      iap_value_new = #{iapValueNew,jdbcType=DECIMAL},
+      iap_value_old = #{iapValueOld,jdbcType=DECIMAL},
+      total_value_new = #{totalValueNew,jdbcType=DECIMAL},
+      total_value_old = #{totalValueOld,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <sql id="Summary_Where_Clause">
+    <where>
+      <foreach collection="_parameter.get('summaryWhereClause')" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+  <select id="selectSummary" parameterType="map" resultMap="BaseResultMap">
+    select
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisher_app_id')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_base_date')">
+      base_date,
+    </if>
+    <if test="_parameter.containsKey('dimension_retention_day')">
+      retention_day,
+    </if>
+    sum(user_cnt_new) as user_cnt_new, sum(retention_cnt_new) as retention_cnt_new,
+    sum(total_value_new) as total_value_new, sum(iap_value_new) as iap_value_new,
+    sum(mediation_value_new) as mediation_value_new
+    from stat_user_ltv
+    <if test="_parameter.containsKey('summaryWhereClause')">
+      <include refid="Summary_Where_Clause" />
+    </if>
+    group by
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisher_app_id')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_base_date')">
+      base_date,
+    </if>
+    <if test="_parameter.containsKey('dimension_retention_day')">
+      retention_day,
+    </if>
+    null
+    <if test="_parameter.containsKey('orderByClause')">
+      order by #{orderByClause}
+    </if>
+  </select>
+</mapper>

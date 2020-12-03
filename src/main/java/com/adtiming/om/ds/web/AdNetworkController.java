@@ -239,12 +239,12 @@ public class AdNetworkController extends BaseController {
      * @see OmAdnetworkApp
      */
     @RequestMapping(value = "/adnetwork/app/status/update", method = RequestMethod.GET)
-    public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status) {
+    public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status, Integer adnId, Integer pubAppId) {
         try {
             if (status >= AdNetworkAppStatus.ADN_Paused.ordinal()) {
                 return Response.RES_PARAMETER_ERROR;
             }
-            return this.adNetworkService.updateAdNetworkAppStatus(adNetworkAppId, status);
+            return this.adNetworkService.updateAdNetworkAppStatus(adNetworkAppId, status, adnId, pubAppId);
         } catch (Exception e) {
             log.error("Update AdNetworks error adNetworkAppId {}", adNetworkAppId, e);
         }
