@@ -4,7 +4,6 @@
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dao.UmUserMapper;
-import com.adtiming.om.ds.dao.UmUserPublisherMapper;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.dto.SwitchStatus;
@@ -48,16 +47,13 @@ public class UserService extends BaseService {
     public static final String DEFAULT_PASSWORD = "666666";
     protected static final Logger log = LogManager.getLogger();
     @Resource
-    private RedisSessionDAO redisSessionDAO;
+    RedisSessionDAO redisSessionDAO;
 
     @Autowired
-    private RoleService roleService;
+    RoleService roleService;
 
     @Resource
-    private UmUserMapper umUserMapper;
-
-    @Resource
-    private UmUserPublisherMapper umUserPublisherMapper;
+    UmUserMapper umUserMapper;
 
     /**
      * Get all user
@@ -152,24 +148,21 @@ public class UserService extends BaseService {
      */
     @Transactional
     public Response createUser(UserDTO userDTO) {
-        try {
-            if (userDTO.getPublisherId() == null) {
-                userDTO.setPublisherId(0);
-            }
-            UmUser dbUser = this.umUserMapper.getUserByName(userDTO.getEmail());
-            if (dbUser != null) {
-                if (StringUtils.isNotBlank(userDTO.getEmail())) {
-                    dbUser.setEmail(userDTO.getEmail());
-                }
-                dbUser.setStatus((byte) SwitchStatus.ON.ordinal());
-                return this.updateUser(dbUser);
-            }
-            Date currentTime = new Date();
-            UmUser umUser = new UmUser();
-            umUser.setName(userDTO.getEmail());
-            umUser.setEmail(userDTO.getEmail());
-            umUser.setUsername(userDTO.getEmail());
-
+        Date currentTime = new Date();
+        UmUser umUser = new UmUser();
+        umUser.setName(userDTO.getEmail());
+        umUser.setEmail(userDTO.getEmail());
+        umUser.setUsername(userDTO.getEmail());
+        UmUser currentUser = this.getCurrentUser();
+        if (userDTO.getCreatorId() == null) {
+            umUser.setCreatorId(currentUser.getId());
+        } else {
+            umUser.setCreatorId(userDTO.getCreatorId());
+        }
+        umUser.setLastmodify(currentTime);
+        UmUser dbUser = this.umUserMapper.getUserByName(userDTO.getEmail());
+        int result;
+        if (dbUser == null) {
             String salt = RandomStringUtils.randomNumeric(4);
             umUser.setSalt(salt);
             String password = ShiroUtils.sha256(DigestUtils.md5Hex(DEFAULT_PASSWORD), salt);
@@ -180,24 +173,21 @@ public class UserService extends BaseService {
             umUser.setCreatorId(this.getCurrentUser().getId());
             umUser.setCreateTime(currentTime);
             umUser.setLastmodify(currentTime);
-            int result = this.umUserMapper.insertSelective(umUser);
-            if (result <= 0) {
-                throw new RuntimeException("Create user " + JSONObject.toJSONString(userDTO) + " failed");
-            }
-            if (userDTO.getPublisherId() == null) {
-                userDTO.setPublisherId(this.getCurrentUser().getPublisherId());
-            }
-            Response response = this.roleService.createUserRole(umUser.getId(), userDTO.getRoleId(), userDTO.getPublisherId());
-            if (response.getCode() != Response.SUCCESS_CODE) {
-                throw new RuntimeException("Create user role relation error " + JSONObject.toJSONString(userDTO));
-            }
-            log.info("Create user {} success", umUser.getName());
-            return Response.buildSuccess(umUser);
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.info("Create user {} error", JSONObject.toJSONString(userDTO), e);
+            result = this.umUserMapper.insertSelective(umUser);
+        } else {
+            dbUser.setStatus((byte) SwitchStatus.ON.ordinal());
+            result = this.umUserMapper.updateByPrimaryKeySelective(dbUser);
+            umUser.setId(dbUser.getId());
         }
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create user failed!");
+        if (result <= 0) {
+            throw new RuntimeException("Create user " + JSONObject.toJSONString(userDTO) + " failed");
+        }
+        if (userDTO.getPublisherId() == null) {
+            userDTO.setPublisherId(this.getCurrentUser().getPublisherId());
+        }
+        this.roleService.createUserRole(umUser.getId(), userDTO.getRoleId(), userDTO.getPublisherId());
+        log.info("Create user {} success", umUser.getName());
+        return Response.buildSuccess(umUser);
     }
 
     /**
@@ -264,52 +254,41 @@ public class UserService extends BaseService {
      */
     @Transactional
     public Response updateUser(UmUser umUser) {
-        try {
-            UmUser dbUser = this.umUserMapper.selectByPrimaryKey(umUser.getId());
-            Set<Integer> userRoleIdSet = this.roleService.getUserRoleIdSet(dbUser.getId());
-            if (umUser.getRoleId() != null) {
-                if (userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId()) && umUser.getRoleId() != RoleType.ADMINISTRATOR.getId()) {
-                    log.error("Can not change administrator's role!", JSONObject.toJSONString(umUser));
-                    return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Can not change administrator's role!");
-                }
-                if (!userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId()) && umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
-                    log.error("Normal user can not be promoted to administrator!", JSONObject.toJSONString(umUser));
-                    return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Normal user can not be promoted to administrator!");
-                }
+        UmUser dbUser = this.umUserMapper.selectByPrimaryKey(umUser.getId());
+        Set<Integer> userRoleIdSet = this.roleService.getUserRoleIdSet(dbUser.getId());
+        if (umUser.getRoleId() != null) {
+            if (userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId()) && umUser.getRoleId() != RoleType.ADMINISTRATOR.getId()) {
+                log.error("User {} Can not change administrator's role!", umUser.getEmail());
+                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Can not change administrator's role!");
             }
-            umUser.setLastmodify(new Date());
-            if (umUser.getEmail() != null && !dbUser.getEmail().equals(umUser.getEmail())) {
-                umUser.setUsername(umUser.getEmail());
-                umUser.setName(umUser.getEmail());
+            if (!userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId()) && umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
+                log.error("Normal user {} can not be promoted to administrator!", umUser.getEmail());
+                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Normal user can not be promoted to administrator!");
             }
-            int result = this.umUserMapper.updateByPrimaryKeySelective(umUser);
-            if (result > 0) {
-                if (umUser.getRoleId() != null && !umUser.getRoleId().equals(dbUser.getRoleId())) {
-                    if (umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
-                        this.roleService.deleteUserRoles(dbUser.getId());
-                        umUser.setPublisherId(0);
-                    } else {
-                        this.roleService.deleteUserRolePublisher(dbUser.getId(), dbUser.getOldPublisherId());
-                    }
-                    Response response = this.roleService.createUserRole(umUser.getId(), umUser.getRoleId(), umUser.getPublisherId());
-                    if (response.success()) {
-                        log.info("Update user {} role {} successfully when update user", umUser.getId(), umUser.getRoleId());
-                    } else {
-                        throw new RuntimeException("Update user " + umUser.getId() + " role " + umUser.getRoleId() + " failed when update user");
-                    }
-                }
-                if (umUser.getStatus() != null && umUser.getStatus() == (byte) SwitchStatus.OFF.ordinal()) {
-                    this.deleteSession(dbUser);
-                }
-                log.info("Update user {} success", umUser.getName());
-                return Response.build();
-            }
-        } catch (Exception e) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error("Update user error {}", JSONObject.toJSONString(umUser), e);
         }
-        log.error("Update user {} failed", umUser.getName());
-        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update user failed!");
+        umUser.setLastmodify(new Date());
+        if (umUser.getEmail() != null && !dbUser.getEmail().equals(umUser.getEmail())) {
+            umUser.setUsername(umUser.getEmail());
+            umUser.setName(umUser.getEmail());
+        }
+        int result = this.umUserMapper.updateByPrimaryKeySelective(umUser);
+        if (result <= 0) {
+            return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Update user failed!");
+        }
+        if (umUser.getRoleId() != null && !umUser.getRoleId().equals(dbUser.getRoleId())) {
+            if (umUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
+                this.roleService.deleteUserRoles(dbUser.getId());
+                umUser.setPublisherId(0);
+            } else {
+                this.roleService.deleteUserRolePublisher(umUser.getId(), umUser.getPublisherId());
+            }
+            this.roleService.createUserRole(umUser.getId(), umUser.getRoleId(), umUser.getPublisherId());
+        }
+        if (umUser.getStatus() != null && umUser.getStatus() == (byte) SwitchStatus.OFF.ordinal()) {
+            this.deleteSession(dbUser);
+        }
+        log.info("Update user {} success", umUser.getName());
+        return Response.build();
     }
 
     /**
@@ -325,10 +304,10 @@ public class UserService extends BaseService {
                 log.info("Can not delete self {}", userId);
                 return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Can not delete your self");
             }
-            Set<Integer> publisherOwners = this.getPublisherOwnerIds();
-            if (publisherOwners.contains(userId)) {
+
+            if (this.isPublisherOwner(userId, pubId)) {
                 log.error("Publisher creator {} can not update!", userId);
-                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Can not delete publisher creator");
+                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "Can not delete publisher default owner.");
             }
             this.roleService.deleteUserRolePublisher(userId, pubId);
             List<UmUserRole> umUserRoles = this.roleService.getUserRoles(userId);
@@ -356,7 +335,7 @@ public class UserService extends BaseService {
     private void deleteSession(UmUser user) {
         try {
             UmUser dbUser = this.umUserMapper.selectByPrimaryKey(user.getId());
-            if (dbUser == null){
+            if (dbUser == null) {
                 return;
             }
             Collection<Session> sessions = this.redisSessionDAO.getActiveSessions();
@@ -364,13 +343,13 @@ public class UserService extends BaseService {
                 SimplePrincipalCollection spc = (SimplePrincipalCollection) session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
                 UmUser sessionUser = (UmUser) spc.getPrimaryPrincipal();
                 if (dbUser.getEmail().equals(sessionUser.getEmail())) {
-                    new Thread(()->{
+                    new Thread(() -> {
                         try {
                             Thread.sleep(10000);
                             this.redisSessionDAO.delete(session);
                             this.redisSessionDAO.setSessionInMemoryEnabled(false);
                             log.info("Delete session {} session successfully!", session);
-                        } catch (Exception e){
+                        } catch (Exception ignored) {
                         }
                     }).start();
                 }
@@ -459,8 +438,7 @@ public class UserService extends BaseService {
 
     public UmUser getUserInfoByName(String userName) {
         try {
-            UmUser umUser = umUserMapper.getUserByName(userName);
-            return umUser;
+            return umUserMapper.getUserByName(userName);
         } catch (Exception e) {
             log.error("getUserInfoByName error:", e);
         }

@@ -40,6 +40,11 @@ public class UtilController {
     @Autowired
     UtilService utilService;
 
+    @RequestMapping(value = "/util/get/os_versions", method = RequestMethod.GET)
+    public Response getOsVersionList() {
+        return Response.buildSuccess(this.utilService.getOsVersionList());
+    }
+
     /**
      * Get dicts
      */

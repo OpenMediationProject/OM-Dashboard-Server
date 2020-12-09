@@ -486,7 +486,7 @@
     <if test="_parameter.containsKey('dimension_sceneId')">
       scene_id,
     </if>
-    <if test="_parameter.containsKey('dimension_only_adn')">
+    <if test="_parameter.containsKey('dimension_show_inapp_bid')">
       case when bid = 0 then adn_id else -1 end as adn_id,
     </if>
     <if test="_parameter.containsKey('dimension_adnId')">
@@ -537,7 +537,7 @@
     <if test="_parameter.containsKey('dimension_sceneId')">
       scene_id,
     </if>
-    <if test="_parameter.containsKey('dimension_only_adn')">
+    <if test="_parameter.containsKey('dimension_show_inapp_bid')">
       case when bid = 0 then adn_id else -1 end,
     </if>
     <if test="_parameter.containsKey('dimension_adnId')">

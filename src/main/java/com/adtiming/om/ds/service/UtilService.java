@@ -3,10 +3,7 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.OmCountryMapper;
-import com.adtiming.om.ds.dao.OmCurrencyExchangeMapper;
-import com.adtiming.om.ds.dao.OmMessageDictMapper;
-import com.adtiming.om.ds.dao.OmSupportDeviceMapper;
+import com.adtiming.om.ds.dao.*;
 import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.util.HttpConnMgr;
@@ -27,6 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -41,19 +39,54 @@ public class UtilService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private OmSupportDeviceMapper omSupportDeviceMapper;
+    OmSupportDeviceMapper omSupportDeviceMapper;
 
     @Resource
-    private OmCountryMapper omCountryMapper;
+    OmCountryMapper omCountryMapper;
 
     @Autowired
-    private CacheService cacheService;
+    CacheService cacheService;
 
     @Resource
-    private OmMessageDictMapper omMessageDictMapper;
+    OmMessageDictMapper omMessageDictMapper;
 
     @Resource
-    private OmCurrencyExchangeMapper omCurrencyExchangeMapper;
+    OmCurrencyExchangeMapper omCurrencyExchangeMapper;
+
+    @Resource
+    OsVersionMapper osVersionMapper;
+
+    @Resource
+    OmDictMapper omDictMapper;
+
+    private final Map<String, OmDict> omDictMap = new HashMap<>();
+
+    @Scheduled(cron = "0 10 * * * *")
+    @PostConstruct
+    protected void initOmDict(){
+        try {
+            List<OmDict> omDictList = this.omDictMapper.selectWithBLOBs(new OmDictCriteria());
+            omDictList.forEach(omDict -> omDictMap.put(omDict.getName(), omDict));
+        } catch (Exception e){
+            log.error("Init om dict error:", e);
+        }
+    }
+
+    public OmDict getOmDict(String name){
+        return omDictMap.get(name);
+    }
+
+    public String getOmDictValue(String name){
+        OmDict omDict = omDictMap.get(name);
+        if (omDict != null){
+            return omDict.getValue();
+        }
+        return "";
+    }
+
+    public List<OsVersion> getOsVersionList() {
+        return this.osVersionMapper.select(new OsVersionCriteria());
+    }
 
     public List<OmMessageDict> getMessageDicts() {
         OmMessageDictCriteria dictCriteria = new OmMessageDictCriteria();

@@ -5,16 +5,24 @@ package com.adtiming.om.ds.web;
 
 import com.adtiming.om.ds.dto.ReportConditionDTO;
 import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.model.StatCp;
+import com.adtiming.om.ds.service.FieldNameService;
 import com.adtiming.om.ds.service.ReportService;
+import com.adtiming.om.ds.util.Util;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +36,10 @@ public class ReportController extends BaseController {
     protected static final Logger log = LogManager.getLogger();
 
     @Autowired
-    private ReportService reportService;
+    ReportService reportService;
+
+    @Autowired
+    FieldNameService fieldNameService;
 
     /**
      * Get DAU report
@@ -42,6 +53,10 @@ public class ReportController extends BaseController {
         if (reportConditionDTO.getType() == null || reportConditionDTO.getType().length <= 0) {
             log.error("Report type must not empty");
             return Response.RES_PARAMETER_ERROR;
+        }
+        if (reportConditionDTO.getCountry() != null && reportConditionDTO.getCountry().length == 1
+                && "00".equals(reportConditionDTO.getCountry()[0])){
+            reportConditionDTO.setCountry(null);
         }
         Set<String> reportTypeSet = new HashSet<>();
         for (String type : reportConditionDTO.getType()) {
@@ -65,4 +80,28 @@ public class ReportController extends BaseController {
     public Response getRegionRevenue(Integer pubAppId) {
         return this.reportService.getRegionRevenue(pubAppId);
     }
+
+    @RequestMapping(value = "/report/list/cross_bid", method = RequestMethod.POST)
+    public Response getCrossBidReport(@RequestBody ReportConditionDTO reportConditionDTO) {
+        try {
+            List<StatCp> statCpList = this.reportService.getCrossBidReport(reportConditionDTO);
+            if (CollectionUtils.isEmpty(statCpList)){
+                return Response.buildSuccess(new JSONArray());
+            }
+            List<JSONObject> results = new ArrayList<>();
+            statCpList.forEach(statCp -> {
+                JSONObject result = (JSONObject)JSONObject.toJSON(statCp);
+                result.put("day", Util.getYYYYMMDD(statCp.getDay()));
+                result.put("impression", statCp.getImpr());
+                result.put("imprCost", statCp.getWinPrice());
+                results.add(result);
+            });
+            this.fieldNameService.fillName(results);
+            return Response.buildSuccess(results);
+        } catch (Exception e) {
+            log.error("Get cross bid report error, {}:", JSONObject.toJSON(reportConditionDTO), e);
+        }
+        return Response.RES_FAILED;
+    }
+    //UPDATE `open_mediation`.`um_permission` SET `api_path` = '/report/list\n/report/dau/list\n/report/lr/list\n/report/adnetwork/list\n/report/ltv\n/report/ltv/chart\n/report/retention\n/report/retention/chart\nreport/list/cross_bid' WHERE (`id` = '1800');
 }

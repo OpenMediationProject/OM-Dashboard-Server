@@ -35,13 +35,13 @@ public class PlacementService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private OmPlacementMapper omPlacementMapper;
+    OmPlacementMapper omPlacementMapper;
 
     @Resource
-    private OmPlacementSceneMapper omPlacementSceneMapper;
+    OmPlacementSceneMapper omPlacementSceneMapper;
 
     @Resource
-    private OmPlacementCountryMapper omPlacementCountryMapper;
+    OmPlacementCountryMapper omPlacementCountryMapper;
 
     /**
      * Select all placements from database which related to current user
@@ -117,9 +117,7 @@ public class PlacementService extends BaseService {
         }
         if (placementTypes != null && placementTypes.length > 0) {
             List<Byte> types = new ArrayList<>();
-            for (Byte type : placementTypes) {
-                types.add(type);
-            }
+            Collections.addAll(types, placementTypes);
             criteria.andAdTypeIn(types);
         }
         if (status != null) {
@@ -225,8 +223,7 @@ public class PlacementService extends BaseService {
         OmPlacementSceneCriteria omPlacementSceneCriteria = new OmPlacementSceneCriteria();
         OmPlacementSceneCriteria.Criteria criteria = omPlacementSceneCriteria.createCriteria();
         criteria.andPlacementIdEqualTo(placementId);
-        List<OmPlacementScene> placementScenes = omPlacementSceneMapper.select(omPlacementSceneCriteria);
-        return placementScenes;
+        return omPlacementSceneMapper.select(omPlacementSceneCriteria);
     }
 
     /**
@@ -242,10 +239,9 @@ public class PlacementService extends BaseService {
         OmPlacementSceneCriteria omPlacementSceneCriteria = new OmPlacementSceneCriteria();
         OmPlacementSceneCriteria.Criteria criteria = omPlacementSceneCriteria.createCriteria();
         criteria.andPlacementIdIn(placementIds);
-        criteria.andStatusEqualTo((byte)NormalStatus.Active.ordinal());
+        criteria.andStatusEqualTo((byte) NormalStatus.Active.ordinal());
         List<OmPlacementScene> placementScenes = this.omPlacementSceneMapper.select(omPlacementSceneCriteria);
-        return placementScenes.stream()
-                .collect(Collectors.groupingBy(m -> m.getPlacementId(), Collectors.toList()));
+        return placementScenes.stream().collect(Collectors.groupingBy(OmPlacementScene::getPlacementId, Collectors.toList()));
     }
 
     /**

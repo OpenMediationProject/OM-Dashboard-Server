@@ -35,10 +35,10 @@ public class PublisherService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Autowired
-    private UserService userService;
+    UserService userService;
 
     @Autowired
-    private RoleService roleService;
+    RoleService roleService;
 
     public OmPublisher getPublisher(Integer publisherId) {
         return omPublisherMapper.selectByPrimaryKey(publisherId);
@@ -57,9 +57,7 @@ public class PublisherService extends BaseService {
             }
             List<UmUserRole> umUserRoles = this.roleService.getUserRoles(userId);
             Set<Integer> userRoleIdSet = new HashSet<>();
-            umUserRoles.forEach(umUserRole -> {
-                userRoleIdSet.add(umUserRole.getRoleId());
-            });
+            umUserRoles.forEach(umUserRole -> userRoleIdSet.add(umUserRole.getRoleId()));
 
             List<OmPublisher> publishers = new ArrayList<>();
             if (userRoleIdSet.contains(RoleType.ADMINISTRATOR.getId())) {
@@ -117,16 +115,14 @@ public class PublisherService extends BaseService {
         if (status != null) {
             criteria.andStatusEqualTo((byte) status.ordinal());
         }
-        List<OmPublisher> userPublishers = this.omPublisherMapper.select(omPublisherCriteria);
-        return userPublishers;
+        return this.omPublisherMapper.select(omPublisherCriteria);
     }
 
     public List<OmPublisher> selectPublisherByName(String name) {
         OmPublisherCriteria omPublisherCriteria = new OmPublisherCriteria();
         OmPublisherCriteria.Criteria criteria = omPublisherCriteria.createCriteria();
         criteria.andNameEqualTo(name);
-        List<OmPublisher> userPublishers = this.omPublisherMapper.select(omPublisherCriteria);
-        return userPublishers;
+        return this.omPublisherMapper.select(omPublisherCriteria);
     }
 
     /**
@@ -160,10 +156,7 @@ public class PublisherService extends BaseService {
         if (result <= 0) {
             throw new RuntimeException("Update publisher's creator id failed" + JSONObject.toJSONString(omPublisher));
         }
-        Response response = this.roleService.createUserRole(umUser.getId(), RoleType.ORGANIZATION_OWNER.getId(), omPublisher.getId());
-        if (response.getCode() != Response.SUCCESS_CODE) {
-            throw new RuntimeException("Create user admin role error when create publisher!");
-        }
+        this.roleService.createUserRole(umUser.getId(), RoleType.ORGANIZATION_OWNER.getId(), omPublisher.getId());
         log.info("Create publisher {} success", omPublisher.getName());
         return Response.buildSuccess(omPublisher);
     }
@@ -206,7 +199,6 @@ public class PublisherService extends BaseService {
         if (response.getCode() != Response.SUCCESS_CODE) {
             throw new RuntimeException("Create user " + omPublisher.getEmail() + " failed");
         }
-        UmUser umUser = (UmUser) response.getData();
-        return umUser;
+        return (UmUser) response.getData();
     }
 }

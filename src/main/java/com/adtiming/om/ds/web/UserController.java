@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -126,11 +127,11 @@ public class UserController extends BaseController {
     public Response getUsers(String email, Integer pubAppId, Integer roleId) {
         try {
             JSONArray resultUsers = new JSONArray();
-            Set<Integer> publisherOwners = publisherService.getPublisherOwnerIds();
             UmUser currentUser = this.userService.getCurrentUser();
             if (currentUser.getRoleId() != RoleType.ORGANIZATION_OWNER.getId() && currentUser.getRoleId() != RoleType.ADMINISTRATOR.getId()) {
                 email = currentUser.getEmail();
             }
+            boolean isPublisherOwner = this.userService.isPublisherOwner(currentUser.getId(), currentUser.getPublisherId());
             List<UmUser> umUserList = this.userService.getUsers(this.userService.getCurrentUser().getPublisherId(), email);
             List<Integer> userIdList = umUserList.stream().map(UmUser::getId).collect(Collectors.toList());
             Map<Integer, List<UmUserApp>> userAppsMap = this.userService.getUserAppsMap(userIdList, pubAppId);
@@ -147,10 +148,14 @@ public class UserController extends BaseController {
                 umUser.setOldPublisherId(umUser.getPublisherId());
                 JSONObject resultUser = (JSONObject) JSONObject.toJSON(umUser);
                 resultUser.remove("password");
-                if (publisherOwners.contains(umUser.getId())) {
-                    resultUser.put("isPublisherOwner", true);
-                } else {
+                if (isPublisherOwner){
                     resultUser.put("isPublisherOwner", false);
+                } else {
+                    if (umUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId()) {
+                        resultUser.put("isPublisherOwner", true);
+                    } else {
+                        resultUser.put("isPublisherOwner", false);
+                    }
                 }
 
                 List<UmUserApp> umUserApps = userAppsMap.get(umUser.getId());
@@ -179,11 +184,16 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/create", method = RequestMethod.POST)
     public Response createUser(@RequestBody UserDTO userDTO) {
-        if (userDTO.getEmail() == null) {
-            log.error("Create user parameter error {}", JSONObject.toJSONString(userDTO));
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (userDTO.getEmail() == null) {
+                log.error("Create user parameter error {}", JSONObject.toJSONString(userDTO));
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.userService.createUser(userDTO);
+        } catch (Exception e) {
+            log.info("Create user {} error", JSONObject.toJSONString(userDTO), e);
+            return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, e.getMessage());
         }
-        return this.userService.createUser(userDTO);
     }
 
     /**
@@ -193,16 +203,26 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
     public Response updateUser(@RequestBody UmUser umUser) {
-        if (umUser.getId() == null || umUser.getId() <= 1) {
-            log.error("Update user parameter {} not valid!", JSONArray.toJSON(umUser));
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (umUser.getId() == null) {
+                log.error("Update user parameter {} not valid!", JSONArray.toJSON(umUser));
+                return Response.RES_PARAMETER_ERROR;
+            }
+
+            if (umUser.getId() <= 1) {
+                log.error("You can't change admin's info {}!", JSONArray.toJSON(umUser));
+                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "You can't change admin's info.");
+            }
+
+            if (this.userService.isCurrentPublisherOwner(umUser.getId()) && !publisherService.getCurrentUser().getId().equals(umUser.getId())) {
+                log.error("Publisher owner {} can not be update!", JSONObject.toJSONString(umUser));
+                return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "This Owner is assigned by Admin. You can't change.");
+            }
+            return this.userService.updateUser(umUser);
+        } catch (Exception e){
+            log.info("Update user {} error", JSONObject.toJSONString(umUser), e);
+            return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, e.getMessage());
         }
-        Set<Integer> publisherOwners = publisherService.getPublisherOwnerIds();
-        if (publisherOwners.contains(umUser.getId())) {
-            log.error("Publisher owner {} can not be update!", JSONObject.toJSONString(umUser));
-            return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "This Owner is assigned by Admin. You can't change the role.");
-        }
-        return this.userService.updateUser(umUser);
     }
 
     /**
@@ -214,6 +234,10 @@ public class UserController extends BaseController {
     public Response updateUserPassword(@RequestBody UmUser umUser) {
         if (umUser.getId() == null) {
             return Response.RES_PARAMETER_ERROR;
+        }
+        if (this.userService.isCurrentPublisherOwner(umUser.getId()) && !publisherService.getCurrentUser().getId().equals(umUser.getId())) {
+            log.error("Publisher owner {} can not be update!", JSONObject.toJSONString(umUser));
+            return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "This Owner is default. You can't change.");
         }
         return this.userService.updateUserPassword(umUser);
     }
@@ -361,10 +385,14 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/user_role/create", method = RequestMethod.POST)
     public Response createUserRole(@RequestBody UmUserRole umUserRole) {
-        if (umUserRole.getRoleId() == null || umUserRole.getUserId() == null) {
-            return Response.RES_PARAMETER_ERROR;
+        try {
+            if (umUserRole.getRoleId() == null || umUserRole.getUserId() == null) {
+                return Response.RES_PARAMETER_ERROR;
+            }
+            return this.roleService.createUserRole(umUserRole.getUserId(), umUserRole.getRoleId(), umUserRole.getPubId());
+        } catch (Exception e){
+            return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, e.getMessage());
         }
-        return this.roleService.createUserRole(umUserRole.getUserId(), umUserRole.getRoleId(), umUserRole.getPubId());
     }
 
     /**

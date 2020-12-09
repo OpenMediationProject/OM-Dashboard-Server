@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.StatDauInstanceMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.StatDauInstance">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="day" jdbcType="DATE" property="day" />
+    <result column="publisher_id" jdbcType="INTEGER" property="publisherId" />
+    <result column="pub_app_id" jdbcType="INTEGER" property="pubAppId" />
+    <result column="platform" jdbcType="TINYINT" property="platform" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="placement_id" jdbcType="INTEGER" property="placementId" />
+    <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="adn_id" jdbcType="INTEGER" property="adnId" />
+    <result column="ip_count" jdbcType="INTEGER" property="ipCount" />
+    <result column="did_count" jdbcType="INTEGER" property="didCount" />
+    <result column="dau" jdbcType="INTEGER" property="dau" />
+    <result column="deu" jdbcType="INTEGER" property="deu" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, day, publisher_id, pub_app_id, platform, country, placement_id, instance_id, 
+    adn_id, ip_count, did_count, dau, deu, create_time
+  </sql>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatDauInstanceCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from stat_dau_instance
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatDauInstanceKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stat_dau_instance
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatDauInstanceKey">
+    delete from stat_dau_instance
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.StatDauInstance">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_dau_instance (day, publisher_id, pub_app_id, 
+      platform, country, placement_id, 
+      instance_id, adn_id, ip_count, 
+      did_count, dau, deu, 
+      create_time)
+    values (#{day,jdbcType=DATE}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
+      #{platform,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, #{placementId,jdbcType=INTEGER}, 
+      #{instanceId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, #{ipCount,jdbcType=INTEGER}, 
+      #{didCount,jdbcType=INTEGER}, #{dau,jdbcType=INTEGER}, #{deu,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatDauInstance">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into stat_dau_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        day,
+      </if>
+      <if test="publisherId != null">
+        publisher_id,
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id,
+      </if>
+      <if test="platform != null">
+        platform,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="placementId != null">
+        placement_id,
+      </if>
+      <if test="instanceId != null">
+        instance_id,
+      </if>
+      <if test="adnId != null">
+        adn_id,
+      </if>
+      <if test="ipCount != null">
+        ip_count,
+      </if>
+      <if test="didCount != null">
+        did_count,
+      </if>
+      <if test="dau != null">
+        dau,
+      </if>
+      <if test="deu != null">
+        deu,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="day != null">
+        #{day,jdbcType=DATE},
+      </if>
+      <if test="publisherId != null">
+        #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="platform != null">
+        #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="placementId != null">
+        #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="ipCount != null">
+        #{ipCount,jdbcType=INTEGER},
+      </if>
+      <if test="didCount != null">
+        #{didCount,jdbcType=INTEGER},
+      </if>
+      <if test="dau != null">
+        #{dau,jdbcType=INTEGER},
+      </if>
+      <if test="deu != null">
+        #{deu,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.StatDauInstance">
+    update stat_dau_instance
+    <set>
+      <if test="publisherId != null">
+        publisher_id = #{publisherId,jdbcType=INTEGER},
+      </if>
+      <if test="pubAppId != null">
+        pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      </if>
+      <if test="platform != null">
+        platform = #{platform,jdbcType=TINYINT},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="placementId != null">
+        placement_id = #{placementId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        instance_id = #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="adnId != null">
+        adn_id = #{adnId,jdbcType=INTEGER},
+      </if>
+      <if test="ipCount != null">
+        ip_count = #{ipCount,jdbcType=INTEGER},
+      </if>
+      <if test="didCount != null">
+        did_count = #{didCount,jdbcType=INTEGER},
+      </if>
+      <if test="dau != null">
+        dau = #{dau,jdbcType=INTEGER},
+      </if>
+      <if test="deu != null">
+        deu = #{deu,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.StatDauInstance">
+    update stat_dau_instance
+    set publisher_id = #{publisherId,jdbcType=INTEGER},
+      pub_app_id = #{pubAppId,jdbcType=INTEGER},
+      platform = #{platform,jdbcType=TINYINT},
+      country = #{country,jdbcType=VARCHAR},
+      placement_id = #{placementId,jdbcType=INTEGER},
+      instance_id = #{instanceId,jdbcType=INTEGER},
+      adn_id = #{adnId,jdbcType=INTEGER},
+      ip_count = #{ipCount,jdbcType=INTEGER},
+      did_count = #{didCount,jdbcType=INTEGER},
+      dau = #{dau,jdbcType=INTEGER},
+      deu = #{deu,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and day = #{day,jdbcType=DATE}
+  </update>
+
+  <sql id="Summary_Where_Clause">
+    <where>
+      <foreach collection="_parameter.get('summaryWhereClause')" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+  <select id="selectSummary" parameterType="map" resultMap="BaseResultMap">
+    select
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_adnId')">
+      adn_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisherId')">
+      publisher_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_pubAppId')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_platform')">
+      platform,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_placementId')">
+      placement_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_instanceId')">
+      instance_id,
+    </if>
+    sum(ip_count) as ip_count,sum(did_count) as did_count,sum(dau) as dau, sum(deu) as deu
+    from stat_dau_instance
+    <if test="_parameter.containsKey('summaryWhereClause')">
+      <include refid="Summary_Where_Clause" />
+    </if>
+    group by
+    <if test="_parameter.containsKey('dimension_day')">
+      day,
+    </if>
+    <if test="_parameter.containsKey('dimension_adnId')">
+      adn_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_publisherId')">
+      publisher_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_pubAppId')">
+      pub_app_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_platform')">
+      platform,
+    </if>
+    <if test="_parameter.containsKey('dimension_country')">
+      country,
+    </if>
+    <if test="_parameter.containsKey('dimension_placementId')">
+      placement_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_instanceId')">
+      instance_id,
+    </if>
+    null
+    <if test="_parameter.containsKey('orderByClause')">
+      order by #{orderByClause}
+    </if>
+  </select>
+</mapper>

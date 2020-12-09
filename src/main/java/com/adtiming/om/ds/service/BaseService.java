@@ -9,9 +9,8 @@ import com.adtiming.om.ds.dao.UmUserAppMapper;
 import com.adtiming.om.ds.dao.UmUserRoleMapper;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.RoleType;
+import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -19,14 +18,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Common info for services
@@ -58,7 +52,6 @@ public class BaseService {
         if (subject.getPrincipal() != null) {
             currentUser = (UmUser) subject.getPrincipals().getPrimaryPrincipal();
         }
-        log.info("Current user {} publisher id {} role id {}", currentUser.getId(), currentUser.getPublisherId(), currentUser.getRoleId());
         return currentUser;
     }
 
@@ -133,13 +126,18 @@ public class BaseService {
         return this.umUserRoleMapper.select(umUserAppCriteria);
     }
 
-    public Set<Integer> getPublisherOwnerIds() {
-        Set<Integer> publisherCreatorIds = new HashSet<>();
-        List<OmPublisher> publishers = this.omPublisherMapper.select(new OmPublisherCriteria());
-        publishers.forEach(publisher -> {
-            publisherCreatorIds.add(publisher.getOwnerUserId());
-        });
-        return publisherCreatorIds;
+    public boolean isPublisherOwner(Integer userId, Integer publisherId) {
+        OmPublisherCriteria publisherCriteria = new OmPublisherCriteria();
+        OmPublisherCriteria.Criteria criteria = publisherCriteria.createCriteria();
+        criteria.andIdEqualTo(publisherId);
+        criteria.andOwnerUserIdEqualTo(userId);
+        criteria.andStatusEqualTo((byte) SwitchStatus.ON.ordinal());
+        List<OmPublisher> publishers = this.omPublisherMapper.select(publisherCriteria);
+        return !CollectionUtils.isEmpty(publishers);
+    }
+
+    public boolean isCurrentPublisherOwner(Integer userId) {
+        return this.isPublisherOwner(userId, this.getCurrentPublisherId());
     }
 
     /**
@@ -169,9 +167,7 @@ public class BaseService {
     public List<Integer> getPublisherAppIds(List<Integer> publisherIds, NormalStatus status) {
         List<Integer> publisherAppIds = new ArrayList<>();
         List<OmPublisherApp> omPublisherApps = this.getPublisherApps(publisherIds, status);
-        omPublisherApps.forEach(omPublisherApp -> {
-            publisherAppIds.add(omPublisherApp.getId());
-        });
+        omPublisherApps.forEach(omPublisherApp -> publisherAppIds.add(omPublisherApp.getId()));
         return publisherAppIds;
     }
 }

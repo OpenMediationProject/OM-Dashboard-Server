@@ -143,22 +143,6 @@ public class PlacementController extends BaseController {
     }
 
     /**
-     * Add placement scenes to result
-     *
-     * @return resultPlacement
-     */
-    private JSONObject buildResultPlacement(OmPlacementWithBLOBs placement, List<OmPlacementScene> placementScenes) {
-        JSONObject resultPlacement = (JSONObject) JSONObject.toJSON(placement);
-        if (!CollectionUtils.isEmpty(placementScenes)) {
-            resultPlacement.put("sceneSize", placementScenes.size());
-            resultPlacement.put("scenes", placementScenes);
-        } else {
-            resultPlacement.put("sceneSize", 0);
-        }
-        return resultPlacement;
-    }
-
-    /**
      * Get all valid placements for select component
      *
      * @param pubAppId
@@ -174,7 +158,7 @@ public class PlacementController extends BaseController {
                 }
             }
             NormalStatus normalStatus = NormalStatus.Active;
-            if (status != null){
+            if (status != null) {
                 normalStatus = NormalStatus.getStatus(status);
             }
             JSONArray results = new JSONArray();

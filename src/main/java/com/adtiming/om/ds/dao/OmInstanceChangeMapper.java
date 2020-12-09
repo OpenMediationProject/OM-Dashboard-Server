@@ -13,7 +13,7 @@ public interface OmInstanceChangeMapper {
 
     int insertSelective(OmInstanceChange record);
 
-    List<OmInstanceChange> selectByExample(OmInstanceChangeCriteria example);
+    List<OmInstanceChange> select(OmInstanceChangeCriteria criteria);
 
     OmInstanceChange selectByPrimaryKey(OmInstanceChangeKey key);
 

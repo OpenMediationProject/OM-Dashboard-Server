@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adtiming.om.ds.dao.CpCampaignPeriodMapper">
+  <resultMap id="BaseResultMap" type="com.adtiming.om.ds.model.CpCampaignPeriod">
+    <id column="campaign_id" jdbcType="INTEGER" property="campaignId" />
+    <result column="hour0" jdbcType="INTEGER" property="hour0" />
+    <result column="hour1" jdbcType="INTEGER" property="hour1" />
+    <result column="hour2" jdbcType="INTEGER" property="hour2" />
+    <result column="hour3" jdbcType="INTEGER" property="hour3" />
+    <result column="hour4" jdbcType="INTEGER" property="hour4" />
+    <result column="hour5" jdbcType="INTEGER" property="hour5" />
+    <result column="hour6" jdbcType="INTEGER" property="hour6" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    campaign_id, hour0, hour1, hour2, hour3, hour4, hour5, hour6, create_time, lastmodify
+  </sql>
+  <select id="selectByExample" parameterType="com.adtiming.om.ds.model.CpCampaignPeriodCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cp_campaign_period
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cp_campaign_period
+    where campaign_id = #{campaignId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cp_campaign_period
+    where campaign_id = #{campaignId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.adtiming.om.ds.model.CpCampaignPeriod">
+    insert into cp_campaign_period (campaign_id, hour0, hour1, 
+      hour2, hour3, hour4, 
+      hour5, hour6, create_time, 
+      lastmodify)
+    values (#{campaignId,jdbcType=INTEGER}, #{hour0,jdbcType=INTEGER}, #{hour1,jdbcType=INTEGER}, 
+      #{hour2,jdbcType=INTEGER}, #{hour3,jdbcType=INTEGER}, #{hour4,jdbcType=INTEGER}, 
+      #{hour5,jdbcType=INTEGER}, #{hour6,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastmodify,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.CpCampaignPeriod">
+    insert into cp_campaign_period
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="campaignId != null">
+        campaign_id,
+      </if>
+      <if test="hour0 != null">
+        hour0,
+      </if>
+      <if test="hour1 != null">
+        hour1,
+      </if>
+      <if test="hour2 != null">
+        hour2,
+      </if>
+      <if test="hour3 != null">
+        hour3,
+      </if>
+      <if test="hour4 != null">
+        hour4,
+      </if>
+      <if test="hour5 != null">
+        hour5,
+      </if>
+      <if test="hour6 != null">
+        hour6,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastmodify != null">
+        lastmodify,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="campaignId != null">
+        #{campaignId,jdbcType=INTEGER},
+      </if>
+      <if test="hour0 != null">
+        #{hour0,jdbcType=INTEGER},
+      </if>
+      <if test="hour1 != null">
+        #{hour1,jdbcType=INTEGER},
+      </if>
+      <if test="hour2 != null">
+        #{hour2,jdbcType=INTEGER},
+      </if>
+      <if test="hour3 != null">
+        #{hour3,jdbcType=INTEGER},
+      </if>
+      <if test="hour4 != null">
+        #{hour4,jdbcType=INTEGER},
+      </if>
+      <if test="hour5 != null">
+        #{hour5,jdbcType=INTEGER},
+      </if>
+      <if test="hour6 != null">
+        #{hour6,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.CpCampaignPeriod">
+    update cp_campaign_period
+    <set>
+      <if test="hour0 != null">
+        hour0 = #{hour0,jdbcType=INTEGER},
+      </if>
+      <if test="hour1 != null">
+        hour1 = #{hour1,jdbcType=INTEGER},
+      </if>
+      <if test="hour2 != null">
+        hour2 = #{hour2,jdbcType=INTEGER},
+      </if>
+      <if test="hour3 != null">
+        hour3 = #{hour3,jdbcType=INTEGER},
+      </if>
+      <if test="hour4 != null">
+        hour4 = #{hour4,jdbcType=INTEGER},
+      </if>
+      <if test="hour5 != null">
+        hour5 = #{hour5,jdbcType=INTEGER},
+      </if>
+      <if test="hour6 != null">
+        hour6 = #{hour6,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastmodify != null">
+        lastmodify = #{lastmodify,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where campaign_id = #{campaignId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.CpCampaignPeriod">
+    update cp_campaign_period
+    set hour0 = #{hour0,jdbcType=INTEGER},
+      hour1 = #{hour1,jdbcType=INTEGER},
+      hour2 = #{hour2,jdbcType=INTEGER},
+      hour3 = #{hour3,jdbcType=INTEGER},
+      hour4 = #{hour4,jdbcType=INTEGER},
+      hour5 = #{hour5,jdbcType=INTEGER},
+      hour6 = #{hour6,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
+    where campaign_id = #{campaignId,jdbcType=INTEGER}
+  </update>
+</mapper>

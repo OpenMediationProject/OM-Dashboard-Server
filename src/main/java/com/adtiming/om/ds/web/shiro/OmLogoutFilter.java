@@ -18,7 +18,7 @@ public class OmLogoutFilter extends LogoutFilter {
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
         Subject subject = this.getSubject(request, response);
-        if(this.isPostOnlyLogout() && !WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ENGLISH).equals("POST")) {
+        if (this.isPostOnlyLogout() && !WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ENGLISH).equals("POST")) {
             return this.onLogoutRequestNotAPost(request, response);
         } else {
             //String redirectUrl = this.getRedirectUrl(request, response, subject);

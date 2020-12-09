@@ -32,31 +32,28 @@ public class AdNetworkService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Resource
-    private ReportAdnetworkAccountMapper reportAdnetworkAccountMapper;
+    ReportAdnetworkAccountMapper reportAdnetworkAccountMapper;
 
     @Resource
-    private OmAdnetworkMapper omAdnetworkMapper;
+    OmAdnetworkMapper omAdnetworkMapper;
 
     @Resource
-    private OmAdnetworkAppMapper omAdnetworkAppMapper;
+    OmAdnetworkAppMapper omAdnetworkAppMapper;
 
     @Resource
-    private OmAdnetworkAppChangeMapper omAdnetworkAppChangeMapper;
+    OmAdnetworkAppChangeMapper omAdnetworkAppChangeMapper;
 
     @Resource
-    private OmPublisherAppMapper omPublisherAppMapper;
+    OmPublisherAppMapper omPublisherAppMapper;
 
     @Resource
-    private ReportAdnetworkAccountMapper reportAdnAccountMapper;
+    InstanceService instanceService;
 
     @Resource
-    private OmAdnetworkAppChangeMapper adnAppChange;
+    AccountService accountService;
 
     @Resource
-    private InstanceService instanceService;
-
-    @Resource
-    private AccountService accountService;
+    OmPlacementMapper omPlacementMapper;
 
     /**
      * Select all AdNetwork
@@ -303,7 +300,7 @@ public class AdNetworkService extends BaseService {
                 } else if (!omAdnetworkApp.getRefreshToken().equals(dbAdnApp.getRefreshToken())) {
                     ReportAdnetworkAccount account = this.accountService.getAccount(dbAdnApp.getReportAccountId());
                     account.setAdnAppToken(omAdnetworkApp.getRefreshToken());
-                    account.setStatus((byte)NormalStatus.Active.ordinal());
+                    account.setStatus((byte) NormalStatus.Active.ordinal());
                     Response response = this.accountService.updateAccount(account);
                     if (response.getCode() != Response.SUCCESS_CODE) {
                         throw new RuntimeException(response.getMsg());
@@ -338,7 +335,7 @@ public class AdNetworkService extends BaseService {
     private void addFacebookAccount(OmAdnetworkApp omAdnetworkApp) {
         List<ReportAdnetworkAccount> accounts = this.accountService.getPublisherAccounts(AdNetworkType.Facebook.ordinal(),
                 this.getCurrentUser().getPublisherId(), NormalStatus.Active, omAdnetworkApp.getAdnAppKey());
-        ReportAdnetworkAccount account = null;
+        ReportAdnetworkAccount account;
         if (CollectionUtils.isEmpty(accounts)) {
             account = new ReportAdnetworkAccount();
             account.setAdnId(omAdnetworkApp.getAdnId());
@@ -354,7 +351,7 @@ public class AdNetworkService extends BaseService {
             account = accounts.get(0);
             if (!omAdnetworkApp.getRefreshToken().equals(account.getAdnAppToken())) {
                 account.setAdnAppToken(omAdnetworkApp.getRefreshToken());
-                account.setStatus((byte)NormalStatus.Active.ordinal());
+                account.setStatus((byte) NormalStatus.Active.ordinal());
                 int result = this.reportAdnetworkAccountMapper.updateByPrimaryKeySelective(account);
                 if (result <= 0) {
                     throw new RuntimeException("Update account " + JSONObject.toJSON(account) + "failed");
@@ -374,7 +371,13 @@ public class AdNetworkService extends BaseService {
      *
      * @param status
      */
-    public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status) {
+    @Transactional
+    public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status, Integer cpAdnId, Integer pubAppId) {
+        if (adNetworkAppId == null && cpAdnId != null && AdNetworkType.CrossPromotion.ordinal() == cpAdnId
+                && status == NormalStatus.Active.ordinal() && pubAppId != null){
+            adNetworkAppId = this.initCrossPromotion(pubAppId);
+        }
+
         OmAdnetworkApp omAdnetworkApp = this.omAdnetworkAppMapper.selectByPrimaryKey(adNetworkAppId);
         if (omAdnetworkApp == null) {
             log.error("AdNetworkAppId {} does not existed", adNetworkAppId);
@@ -391,5 +394,40 @@ public class AdNetworkService extends BaseService {
             throw new RuntimeException("Update adNetwork " + omAdnetworkApp.getId() + " failed!");
         }
         return Response.build();
+    }
+
+    @Transactional
+    private Integer initCrossPromotion(Integer pubAppId){
+        Byte status = (byte) NormalStatus.Active.ordinal();
+        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId, AdNetworkType.CrossPromotion.ordinal(), null);
+        if (!CollectionUtils.isEmpty(omAdNetworkApps)){
+            OmAdnetworkApp omAdNetworkApp = omAdNetworkApps.get(0);
+            omAdNetworkApp.setStatus(status);
+            int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdNetworkApp);
+            if (result <= 0) {
+                throw new RuntimeException("Update Default Cross Promotion AdnApp failed " + JSONObject.toJSONString(omAdNetworkApp));
+            }
+            return omAdNetworkApp.getId();
+        }
+        OmAdnetworkApp adtPublisherApp = new OmAdnetworkApp();
+        adtPublisherApp.setAdnId(AdNetworkType.CrossPromotion.ordinal());
+        adtPublisherApp.setReportapiStatus(status);
+        adtPublisherApp.setPubAppId(pubAppId);
+        adtPublisherApp.setStatus(status);
+        adtPublisherApp.setAccountOwner((byte) 1);
+        adtPublisherApp.setAccountId(0);
+        int result = this.omAdnetworkAppMapper.insertSelective(adtPublisherApp);
+        if (result <= 0) {
+            throw new RuntimeException("Add Default Cross Promotion AdnApp failed " + JSONObject.toJSONString(adtPublisherApp));
+        }
+
+        OmPlacementCriteria placementCriteria = new OmPlacementCriteria();
+        OmPlacementCriteria.Criteria criteria = placementCriteria.createCriteria();
+        criteria.andPubAppIdEqualTo(pubAppId);
+        List<OmPlacement> placements = this.omPlacementMapper.select(placementCriteria);
+        for (OmPlacement placement : placements) {
+            this.instanceService.buildDefaultCrossBidInstance(placement);
+        }
+        return adtPublisherApp.getId();
     }
 }

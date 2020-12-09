@@ -33,19 +33,19 @@ public class SDKIntegrationService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     @Autowired
-    private InstanceService instanceService;
+    InstanceService instanceService;
 
     @Autowired
-    private AdNetworkService adNetworkService;
+    AdNetworkService adNetworkService;
 
     @Autowired
-    private PlacementService placementService;
+    PlacementService placementService;
 
     @Resource
-    private OmDevDeviceMapper omDevDeviceMapper;
+    OmDevDeviceMapper omDevDeviceMapper;
 
     @Resource
-    private OmDevAppMapper omDevAppMapper;
+    OmDevAppMapper omDevAppMapper;
 
     public Response getDevApp(Integer pubAppId) {
         List<OmDevApp> devApps = this.getDevApps(null, pubAppId, SwitchStatus.ON, DevAppTestResult.UnKnow);
@@ -230,9 +230,7 @@ public class SDKIntegrationService extends BaseService {
     private Map<Integer, OmDevApp> getDevAppMap(Integer pubAppId, SwitchStatus devAppStatus) {
         List<OmDevApp> omDevApps = this.getDevApps(null, pubAppId, devAppStatus);
         Map<Integer, OmDevApp> devAppMap = new HashMap<>();
-        omDevApps.forEach(omDevApp -> {
-            devAppMap.put(omDevApp.getAdnId(), omDevApp);
-        });
+        omDevApps.forEach(omDevApp -> devAppMap.put(omDevApp.getAdnId(), omDevApp));
         return devAppMap;
     }
 

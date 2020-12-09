@@ -34,6 +34,8 @@ public class Response {
 
     public static final int CODE_CAN_NOT_CHANGE = 1011;
 
+    public static final int CODE_PARAMETER_INVALID = 1012;
+
     public static final Response RES_UNAUTHORIZED = new Response(CODE_RES_UNAUTHORIZED, STATUS_DISABLE, "Insufficient authority");
 
     public static final Response RES_FAILED = new Response(CODE_RES_FAILED, STATUS_DISABLE, "Request failed");

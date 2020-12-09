@@ -17,7 +17,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +38,6 @@ public class PublisherAppService extends BaseService {
     protected static final Logger log = LogManager.getLogger();
 
     private static final String APP_UPDATE_URL = "http://adtimingapi.com/om/app?id=%s";
-
-    @Autowired
-    private PlacementService placementService;
 
     /**
      * Update publisher app's info from app store every day

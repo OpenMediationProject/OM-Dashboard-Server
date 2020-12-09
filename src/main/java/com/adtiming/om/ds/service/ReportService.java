@@ -3,9 +3,8 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.StatAdnetworkMapper;
-import com.adtiming.om.ds.dao.StatDauMapper;
-import com.adtiming.om.ds.dao.StatLrMapper;
+import com.adtiming.om.ds.dao.*;
+import com.adtiming.om.ds.dto.DauDimensionsDTO;
 import com.adtiming.om.ds.dto.ReportConditionDTO;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.*;
@@ -36,16 +35,42 @@ public class ReportService extends BaseService {
     private static final Logger log = LogManager.getLogger();
 
     @Resource
-    private StatDauMapper statDauMapper;
+    StatDauMapper statDauMapper;
 
     @Resource
-    private StatLrMapper statLrMapper;
+    StatDauInstanceMapper statDauInstanceMapper;
 
     @Resource
-    private StatAdnetworkMapper statAdnetworkMapper;
+    StatDauPlacementMapper statDauPlacementMapper;
+
+    @Resource
+    StatDauAdnPlacementMapper statDauAdnPlacementMapper;
+
+    @Resource
+    StatDauAdnMapper statDauAdnMapper;
+
+    @Resource
+    StatLrMapper statLrMapper;
+
+    @Resource
+    StatAdnetworkMapper statAdnetworkMapper;
+
+    @Resource
+    StatCpMapper statCpMapper;
 
     @Autowired
-    private FieldNameService fieldNameService;
+    FieldNameService fieldNameService;
+
+    @Autowired
+    UtilService utilService;
+
+    public static final String ADN_ID = "adnId";
+
+    public static final String PUB_APP_ID = "pubAppId";
+
+    public static final String PLACEMENT_ID = "placementId";
+
+    public static final String INSTANCE_ID = "instanceId";
 
     /**
      * Get dau lr revenue reports
@@ -60,13 +85,23 @@ public class ReportService extends BaseService {
             if (reportConditionDTO.getDimension() != null && reportConditionDTO.getDimension().length > 0) {
                 Collections.addAll(dimensionSet, reportConditionDTO.getDimension());
             }
+            reportConditionDTO.setDimensionSet(dimensionSet);
 
-            if (dimensionSet.contains("adType") && !dimensionSet.contains("placementId")) {
-                dimensionSet.add("placementId");
+            if ((dimensionSet.contains(PLACEMENT_ID) || dimensionSet.contains(INSTANCE_ID) )
+                    && !dimensionSet.contains(PUB_APP_ID) ){
+                Set<String> dimensionSetTmp = new HashSet<>(dimensionSet);
+                dimensionSetTmp.add(PUB_APP_ID);
+                String[] dimension = new String[dimensionSetTmp.size() + 1];
+                dimensionSetTmp.toArray(dimension);
+                reportConditionDTO.setDimension(dimension);
+            }
+
+            if (dimensionSet.contains("adType") && !dimensionSet.contains(PLACEMENT_ID)) {
+                dimensionSet.add(PLACEMENT_ID);
                 String[] dimension = new String[dimensionSet.size() + 1];
                 dimensionSet.toArray(dimension);
                 reportConditionDTO.setDimension(dimension);
-                dimensionSet.remove("placementId");
+                dimensionSet.remove(PLACEMENT_ID);
             }
 
             if (dimensionSet.contains("instanceId")) {
@@ -84,15 +119,13 @@ public class ReportService extends BaseService {
 
             List<JSONObject> resultReport = new ArrayList<>();
             if (reportTypeSet.contains("api") && !dimensionSet.contains("sceneId")) {
-                List<StatAdnetwork> statAdnetworks = this.getAdNetworkReport(reportConditionDTO);
-                statAdnetworks.forEach(statAdnetwork -> {
-                    resultReport.add((JSONObject) JSONObject.toJSON(statAdnetwork));
-                });
+                List<StatAdnetwork> statAdNetworks = this.getAdNetworkReport(reportConditionDTO);
+                statAdNetworks.forEach(statAdNetwork -> resultReport.add((JSONObject) JSONObject.toJSON(statAdNetwork)));
             }
 
             if (reportTypeSet.contains("lr")) {
                 List<StatLr> statLrs = this.getLrReport(reportConditionDTO);
-                for (StatLr statLr : statLrs){
+                for (StatLr statLr : statLrs) {
                     if (dimensionSet.contains("adnId") && statLr.getAdnId() == 0) {
                         continue;
                     }
@@ -104,18 +137,20 @@ public class ReportService extends BaseService {
             }
 
             if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
-                List<StatDau> statDaus = this.getDauReport(reportConditionDTO);
-                statDaus.forEach(statDau -> {
-                    JSONObject resultStatDau = (JSONObject) JSONObject.toJSON(statDau);
-                    resultReport.add(resultStatDau);
-                });
+                List<JSONObject> statDauList = this.getDeuReport(reportConditionDTO);
+                if (!CollectionUtils.isEmpty(statDauList)) {
+                    resultReport.addAll(statDauList);
+                }
             }
 
             if (isAdType) {
                 this.fieldNameService.fillPlacementAdType(resultReport);
                 dimensionSet.add("adType");
             }
-            List<JSONObject> results = this.businessMapReduce(resultReport, reportConditionDTO, dimensionSet);
+            List<JSONObject> results = this.businessMapReduce(resultReport, dimensionSet);
+            if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
+                this.fillPlacementInstanceDau(results, reportConditionDTO);
+            }
             this.fieldNameService.fillName(results);
             return Response.buildSuccess(results);
         } catch (Exception e) {
@@ -124,7 +159,7 @@ public class ReportService extends BaseService {
         return Response.RES_FAILED;
     }
 
-    private List<JSONObject> businessMapReduce(List<JSONObject> resultReport, ReportConditionDTO reportConditionDTO, Set<String> dimensionSet) {
+    private List<JSONObject> businessMapReduce(List<JSONObject> resultReport, Set<String> dimensionSet) {
         Map<String, List<JSONObject>> reportMap = resultReport.stream().collect(
                 Collectors.groupingBy(report -> {
                     List keys = new ArrayList();
@@ -278,7 +313,7 @@ public class ReportService extends BaseService {
             });
 
             Map<Date, List<StatAdnetwork>> otherDayStatMap = allStatAdNetworks.stream()
-                    .collect(Collectors.groupingBy(m -> m.getDay(), Collectors.toList()));
+                    .collect(Collectors.groupingBy(StatAdnetworkKey::getDay, Collectors.toList()));
             for (Map.Entry<Date, List<StatAdnetwork>> entry : otherDayStatMap.entrySet()) {
                 StatAdnetwork otherCountryStat = new StatAdnetwork();
                 otherCountryStat.setDay(entry.getKey());
@@ -345,6 +380,22 @@ public class ReportService extends BaseService {
      *
      * @param reportConditionDTO
      */
+    private Map<String, Object> buildDauConditionMap(ReportConditionDTO reportConditionDTO) {
+        String[] dimensions = reportConditionDTO.getDimension();
+        Map<String, Object> conditionMap = new HashMap<>();
+        if (dimensions != null && dimensions.length > 0) {
+            for (String dimension : dimensions) {
+                conditionMap.put("dimension_" + dimension, dimension);
+            }
+        }
+        return conditionMap;
+    }
+
+    /**
+     * Build date/dimension/group by clause conditions
+     *
+     * @param reportConditionDTO
+     */
     private Map<String, Object> buildConditionMap(ReportConditionDTO reportConditionDTO) {
         String[] dimensions = reportConditionDTO.getDimension();
         Map<String, Object> conditionMap = new HashMap<>();
@@ -353,11 +404,8 @@ public class ReportService extends BaseService {
                 conditionMap.put("dimension_" + dimension, dimension);
             }
         }
-        if (conditionMap.size() == 3 && conditionMap.containsKey("dimension_adnId") && conditionMap.containsKey("dimension_day")
-                && conditionMap.containsKey("dimension_hour") ||
-                conditionMap.size() == 2 && conditionMap.containsKey("dimension_adnId") && conditionMap.containsKey("dimension_day")
-                || conditionMap.size() == 1 && conditionMap.containsKey("dimension_adnId")){
-            conditionMap.put("dimension_only_adn", "dimension_only_adn");
+        if (conditionMap.containsKey("dimension_adnId")) {
+            conditionMap.put("dimension_show_inapp_bid", "dimension_show_inapp_bid");
             conditionMap.remove("dimension_adnId");
         }
         return conditionMap;
@@ -377,12 +425,7 @@ public class ReportService extends BaseService {
         Set<Integer> appIdsOfCurrentUserSet = new HashSet<>(appIdsOfCurrentUser);
         List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
         if (!CollectionUtils.isEmpty(publisherAppIds)) {
-            Iterator iterator = publisherAppIds.iterator();
-            while (iterator.hasNext()) {
-                if (!appIdsOfCurrentUserSet.contains(iterator.next())) {
-                    iterator.remove();
-                }
-            }
+            publisherAppIds.removeIf(o -> !appIdsOfCurrentUserSet.contains(o));
             if (!CollectionUtils.isEmpty(publisherAppIds)) {
                 Integer[] publisherAppIdArr = new Integer[publisherAppIds.size()];
                 publisherAppIds.toArray(publisherAppIdArr);
@@ -396,12 +439,299 @@ public class ReportService extends BaseService {
     }
 
     /**
-     * Get dau report
+     * Get deu report
      *
      * @param reportConditionDTO
      */
-    public List<StatDau> getDauReport(ReportConditionDTO reportConditionDTO) {
-        Map<String, Object> conditionMap = this.buildConditionMap(reportConditionDTO);
+    public List<JSONObject> getDeuReport(ReportConditionDTO reportConditionDTO) {
+        try {
+            Map<String, Object> dauConditionMap = this.buildDauConditionMap(reportConditionDTO);
+            List<JSONObject> results = new ArrayList<>();
+            OmDict omDict = this.utilService.getOmDict("dau_dimensions");
+            if (omDict != null && StringUtils.isNotBlank(omDict.getValue())) {
+                try {
+                    DauDimensionsDTO dauDimensionsDTO = JSONObject.parseObject(omDict.getValue(), DauDimensionsDTO.class);
+                    Set<String> dimensionSet = reportConditionDTO.getDimensionSet();
+                    if (dimensionSet.contains(INSTANCE_ID)) {
+                        if (dauDimensionsDTO.getInstance() != null && dauDimensionsDTO.getInstance() == 1) {
+                            List<StatDauInstance> statInstanceDauSummary = this.getInstanceDauReport(reportConditionDTO, dauConditionMap);
+                            statInstanceDauSummary.forEach(instanceStatDeu -> results.add((JSONObject) JSONObject.toJSON(instanceStatDeu)));
+                            return results;
+                        }
+                    } else if (dimensionSet.contains(PLACEMENT_ID) && dimensionSet.contains(ADN_ID)
+                            || (dimensionSet.contains(ADN_ID) && reportConditionDTO.getPlacementId() != null && reportConditionDTO.getPlacementId().length >0)) {
+                        if (dauDimensionsDTO.getAdn_placement() != null && dauDimensionsDTO.getAdn_placement() == 1) {
+                            List<StatDauAdnPlacement> statAdnPlacementDauSummary = this.getAdnPlacementDauReport(reportConditionDTO, dauConditionMap);
+                            statAdnPlacementDauSummary.forEach(adnPlacementStatDau -> results.add((JSONObject) JSONObject.toJSON(adnPlacementStatDau)));
+                            return results;
+                        }
+                    } else if (dimensionSet.contains(PLACEMENT_ID)) {
+                        if (dauDimensionsDTO.getPlacement() != null && dauDimensionsDTO.getPlacement() == 1) {
+                            List<StatDauPlacement> statPlacementDauSummary = this.getPlacementDauReport(reportConditionDTO, dauConditionMap);
+                            statPlacementDauSummary.forEach(placementStatDau -> results.add((JSONObject) JSONObject.toJSON(placementStatDau)));
+                            return results;
+                        }
+                    } else if (dimensionSet.contains(ADN_ID)) {
+                        if (dauDimensionsDTO.getAdn() != null && dauDimensionsDTO.getAdn() == 1) {
+                            List<StatDauAdn> statAdnDauSummary = this.getAdnDauReport(reportConditionDTO, dauConditionMap);
+                            statAdnDauSummary.forEach(adnStatDau -> results.add((JSONObject) JSONObject.toJSON(adnStatDau)));
+                            return results;
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Get dimension dau {} error:", JSONObject.toJSON(omDict), e);
+                }
+            }
+            List<StatDau> appStatDeuList = this.getAppDauReport(reportConditionDTO, dauConditionMap);
+            appStatDeuList.forEach(appStatDeu -> results.add((JSONObject) JSONObject.toJSON(appStatDeu)));
+            return results;
+        } catch (Exception e) {
+            log.error("Get deu report {} error:", JSONObject.toJSON(reportConditionDTO), e);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Get adn placement deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<StatDauAdn> getAdnDauReport(ReportConditionDTO reportConditionDTO, Map<String, Object> conditionMap) {
+        StatDauAdnCriteria statDauCriteria = new StatDauAdnCriteria();
+        StatDauAdnCriteria.Criteria criteria = statDauCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<Byte> platforms = Util.buildByteList(reportConditionDTO.getPlatform());
+        if (!CollectionUtils.isEmpty(platforms)) {
+            criteria.andPlatformIn(platforms);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());
+        if (!CollectionUtils.isEmpty(adnIds)) {
+            criteria.andAdnIdIn(adnIds);
+        }
+
+        if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
+        }
+        statDauCriteria.setOrderByClause(" day desc ");
+        conditionMap.put("orderByClause", statDauCriteria.getOrderByClause());
+
+        List<StatDauAdn> statAdnDauSummary = this.statDauAdnMapper.selectSummary(conditionMap);
+        log.info("Get adn DAU summary size {} condition {}", statAdnDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statAdnDauSummary;
+    }
+
+
+    /**
+     * Get adn placement deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<StatDauAdnPlacement> getAdnPlacementDauReport(ReportConditionDTO reportConditionDTO, Map<String, Object> conditionMap) {
+        StatDauAdnPlacementCriteria statDauCriteria = new StatDauAdnPlacementCriteria();
+        StatDauAdnPlacementCriteria.Criteria criteria = statDauCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<Byte> platforms = Util.buildByteList(reportConditionDTO.getPlatform());
+        if (!CollectionUtils.isEmpty(platforms)) {
+            criteria.andPlatformIn(platforms);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<Integer> placementIds = Util.buildIntegerList(reportConditionDTO.getPlacementId());
+        if (!CollectionUtils.isEmpty(placementIds)) {
+            criteria.andPlacementIdIn(placementIds);
+        } else {
+            criteria.andPlacementIdGreaterThan(0);
+        }
+
+        List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());
+        if (!CollectionUtils.isEmpty(adnIds)) {
+            criteria.andAdnIdIn(adnIds);
+        }
+
+        if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
+        }
+        statDauCriteria.setOrderByClause(" day desc ");
+        conditionMap.put("orderByClause", statDauCriteria.getOrderByClause());
+
+        List<StatDauAdnPlacement> statAdnPlacementDauSummary = this.statDauAdnPlacementMapper.selectSummary(conditionMap);
+        log.info("Get adn placement DAU summary size {} condition {}", statAdnPlacementDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statAdnPlacementDauSummary;
+    }
+
+    /**
+     * Get instance deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<StatDauPlacement> getPlacementDauReport(ReportConditionDTO reportConditionDTO, Map<String, Object> conditionMap) {
+        StatDauPlacementCriteria statDauCriteria = new StatDauPlacementCriteria();
+        StatDauPlacementCriteria.Criteria criteria = statDauCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<Byte> platforms = Util.buildByteList(reportConditionDTO.getPlatform());
+        if (!CollectionUtils.isEmpty(platforms)) {
+            criteria.andPlatformIn(platforms);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<Integer> placementIds = Util.buildIntegerList(reportConditionDTO.getPlacementId());
+        if (!CollectionUtils.isEmpty(placementIds)) {
+            criteria.andPlacementIdIn(placementIds);
+        } else {
+            criteria.andPlacementIdGreaterThan(0);
+        }
+
+        if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
+        }
+        statDauCriteria.setOrderByClause(" day desc ");
+        conditionMap.put("orderByClause", statDauCriteria.getOrderByClause());
+
+        List<StatDauPlacement> statPlacementDauSummary = this.statDauPlacementMapper.selectSummary(conditionMap);
+        log.info("Get placement DAU summary size {} condition {}", statPlacementDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statPlacementDauSummary;
+    }
+
+    /**
+     * Get instance deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<StatDauInstance> getInstanceDauReport(ReportConditionDTO reportConditionDTO, Map<String, Object> conditionMap) {
+        StatDauInstanceCriteria statDauCriteria = new StatDauInstanceCriteria();
+        StatDauInstanceCriteria.Criteria criteria = statDauCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<Byte> platforms = Util.buildByteList(reportConditionDTO.getPlatform());
+        if (!CollectionUtils.isEmpty(platforms)) {
+            criteria.andPlatformIn(platforms);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<Integer> placementIds = Util.buildIntegerList(reportConditionDTO.getPlacementId());
+        if (!CollectionUtils.isEmpty(placementIds)) {
+            criteria.andPlacementIdIn(placementIds);
+        }
+
+        List<Integer> instanceIds = Util.buildIntegerList(reportConditionDTO.getInstanceId());
+        if (!CollectionUtils.isEmpty(instanceIds)) {
+            criteria.andInstanceIdIn(instanceIds);
+        }
+
+        List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());
+        if (!CollectionUtils.isEmpty(adnIds)) {
+            criteria.andAdnIdIn(adnIds);
+        }
+
+        if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
+        }
+        statDauCriteria.setOrderByClause(" day desc ");
+        conditionMap.put("orderByClause", statDauCriteria.getOrderByClause());
+
+        List<StatDauInstance> statInstanceDauSummary = this.statDauInstanceMapper.selectSummary(conditionMap);
+        log.info("Get instance DAU summary size {} condition {}", statInstanceDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statInstanceDauSummary;
+    }
+
+    private void fillPlacementInstanceDau(List<JSONObject> reportList, ReportConditionDTO conditionDTO){
+        try {
+            if (CollectionUtils.isEmpty(reportList)){
+                return;
+            }
+            Map<String, Object> dauConditionMap = this.buildDauConditionMap(conditionDTO);
+            conditionDTO.setDimension(new String[]{"day", "pubAppId"});
+            if (conditionDTO.getDimensionSet().contains("country")){
+                conditionDTO.setDimension(new String[]{"day", "pubAppId", "country"});
+            }
+            conditionDTO.setPublisherId(new Integer[]{this.getCurrentPublisherId()});
+            List<StatDau> appStatSdkUsers = this.getAppDauReport(conditionDTO, dauConditionMap);
+            Map<String, StatDau> appDeuMap = new HashMap<>();
+            appStatSdkUsers.forEach(appStat -> appDeuMap.put(Util.getYYYYMMDD(appStat.getDay()) + appStat.getCountry() + appStat.getPubAppId(), appStat));
+            reportList.forEach(report -> {
+                StatDau sdkUser = appDeuMap.get(report.getString("day") + report.getString("country") + report.getString("pubAppId"));
+                if (sdkUser != null) {
+                    report.put("dau", sdkUser.getDau());
+                } else if (!report.containsKey("dau")){
+                    report.put("dau", 0);
+                }
+            });
+        } catch (Exception e){
+            log.error("fillPlacementInstanceDau error:", e);
+        }
+    }
+
+    /**
+     * Get app deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<StatDau> getAppDauReport(ReportConditionDTO reportConditionDTO, Map<String, Object> conditionMap) {
         StatDauCriteria statDauCriteria = new StatDauCriteria();
         StatDauCriteria.Criteria criteria = statDauCriteria.createCriteria();
         criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
@@ -451,7 +781,7 @@ public class ReportService extends BaseService {
         } else {
             criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
         }
-        if (reportConditionDTO.getHourEnd() != null){
+        if (reportConditionDTO.getHourEnd() != null) {
             criteria.andDayHourLessThanOrEqualTo(reportConditionDTO.getDateEnd(), reportConditionDTO.getHourEnd());
         } else {
             criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
@@ -580,5 +910,48 @@ public class ReportService extends BaseService {
         List<StatAdnetwork> statAdNetworkSummary = this.statAdnetworkMapper.selectSummary(conditionMap);
         log.info("Get adNetwork summary size {} condition {}", statAdNetworkSummary.size(), JSONObject.toJSONString(reportConditionDTO));
         return statAdNetworkSummary;
+    }
+
+    public List<StatCp> getCrossBidReport(ReportConditionDTO reportConditionDTO) {
+        this.handleDataPermissions(reportConditionDTO);
+        Map<String, Object> conditionMap = this.buildConditionMap(reportConditionDTO);
+        StatCpCriteria statCpCriteria = new StatCpCriteria();
+        StatCpCriteria.Criteria criteria = statCpCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<Integer> placementIds = Util.buildIntegerList(reportConditionDTO.getPlacementId());
+        if (!CollectionUtils.isEmpty(placementIds)) {
+            criteria.andPlacementIdIn(placementIds);
+        }
+
+        List<Integer> creativeIds = Util.buildIntegerList(reportConditionDTO.getCreativeId());
+        if (!CollectionUtils.isEmpty(creativeIds)) {
+            criteria.andCreativeIdIn(creativeIds);
+        }
+
+        statCpCriteria.setOrderByClause(" day desc ");
+        if (!CollectionUtils.isEmpty(statCpCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", statCpCriteria.getOredCriteria());
+        }
+        conditionMap.put("orderByClause", statCpCriteria.getOrderByClause());
+        List<StatCp> statStatCpSummary = this.statCpMapper.selectSummary(conditionMap);
+        log.info("Get adNetwork summary size {} condition {}", statStatCpSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        return statStatCpSummary;
     }
 }

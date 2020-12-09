@@ -32,7 +32,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
- *
  * @author dianbo ruan
  */
 @Service
@@ -47,13 +46,13 @@ public class AdmobService extends BaseService {
     public String adtClientSecret;
 
     @Resource
-    private OmAdnetworkAppMapper omAdnetworkAppMapper;
+    OmAdnetworkAppMapper omAdnetworkAppMapper;
 
     @Resource
-    private ReportAdnetworkAccountMapper reportAdnAccountMapper;
+    ReportAdnetworkAccountMapper reportAdnAccountMapper;
 
     @Value("${om.adc.domain}")
-    private String adcDomain;
+    String adcDomain;
 
     /**
      * Get admob auth grant url
@@ -145,7 +144,7 @@ public class AdmobService extends BaseService {
             throw new Exception("This Account is granted!");
         }
         Response response = getAdmobPublisherId(adtClientId, adtClientSecret, refreshToken);
-        if (response.getCode() != Response.SUCCESS_CODE){
+        if (response.getCode() != Response.SUCCESS_CODE) {
             return response;
         }
         String publisherId = response.getData().toString();
