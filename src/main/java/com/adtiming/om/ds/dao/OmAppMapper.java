@@ -15,7 +15,7 @@ public interface OmAppMapper {
 
     int insertSelective(OmAppWithBLOBs record);
 
-    List<OmAppWithBLOBs> selectWithBLOBs(OmAppCriteria example);
+    List<OmAppWithBLOBs> selectWithBLOBs(OmAppCriteria criteria);
 
     List<OmApp> select(OmAppCriteria example);
 

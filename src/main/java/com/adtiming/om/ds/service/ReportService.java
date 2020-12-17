@@ -155,8 +155,8 @@ public class ReportService extends BaseService {
             return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("Get report error {} ", JSONObject.toJSONString(reportConditionDTO), e);
+            return Response.build(Response.RES_FAILED.getCode(), Response.STATUS_DISABLE, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
 
     private List<JSONObject> businessMapReduce(List<JSONObject> resultReport, Set<String> dimensionSet) {
@@ -336,8 +336,8 @@ public class ReportService extends BaseService {
             return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("Get publisher app id {} regions' revenue error", pubAppId, e);
+            return Response.build(Response.RES_FAILED.getCode(), Response.STATUS_DISABLE, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
 
     /**

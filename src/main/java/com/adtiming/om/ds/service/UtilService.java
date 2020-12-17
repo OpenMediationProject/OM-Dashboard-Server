@@ -61,7 +61,7 @@ public class UtilService {
 
     private final Map<String, OmDict> omDictMap = new HashMap<>();
 
-    @Scheduled(cron = "0 10 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     @PostConstruct
     protected void initOmDict(){
         try {

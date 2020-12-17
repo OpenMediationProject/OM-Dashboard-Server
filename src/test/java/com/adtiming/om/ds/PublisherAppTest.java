@@ -3,7 +3,6 @@ package com.adtiming.om.ds;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.model.OmPublisherApp;
 import com.adtiming.om.ds.service.PublisherAppService;
-import com.adtiming.om.ds.web.PublisherAppController;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,10 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PublisherAppTest extends BaseCommonTests {
 
     @Autowired
-    private PublisherAppService publisherAppService;
-
-    @Autowired
-    private PublisherAppController publisherAppController;
+    PublisherAppService publisherAppService;
 
     @Test
     public void testCreatePublisherApp() {
@@ -60,10 +56,5 @@ public class PublisherAppTest extends BaseCommonTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8));
-    }
-
-    @Test
-    public void testUpdatePublisherAppsInfo() {
-        this.publisherAppService.updatePublisherAppInfo();
     }
 }

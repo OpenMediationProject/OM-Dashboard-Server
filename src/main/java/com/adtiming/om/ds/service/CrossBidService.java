@@ -174,6 +174,9 @@ public class CrossBidService extends BaseService {
     }
 
     private void fillPlacementPubAppId(List<CpCampaignTargeting> placementTargetingList) {
+        if (CollectionUtils.isEmpty(placementTargetingList)){
+            return;
+        }
         List<Integer> placementIds = new ArrayList<>();
         placementTargetingList.forEach(targeting -> placementIds.add(Integer.parseInt(targeting.getContent())));
         OmPlacementCriteria placementCriteria = new OmPlacementCriteria();

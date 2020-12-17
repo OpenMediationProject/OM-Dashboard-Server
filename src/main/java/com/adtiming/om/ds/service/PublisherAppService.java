@@ -3,11 +3,10 @@
 
 package com.adtiming.om.ds.service;
 
+import com.adtiming.om.ds.dao.OmAppMapper;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
-import com.adtiming.om.ds.model.OmPublisherApp;
-import com.adtiming.om.ds.model.OmPublisherAppCriteria;
-import com.adtiming.om.ds.model.UmUserApp;
+import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.util.HttpConnMgr;
 import com.adtiming.om.ds.util.Util;
 import com.alibaba.fastjson.JSONObject;
@@ -22,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -37,23 +38,50 @@ public class PublisherAppService extends BaseService {
 
     protected static final Logger log = LogManager.getLogger();
 
+    @Resource
+    OmAppMapper omAppMapper;
+
     private static final String APP_UPDATE_URL = "http://adtimingapi.com/om/app?id=%s";
 
     /**
      * Update publisher app's info from app store every day
      */
     @Scheduled(cron = "0 30 4 * * *")
-    public void updatePublisherAppInfo() {
-        List<OmPublisherApp> omPublisherApps = this.getPublisherApps(null, NormalStatus.Active);
-        for (OmPublisherApp omPublisherApp : omPublisherApps) {
-            try {
-                boolean result = this.updatePublisherAppInfo(omPublisherApp);
-                if (result) {
-                    this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
+    protected void updateAppInfo() {
+        try {
+            List<OmPublisherApp> omPublisherApps = this.getPublisherApps(null, NormalStatus.Active);
+            for (OmPublisherApp omPublisherApp : omPublisherApps) {
+                try {
+                    boolean result = this.updatePublisherAppInfo(omPublisherApp);
+                    if (result) {
+                        this.omPublisherAppMapper.updateByPrimaryKeySelective(omPublisherApp);
+                    }
+                } catch (Exception e) {
+                    log.error("Update publisher app info {} error:", JSONObject.toJSON(omPublisherApp));
                 }
-            } catch (Exception e) {
-                log.error("Update publisher app info {} error:", JSONObject.toJSON(omPublisherApp));
             }
+
+            List<OmAppWithBLOBs> omApps = this.omAppMapper.selectWithBLOBs(new OmAppCriteria());
+            for (OmAppWithBLOBs dbOmApp : omApps){
+                try {
+                    OmPublisherApp omPublisherApp = new OmPublisherApp();
+                    omPublisherApp.setAppId(dbOmApp.getAppId());
+                    if (this.updatePublisherAppInfo(omPublisherApp)){
+                        OmAppWithBLOBs omApp = this.buildOmApp(omPublisherApp);
+                        omApp.setId(dbOmApp.getId());
+                        omApp.setCreateTime(dbOmApp.getCreateTime());
+                        omApp.setLastmodify(new Date());
+                        int result = this.omAppMapper.updateByPrimaryKeySelective(omApp);
+                        if (result <= 0) {
+                            throw new RuntimeException("Update om app " + JSONObject.toJSONString(omApp) + " failed");
+                        }
+                    }
+                } catch (Exception e){
+                    log.error("Update om app info {} error:", JSONObject.toJSON(dbOmApp));
+                }
+            }
+        } catch (Exception e){
+            log.error("Update publisher app info error:", e);
         }
     }
 
@@ -282,6 +310,7 @@ public class PublisherAppService extends BaseService {
                         omPublisherApp.setDescn(appInfoJson.getString("descn").substring(0, 1999));
                     }
                 }
+                this.updateOmApp(omPublisherApp);
                 return true;
             } else {
                 log.info("Update app {} failed url {}", result, updateUrl);
@@ -290,6 +319,46 @@ public class PublisherAppService extends BaseService {
             log.error("Update publisher app {} error:", JSONObject.toJSONString(omPublisherApp), e);
         }
         return false;
+    }
+
+    private void updateOmApp(OmPublisherApp omPublisherApp){
+        OmAppCriteria omAppCriteria = new OmAppCriteria();
+        OmAppCriteria.Criteria criteria = omAppCriteria.createCriteria();
+        criteria.andAppIdEqualTo(omPublisherApp.getAppId());
+        List<OmAppWithBLOBs> apps = this.omAppMapper.selectWithBLOBs(omAppCriteria);
+        if (CollectionUtils.isEmpty(apps)){
+            OmAppWithBLOBs omApp = this.buildOmApp(omPublisherApp);
+            int result = this.omAppMapper.insertSelective(omApp);
+            if (result <= 0) {
+                throw new RuntimeException("Insert om app " + JSONObject.toJSONString(omApp) + " failed");
+            }
+        } else {
+            OmAppWithBLOBs dbOmApp = apps.get(0);
+            OmAppWithBLOBs omApp = this.buildOmApp(omPublisherApp);
+            omApp.setId(dbOmApp.getId());
+            omApp.setLastmodify(new Date());
+            omApp.setCreateTime(dbOmApp.getCreateTime());
+            int result = this.omAppMapper.updateByPrimaryKeySelective(omApp);
+            if (result <= 0) {
+                throw new RuntimeException("Update om app " + JSONObject.toJSONString(omApp) + " failed");
+            }
+        }
+    }
+
+    private OmAppWithBLOBs buildOmApp(OmPublisherApp omPublisherApp){
+        OmAppWithBLOBs omApp = new OmAppWithBLOBs();
+        omApp.setAppId(omPublisherApp.getAppId());
+        omApp.setIcon(omPublisherApp.getIcon());
+        omApp.setDescn(omPublisherApp.getDescn());
+        omApp.setPlat(omPublisherApp.getPlat());
+        omApp.setName(omPublisherApp.getAppName());
+        omApp.setBundleId(omPublisherApp.getBundleId());
+        omApp.setCategory(omPublisherApp.getCategory());
+        omApp.setCategoryId(omPublisherApp.getCategoryId());
+        omApp.setCountry(omPublisherApp.getCountry());
+        omApp.setPreviewUrl(omPublisherApp.getPreviewUrl());
+        omApp.setOsRequire(omPublisherApp.getOsRequire());
+        return omApp;
     }
 }
 

@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Report interface
@@ -58,10 +55,7 @@ public class ReportController extends BaseController {
                 && "00".equals(reportConditionDTO.getCountry()[0])){
             reportConditionDTO.setCountry(null);
         }
-        Set<String> reportTypeSet = new HashSet<>();
-        for (String type : reportConditionDTO.getType()) {
-            reportTypeSet.add(type);
-        }
+        Set<String> reportTypeSet = new HashSet<>(Arrays.asList(reportConditionDTO.getType()));
         return this.reportService.getReport(reportConditionDTO, reportTypeSet);
     }
 
@@ -70,7 +64,12 @@ public class ReportController extends BaseController {
      */
     @RequestMapping(value = "/report/dashboard/head/revenues", method = RequestMethod.GET)
     public Response getDashboardHeadRevenue(Integer pubAppId) {
-        return this.reportService.getDashboardHeadRevenue(pubAppId);
+        try {
+            return this.reportService.getDashboardHeadRevenue(pubAppId);
+        } catch (Exception e){
+            log.error("GetDashboardHeadRevenue error:", e);
+            return Response.build(Response.RES_FAILED.getCode(), Response.STATUS_DISABLE, e.getMessage());
+        }
     }
 
     /**
@@ -100,8 +99,7 @@ public class ReportController extends BaseController {
             return Response.buildSuccess(results);
         } catch (Exception e) {
             log.error("Get cross bid report error, {}:", JSONObject.toJSON(reportConditionDTO), e);
+            return Response.build(Response.RES_FAILED.getCode(), Response.STATUS_DISABLE, e.getMessage());
         }
-        return Response.RES_FAILED;
     }
-    //UPDATE `open_mediation`.`um_permission` SET `api_path` = '/report/list\n/report/dau/list\n/report/lr/list\n/report/adnetwork/list\n/report/ltv\n/report/ltv/chart\n/report/retention\n/report/retention/chart\nreport/list/cross_bid' WHERE (`id` = '1800');
 }
