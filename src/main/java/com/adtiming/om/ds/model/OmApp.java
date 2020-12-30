@@ -17,6 +17,8 @@ public class OmApp {
 
     private String name;
 
+    private String appName;
+
     private String icon;
 
     private String videoUrl;
@@ -97,6 +99,14 @@ public class OmApp {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public String getIcon() {

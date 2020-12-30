@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -1233,6 +1236,66 @@ public class CpCampaignCriteria {
 
         public Criteria andAdDomainNotBetween(String value1, String value2) {
             addCriterion("ad_domain not between", value1, value2, "adDomain");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeIsNull() {
+            addCriterion("open_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeIsNotNull() {
+            addCriterion("open_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeEqualTo(Byte value) {
+            addCriterion("open_type =", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeNotEqualTo(Byte value) {
+            addCriterion("open_type <>", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeGreaterThan(Byte value) {
+            addCriterion("open_type >", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeGreaterThanOrEqualTo(Byte value) {
+            addCriterion("open_type >=", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeLessThan(Byte value) {
+            addCriterion("open_type <", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeLessThanOrEqualTo(Byte value) {
+            addCriterion("open_type <=", value, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeIn(List<Byte> values) {
+            addCriterion("open_type in", values, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeNotIn(List<Byte> values) {
+            addCriterion("open_type not in", values, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeBetween(Byte value1, Byte value2) {
+            addCriterion("open_type between", value1, value2, "openType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOpenTypeNotBetween(Byte value1, Byte value2) {
+            addCriterion("open_type not between", value1, value2, "openType");
             return (Criteria) this;
         }
 

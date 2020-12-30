@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -40,6 +43,8 @@ public class CpCampaign {
 
     private String adDomain;
 
+    private Byte openType;
+
     private String clickUrl;
 
     private String imprUrl;
@@ -71,6 +76,8 @@ public class CpCampaign {
     private CpCampaignBidprice[] bidPriceList;
 
     private CpCreative[] creativeList;
+
+    private OmAppWithBLOBs promoteApp;
 
     public Integer getId() {
         return id;
@@ -216,6 +223,14 @@ public class CpCampaign {
         this.adDomain = adDomain == null ? null : adDomain.trim();
     }
 
+    public Byte getOpenType() {
+        return openType;
+    }
+
+    public void setOpenType(Byte openType) {
+        this.openType = openType;
+    }
+
     public String getClickUrl() {
         return clickUrl;
     }
@@ -344,6 +359,14 @@ public class CpCampaign {
         this.creativeList = creativeList;
     }
 
+    public OmAppWithBLOBs getPromoteApp() {
+        return promoteApp;
+    }
+
+    public void setPromoteApp(OmAppWithBLOBs promoteApp) {
+        this.promoteApp = promoteApp;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -374,6 +397,7 @@ public class CpCampaign {
             && (this.getImprCap() == null ? other.getImprCap() == null : this.getImprCap().equals(other.getImprCap()))
             && (this.getImprFreq() == null ? other.getImprFreq() == null : this.getImprFreq().equals(other.getImprFreq()))
             && (this.getAdDomain() == null ? other.getAdDomain() == null : this.getAdDomain().equals(other.getAdDomain()))
+            && (this.getOpenType() == null ? other.getOpenType() == null : this.getOpenType().equals(other.getOpenType()))
             && (this.getClickUrl() == null ? other.getClickUrl() == null : this.getClickUrl().equals(other.getClickUrl()))
             && (this.getImprUrl() == null ? other.getImprUrl() == null : this.getImprUrl().equals(other.getImprUrl()))
             && (this.getClickTkUrls() == null ? other.getClickTkUrls() == null : this.getClickTkUrls().equals(other.getClickTkUrls()))
@@ -410,6 +434,7 @@ public class CpCampaign {
         result = prime * result + ((getImprCap() == null) ? 0 : getImprCap().hashCode());
         result = prime * result + ((getImprFreq() == null) ? 0 : getImprFreq().hashCode());
         result = prime * result + ((getAdDomain() == null) ? 0 : getAdDomain().hashCode());
+        result = prime * result + ((getOpenType() == null) ? 0 : getOpenType().hashCode());
         result = prime * result + ((getClickUrl() == null) ? 0 : getClickUrl().hashCode());
         result = prime * result + ((getImprUrl() == null) ? 0 : getImprUrl().hashCode());
         result = prime * result + ((getClickTkUrls() == null) ? 0 : getClickTkUrls().hashCode());

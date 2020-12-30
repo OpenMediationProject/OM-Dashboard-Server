@@ -17,7 +17,7 @@ public interface OmAppMapper {
 
     List<OmAppWithBLOBs> selectWithBLOBs(OmAppCriteria criteria);
 
-    List<OmApp> select(OmAppCriteria example);
+    List<OmApp> select(OmAppCriteria criteria);
 
     OmAppWithBLOBs selectByPrimaryKey(Integer id);
 

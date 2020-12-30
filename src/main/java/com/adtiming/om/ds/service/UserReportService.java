@@ -105,6 +105,9 @@ public class UserReportService extends BaseService {
             if (ltv.getPubAppId() != null && ltv.getPubAppId() > 0) {
                 result.put("publisher_app_id", ltv.getPubAppId());
                 result.put("pub_app_id", ltv.getPubAppId());
+            } else {
+                result.put("publisher_app_id", 0);
+                result.put("pub_app_id", 0);
             }
             if (!StringUtils.isBlank(ltv.getCountry())) {
                 result.put("country", ltv.getCountry());
@@ -134,28 +137,6 @@ public class UserReportService extends BaseService {
         ps.add("s_base_date", lBegin.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         List<Map<String, Object>> results = this.getReport(ps);
-        List<String> queryPaymentTypes = ps.get("queryPaymentType");
-        if (!CollectionUtils.isEmpty(queryPaymentTypes) && queryPaymentTypes.size() == 1) {
-            /**
-             * 只选IAA = adt_value_new + mediation_value_new
-             * 只选IAP = iap_value_new
-             * IAA和IAP都选 = total_value_new 或者 adt_value_new + mediation_value_new + iap_value_new
-             * **/
-            String paymentType = queryPaymentTypes.get(0);
-            for (Map<String, Object> result : results) {
-                if ("IAA".equals(paymentType)) {
-                    BigDecimal adtValueNew = MapHelper.getBigDecimal(result, "adt_value_new") == null
-                            ? BigDecimal.ZERO : MapHelper.getBigDecimal(result, "adt_value_new");
-                    BigDecimal mediationValueNew = MapHelper.getBigDecimal(result, "mediation_value_new") == null
-                            ? BigDecimal.ZERO : MapHelper.getBigDecimal(result, "mediation_value_new");
-                    result.put("total_value_new", adtValueNew.add(mediationValueNew));
-                } else if ("IAP".equals(paymentType)) {
-                    BigDecimal iapValueNew = MapHelper.getBigDecimal(result, "iap_value_new") == null
-                            ? BigDecimal.ZERO : MapHelper.getBigDecimal(result, "iap_value_new");
-                    result.put("total_value_new", iapValueNew);
-                }
-            }
-        }
         Iterator<Map<String, Object>> iterator = results.iterator();
         while (iterator.hasNext()) {
             Map<String, Object> report = iterator.next();

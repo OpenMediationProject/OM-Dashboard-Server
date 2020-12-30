@@ -230,6 +230,22 @@ public class CrossBidService extends BaseService {
             throw new RuntimeException("Create campaign failed!" + JSONObject.toJSON(campaign));
         }
 
+        if (campaign.getOpenType() != null && campaign.getOpenType() > 0){
+            OmAppWithBLOBs promoteApp = campaign.getPromoteApp();
+            if (promoteApp != null){
+                OmAppCriteria appCriteria = new OmAppCriteria();
+                OmAppCriteria.Criteria criteria = appCriteria.createCriteria();
+                criteria.andAppIdEqualTo(promoteApp.getAppId());
+                List<OmApp> apps = this.omAppMapper.select(appCriteria);
+                if (CollectionUtils.isEmpty(apps)) {
+                    result = this.omAppMapper.insertSelective(promoteApp);
+                    if (result <= 0) {
+                        throw new RuntimeException("Create promoteApp failed!" + JSONObject.toJSON(campaign));
+                    }
+                }
+            }
+        }
+
         CpCampaignTargeting[] targetingList = campaign.getTargetingList();
         if (targetingList != null && targetingList.length > 0) {
             for (CpCampaignTargeting targeting : targetingList) {

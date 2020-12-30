@@ -6,6 +6,7 @@ package com.adtiming.om.ds.web;
 import com.adtiming.om.ds.dto.AdvertisementType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
+import com.adtiming.om.ds.model.OmApp;
 import com.adtiming.om.ds.model.OmPlacement;
 import com.adtiming.om.ds.model.OmPublisherApp;
 import com.adtiming.om.ds.service.PlacementService;
@@ -169,7 +170,19 @@ public class PublisherAppController extends BaseController {
         omPublisherApp.setAppId(appId);
         boolean result = this.publisherAppService.updatePublisherAppInfo(omPublisherApp);
         if (result) {
+            JSONObject appResult = (JSONObject) JSONObject.toJSON(omPublisherApp);
+            OmApp app = this.publisherAppService.getApp(appId);
+            if (app != null){
+                appResult.put("ratingCount", app.getRatingCount());
+                appResult.put("ratingValue", app.getRatingValue());
+            }
             return Response.buildSuccess(omPublisherApp);
+        } else  {
+            OmApp app = this.publisherAppService.getApp(appId);
+            if (app != null) {
+                app.setAppName(app.getName());
+                return new Response(Response.SUCCESS_CODE, Response.STATUS_ENABLE, "OK", (JSONObject)JSONObject.toJSON(app));
+            }
         }
         return Response.RES_FAILED;
     }

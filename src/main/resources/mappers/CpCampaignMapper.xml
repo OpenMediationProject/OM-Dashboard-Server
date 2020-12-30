@@ -20,6 +20,7 @@
     <result column="impr_cap" jdbcType="INTEGER" property="imprCap" />
     <result column="impr_freq" jdbcType="INTEGER" property="imprFreq" />
     <result column="ad_domain" jdbcType="VARCHAR" property="adDomain" />
+    <result column="open_type" jdbcType="TINYINT" property="openType" />
     <result column="click_url" jdbcType="VARCHAR" property="clickUrl" />
     <result column="impr_url" jdbcType="VARCHAR" property="imprUrl" />
     <result column="click_tk_urls" jdbcType="VARCHAR" property="clickTkUrls" />
@@ -67,8 +68,8 @@
   <sql id="Base_Column_List">
     id, ska_campaign_id, publisher_id, type, name, app_id, app_name, preview_url, platform, 
     billing_type, price, daily_cap, daily_budget, max_bidprice, bidprice, impr_cap, impr_freq, 
-    ad_domain, click_url, impr_url, click_tk_urls, impr_tk_urls, start_time, end_time, 
-    status, run_status, last_reason, lastmodify, create_time
+    ad_domain, open_type, click_url, impr_url, click_tk_urls, impr_tk_urls, start_time, 
+    end_time, status, run_status, last_reason, lastmodify, create_time
   </sql>
   <sql id="Blob_Column_List">
     remark
@@ -124,21 +125,23 @@
       preview_url, platform, billing_type, 
       price, daily_cap, daily_budget, 
       max_bidprice, bidprice, impr_cap, 
-      impr_freq, ad_domain, click_url, 
-      impr_url, click_tk_urls, impr_tk_urls, 
-      start_time, end_time, status, 
-      run_status, last_reason, lastmodify, 
-      create_time, remark)
+      impr_freq, ad_domain, open_type, 
+      click_url, impr_url, click_tk_urls, 
+      impr_tk_urls, start_time, end_time, 
+      status, run_status, last_reason, 
+      lastmodify, create_time, remark
+      )
     values (#{skaCampaignId,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{type,jdbcType=TINYINT}, 
       #{name,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, #{appName,jdbcType=VARCHAR}, 
       #{previewUrl,jdbcType=VARCHAR}, #{platform,jdbcType=TINYINT}, #{billingType,jdbcType=TINYINT}, 
       #{price,jdbcType=DECIMAL}, #{dailyCap,jdbcType=INTEGER}, #{dailyBudget,jdbcType=DECIMAL}, 
       #{maxBidprice,jdbcType=DECIMAL}, #{bidprice,jdbcType=DECIMAL}, #{imprCap,jdbcType=INTEGER}, 
-      #{imprFreq,jdbcType=INTEGER}, #{adDomain,jdbcType=VARCHAR}, #{clickUrl,jdbcType=VARCHAR}, 
-      #{imprUrl,jdbcType=VARCHAR}, #{clickTkUrls,jdbcType=VARCHAR}, #{imprTkUrls,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}, 
-      #{runStatus,jdbcType=TINYINT}, #{lastReason,jdbcType=VARCHAR}, #{lastmodify,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=LONGVARCHAR})
+      #{imprFreq,jdbcType=INTEGER}, #{adDomain,jdbcType=VARCHAR}, #{openType,jdbcType=TINYINT}, 
+      #{clickUrl,jdbcType=VARCHAR}, #{imprUrl,jdbcType=VARCHAR}, #{clickTkUrls,jdbcType=VARCHAR}, 
+      #{imprTkUrls,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=TINYINT}, #{runStatus,jdbcType=TINYINT}, #{lastReason,jdbcType=VARCHAR}, 
+      #{lastmodify,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.CpCampaign">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -196,6 +199,9 @@
       </if>
       <if test="adDomain != null">
         ad_domain,
+      </if>
+      <if test="openType != null">
+        open_type,
       </if>
       <if test="clickUrl != null">
         click_url,
@@ -285,6 +291,9 @@
       </if>
       <if test="adDomain != null">
         #{adDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="openType != null">
+        #{openType,jdbcType=TINYINT},
       </if>
       <if test="clickUrl != null">
         #{clickUrl,jdbcType=VARCHAR},
@@ -378,6 +387,9 @@
       <if test="adDomain != null">
         ad_domain = #{adDomain,jdbcType=VARCHAR},
       </if>
+      <if test="openType != null">
+        open_type = #{openType,jdbcType=TINYINT},
+      </if>
       <if test="clickUrl != null">
         click_url = #{clickUrl,jdbcType=VARCHAR},
       </if>
@@ -436,6 +448,7 @@
       impr_cap = #{imprCap,jdbcType=INTEGER},
       impr_freq = #{imprFreq,jdbcType=INTEGER},
       ad_domain = #{adDomain,jdbcType=VARCHAR},
+      open_type = #{openType,jdbcType=TINYINT},
       click_url = #{clickUrl,jdbcType=VARCHAR},
       impr_url = #{imprUrl,jdbcType=VARCHAR},
       click_tk_urls = #{clickTkUrls,jdbcType=VARCHAR},
@@ -469,6 +482,7 @@
       impr_cap = #{imprCap,jdbcType=INTEGER},
       impr_freq = #{imprFreq,jdbcType=INTEGER},
       ad_domain = #{adDomain,jdbcType=VARCHAR},
+      open_type = #{openType,jdbcType=TINYINT},
       click_url = #{clickUrl,jdbcType=VARCHAR},
       impr_url = #{imprUrl,jdbcType=VARCHAR},
       click_tk_urls = #{clickTkUrls,jdbcType=VARCHAR},

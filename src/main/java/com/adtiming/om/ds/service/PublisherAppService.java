@@ -253,6 +253,17 @@ public class PublisherAppService extends BaseService {
         return Response.build();
     }
 
+    public OmApp getApp(String appId){
+        OmAppCriteria appCriteria = new OmAppCriteria();
+        OmAppCriteria.Criteria criteria = appCriteria.createCriteria();
+        criteria.andAppIdEqualTo(appId);
+        List<OmApp> apps = this.omAppMapper.select(appCriteria);
+        if (!CollectionUtils.isEmpty(apps)) {
+            return apps.get(0);
+        }
+        return null;
+    }
+
     /**
      * Update publisher app's info from app store
      *

@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -108,11 +109,25 @@ public class FieldNameService {
 
             Integer pubAppId = result.getInteger("pubAppId");
             if (pubAppId != null) {
-                result.put("pubAppName", this.idNameMap.get("pubAppId" + pubAppId));
+                String pubAppName = this.idNameMap.get("pubAppId" + pubAppId);
+                if (!StringUtils.isEmpty(pubAppName)) {
+                    result.put("pubAppName", this.idNameMap.get("pubAppId" + pubAppId));
+                    result.put("appName", this.idNameMap.get("pubAppId" + pubAppId));
+                } else {
+                    result.put("pubAppName", pubAppId);
+                    result.put("appName", pubAppId);
+                }
             } else {
                 pubAppId = result.getInteger("publisher_app_id");
                 if (pubAppId != null) {
-                    result.put("appName", this.idNameMap.get("pubAppId" + pubAppId));
+                    String pubAppName = this.idNameMap.get("pubAppId" + pubAppId);
+                    if (!StringUtils.isEmpty(pubAppName)) {
+                        result.put("pubAppName", this.idNameMap.get("pubAppId" + pubAppId));
+                        result.put("appName", this.idNameMap.get("pubAppId" + pubAppId));
+                    } else {
+                        result.put("pubAppName", pubAppId);
+                        result.put("appName", pubAppId);
+                    }
                 }
             }
 
