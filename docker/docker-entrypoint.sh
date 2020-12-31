@@ -94,7 +94,7 @@ do
         fi
         if [[ ${item_name} = "dbname" ]];then
             loginfo_note "[Configuring] ${item_name} in ${CONFFILE}/application-loc.yml"
-            sed -i "/url/s/open_mediation/${!env_var}/g" ${CONFFILE}/application-loc.yml
+            sed -i "/url/s/open_mediation?/${!env_var}?/g" ${CONFFILE}/application-loc.yml
             continue
         fi
         if [[ ${item_name} = "omadcdomain" ]];then
