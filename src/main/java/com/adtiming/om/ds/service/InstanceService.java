@@ -408,13 +408,24 @@ public class InstanceService extends BaseService {
         instance.setName("cross_biding");
         instance.setPlacementId(placement.getId());
         instance.setAdnId(AdNetworkType.CrossPromotion.ordinal());
-        if(placement.getAdType() == 5){
-            instance.setHbStatus((byte) 0);
-        } else {
-            instance.setHbStatus((byte) 1);
+
+        List<OmInstanceWithBLOBs> instances = this.getInstances(placement.getPubAppId(),
+                AdNetworkType.CrossPromotion.ordinal(), null, placement.getId());
+        if (!CollectionUtils.isEmpty(instances)){
+            log.info("Cross promotion instance existed for placement {}", placement.getId());
+            return;
         }
+
+        if(placement.getAdType() == 5){
+            instance.setStatus((byte) NormalStatus.Active.ordinal());
+            instance.setHbStatus((byte) NormalStatus.Pending.ordinal());
+        } else {
+            instance.setHbStatus((byte) NormalStatus.Pending.ordinal());
+            instance.setStatus((byte) NormalStatus.Pending.ordinal());
+        }
+
         instance.setPubAppId(placement.getPubAppId());
-        instance.setStatus((byte)NormalStatus.Pending.ordinal());
+        instance.setAdnAppId(placement.getPubAppId());
         Response response = this.createInstance(instance);
         if (response.failed()){
             throw new RuntimeException("Build default cross bid instance " + JSONObject.toJSON(instance) + " failed!");

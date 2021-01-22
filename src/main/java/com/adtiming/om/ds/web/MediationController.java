@@ -256,10 +256,10 @@ public class MediationController extends BaseController {
             Map<String, JSONObject> secondEcpmMap;
             if (hourBefore <= 24) {
                 dateBegin = DateUtils.addDays(currentDate, -1);
-                Date dateEnd = DateUtils.addDays(currentDate, -1);
+                Date dateEnd = currentDate;
                 firstEcpmMap = this.getInstanceReportMap(pubAppId, placementId, dateBegin, dateEnd, countries);
                 dateBegin = DateUtils.addDays(currentDate, -2);
-                dateEnd = DateUtils.addDays(currentDate, -2);
+                dateEnd = DateUtils.addDays(currentDate, -1);
                 secondEcpmMap = this.getInstanceReportMap(pubAppId, placementId, dateBegin, dateEnd, countries);
             } else {
                 dateBegin = DateUtils.addDays(currentDate, -1);

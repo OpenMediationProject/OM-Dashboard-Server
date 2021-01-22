@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -41,6 +42,9 @@ public class PlacementService extends BaseService {
 
     @Resource
     OmPlacementCountryMapper omPlacementCountryMapper;
+
+    @Autowired
+    InstanceService instanceService;
 
     /**
      * Select all placements from database which related to current user
@@ -209,6 +213,9 @@ public class PlacementService extends BaseService {
         int id = this.omPlacementMapper.insertSelective(omPlacement);
         if (id <= 0) {
             throw new RuntimeException("Insert placement " + JSONObject.toJSON(omPlacement) + " failed!");
+        }
+        if (omPlacement.getAdType() != null && omPlacement.getAdType() == 5) {
+            this.instanceService.buildDefaultCrossBidInstance(omPlacement);
         }
         log.info("Create placement name {}", omPlacement.getName());
         return Response.buildSuccess(omPlacement);

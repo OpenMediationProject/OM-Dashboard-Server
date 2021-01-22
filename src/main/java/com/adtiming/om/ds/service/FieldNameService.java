@@ -50,6 +50,9 @@ public class FieldNameService {
     @Resource
     CpCreativeMapper cpCreativeMapper;
 
+    @Resource
+    OmPlacementSceneMapper omPlacementSceneMapper;
+
     /**
      * Init cache when start and per hour
      */
@@ -83,6 +86,11 @@ public class FieldNameService {
             List<OmInstanceWithBLOBs> instances = omInstanceMapper.select(new OmInstanceCriteria());
             instances.forEach(instance -> this.idNameMap.put("instanceId" + instance.getId(), instance.getName()));
             log.info("Init instances size: {}", instances.size());
+
+            List<OmPlacementScene> scenes = omPlacementSceneMapper.select(new OmPlacementSceneCriteria());
+            scenes.forEach(scene -> this.idNameMap.put("sceneId" + scene.getId(), scene.getName()));
+            this.idNameMap.put("sceneId0", "Default_Scene");
+            log.info("Init scene size: {}", scenes.size());
 
             try {
                 List<CpCreative> cpCreatives = this.cpCreativeMapper.selectWithBLOBs(new CpCreativeCriteria());
@@ -139,6 +147,11 @@ public class FieldNameService {
             Integer instanceId = result.getInteger("instanceId");
             if (instanceId != null) {
                 result.put("instanceName", this.idNameMap.get("instanceId" + instanceId));
+            }
+
+            Integer sceneId = result.getInteger("sceneId");
+            if (sceneId != null) {
+                result.put("sceneName", this.idNameMap.get("sceneId" + sceneId));
             }
 
             Integer adType = result.getInteger("adType");

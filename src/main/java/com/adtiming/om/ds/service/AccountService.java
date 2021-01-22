@@ -5,10 +5,8 @@ import com.adtiming.om.ds.dao.ReportAdnetworkAccountPublisherMapper;
 import com.adtiming.om.ds.dto.AdNetworkType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
-import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.auth.oauth2.TokenResponseException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -393,6 +391,11 @@ public class AccountService extends BaseService {
                 }
                 if (StringUtils.isBlank(account.getUserSignature())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Chartboost's [ User Signature] must be not null");
+                }
+                break;
+            case TencentAd:
+                if (StringUtils.isBlank(account.getUserId())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "TencentAd's [User ID] must be not null");
                 }
                 break;
             case IronSource:

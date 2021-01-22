@@ -66,7 +66,7 @@ public class SDKIntegrationService extends BaseService {
             Map<Integer, OmDevApp> devAppMap = this.getDevAppMap(pubAppId, null);
             Set<Integer> adNetworkIds = this.instanceService.getAdnIdsWithInstance(pubAppId);
             if (CollectionUtils.isEmpty(adNetworkIds)) {
-                return Response.build(Response.CODE_RES_FAILED, Response.STATUS_DISABLE, "No active instances to be test");
+                return Response.build(Response.CODE_DATA_DOES_NOT_EXISTED, Response.STATUS_DISABLE, "No active instances to be test.");
             }
             List<OmAdnetwork> adNetworks = this.adNetworkService.getAllAdNetworks();
             for (OmAdnetwork omAdnetwork : adNetworks) {
