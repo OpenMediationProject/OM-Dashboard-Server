@@ -1,6 +1,5 @@
 // Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
 // Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.util.Date;
@@ -39,7 +38,7 @@ public class StatDauKey {
         }
         StatDauKey other = (StatDauKey) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()));
+            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()));
     }
 
     @Override

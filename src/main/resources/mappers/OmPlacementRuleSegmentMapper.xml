@@ -7,6 +7,10 @@
     <result column="countries" jdbcType="VARCHAR" property="countries" />
     <result column="frequency" jdbcType="INTEGER" property="frequency" />
     <result column="con_type" jdbcType="TINYINT" property="conType" />
+    <result column="osv_exp" jdbcType="VARCHAR" property="osvExp" />
+    <result column="sdkv_exp" jdbcType="VARCHAR" property="sdkvExp" />
+    <result column="appv_exp" jdbcType="VARCHAR" property="appvExp" />
+    <result column="require_did" jdbcType="TINYINT" property="requireDid" />
     <result column="gender" jdbcType="TINYINT" property="gender" />
     <result column="age_min" jdbcType="INTEGER" property="ageMin" />
     <result column="age_max" jdbcType="INTEGER" property="ageMax" />
@@ -26,6 +30,7 @@
     <result column="brand_blacklist" jdbcType="LONGVARCHAR" property="brandBlacklist" />
     <result column="model_whitelist" jdbcType="LONGVARCHAR" property="modelWhitelist" />
     <result column="model_blacklist" jdbcType="LONGVARCHAR" property="modelBlacklist" />
+    <result column="custom_tags" jdbcType="LONGVARCHAR" property="customTags" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -57,12 +62,12 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, placement_id, countries, frequency, con_type, gender, age_min, age_max, interest, 
-    iap_min, iap_max, channel, channel_bow, model_type, priority, status, create_time, 
-    lastmodify
+    id, placement_id, countries, frequency, con_type, osv_exp, sdkv_exp, appv_exp, require_did, 
+    gender, age_min, age_max, interest, iap_min, iap_max, channel, channel_bow, model_type, 
+    priority, status, create_time, lastmodify
   </sql>
   <sql id="Blob_Column_List">
-    brand_whitelist, brand_blacklist, model_whitelist, model_blacklist
+    brand_whitelist, brand_blacklist, model_whitelist, model_blacklist, custom_tags
   </sql>
   <select id="selectWithBLOBs" parameterType="com.adtiming.om.ds.model.OmPlacementRuleSegmentCriteria" resultMap="ResultMapWithBLOBs">
     select
@@ -111,21 +116,25 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into om_placement_rule_segment (placement_id, countries, frequency, 
-      con_type, gender, age_min, 
-      age_max, interest, iap_min, 
-      iap_max, channel, channel_bow, 
-      model_type, priority, status, 
-      create_time, lastmodify, brand_whitelist, 
-      brand_blacklist, model_whitelist, 
-      model_blacklist)
+      con_type, osv_exp, sdkv_exp, 
+      appv_exp, require_did, gender, 
+      age_min, age_max, interest, 
+      iap_min, iap_max, channel, 
+      channel_bow, model_type, priority, 
+      status, create_time, lastmodify, 
+      brand_whitelist, brand_blacklist, 
+      model_whitelist, model_blacklist, 
+      custom_tags)
     values (#{placementId,jdbcType=INTEGER}, #{countries,jdbcType=VARCHAR}, #{frequency,jdbcType=INTEGER}, 
-      #{conType,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, #{ageMin,jdbcType=INTEGER}, 
-      #{ageMax,jdbcType=INTEGER}, #{interest,jdbcType=VARCHAR}, #{iapMin,jdbcType=DECIMAL}, 
-      #{iapMax,jdbcType=DECIMAL}, #{channel,jdbcType=VARCHAR}, #{channelBow,jdbcType=TINYINT}, 
-      #{modelType,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, #{brandWhitelist,jdbcType=LONGVARCHAR}, 
-      #{brandBlacklist,jdbcType=LONGVARCHAR}, #{modelWhitelist,jdbcType=LONGVARCHAR}, 
-      #{modelBlacklist,jdbcType=LONGVARCHAR})
+      #{conType,jdbcType=TINYINT}, #{osvExp,jdbcType=VARCHAR}, #{sdkvExp,jdbcType=VARCHAR}, 
+      #{appvExp,jdbcType=VARCHAR}, #{requireDid,jdbcType=TINYINT}, #{gender,jdbcType=TINYINT}, 
+      #{ageMin,jdbcType=INTEGER}, #{ageMax,jdbcType=INTEGER}, #{interest,jdbcType=VARCHAR}, 
+      #{iapMin,jdbcType=DECIMAL}, #{iapMax,jdbcType=DECIMAL}, #{channel,jdbcType=VARCHAR}, 
+      #{channelBow,jdbcType=TINYINT}, #{modelType,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
+      #{brandWhitelist,jdbcType=LONGVARCHAR}, #{brandBlacklist,jdbcType=LONGVARCHAR}, 
+      #{modelWhitelist,jdbcType=LONGVARCHAR}, #{modelBlacklist,jdbcType=LONGVARCHAR}, 
+      #{customTags,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -144,6 +153,18 @@
       </if>
       <if test="conType != null">
         con_type,
+      </if>
+      <if test="osvExp != null">
+        osv_exp,
+      </if>
+      <if test="sdkvExp != null">
+        sdkv_exp,
+      </if>
+      <if test="appvExp != null">
+        appv_exp,
+      </if>
+      <if test="requireDid != null">
+        require_did,
       </if>
       <if test="gender != null">
         gender,
@@ -196,6 +217,9 @@
       <if test="modelBlacklist != null">
         model_blacklist,
       </if>
+      <if test="customTags != null">
+        custom_tags,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="placementId != null">
@@ -209,6 +233,18 @@
       </if>
       <if test="conType != null">
         #{conType,jdbcType=TINYINT},
+      </if>
+      <if test="osvExp != null">
+        #{osvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkvExp != null">
+        #{sdkvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="appvExp != null">
+        #{appvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="requireDid != null">
+        #{requireDid,jdbcType=TINYINT},
       </if>
       <if test="gender != null">
         #{gender,jdbcType=TINYINT},
@@ -261,6 +297,9 @@
       <if test="modelBlacklist != null">
         #{modelBlacklist,jdbcType=LONGVARCHAR},
       </if>
+      <if test="customTags != null">
+        #{customTags,jdbcType=LONGVARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs">
@@ -277,6 +316,18 @@
       </if>
       <if test="conType != null">
         con_type = #{conType,jdbcType=TINYINT},
+      </if>
+      <if test="osvExp != null">
+        osv_exp = #{osvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkvExp != null">
+        sdkv_exp = #{sdkvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="appvExp != null">
+        appv_exp = #{appvExp,jdbcType=VARCHAR},
+      </if>
+      <if test="requireDid != null">
+        require_did = #{requireDid,jdbcType=TINYINT},
       </if>
       <if test="gender != null">
         gender = #{gender,jdbcType=TINYINT},
@@ -329,6 +380,9 @@
       <if test="modelBlacklist != null">
         model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR},
       </if>
+      <if test="customTags != null">
+        custom_tags = #{customTags,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -338,6 +392,10 @@
       countries = #{countries,jdbcType=VARCHAR},
       frequency = #{frequency,jdbcType=INTEGER},
       con_type = #{conType,jdbcType=TINYINT},
+      osv_exp = #{osvExp,jdbcType=VARCHAR},
+      sdkv_exp = #{sdkvExp,jdbcType=VARCHAR},
+      appv_exp = #{appvExp,jdbcType=VARCHAR},
+      require_did = #{requireDid,jdbcType=TINYINT},
       gender = #{gender,jdbcType=TINYINT},
       age_min = #{ageMin,jdbcType=INTEGER},
       age_max = #{ageMax,jdbcType=INTEGER},
@@ -354,7 +412,8 @@
       brand_whitelist = #{brandWhitelist,jdbcType=LONGVARCHAR},
       brand_blacklist = #{brandBlacklist,jdbcType=LONGVARCHAR},
       model_whitelist = #{modelWhitelist,jdbcType=LONGVARCHAR},
-      model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR}
+      model_blacklist = #{modelBlacklist,jdbcType=LONGVARCHAR},
+      custom_tags = #{customTags,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.adtiming.om.ds.model.OmPlacementRuleSegment">
@@ -363,6 +422,10 @@
       countries = #{countries,jdbcType=VARCHAR},
       frequency = #{frequency,jdbcType=INTEGER},
       con_type = #{conType,jdbcType=TINYINT},
+      osv_exp = #{osvExp,jdbcType=VARCHAR},
+      sdkv_exp = #{sdkvExp,jdbcType=VARCHAR},
+      appv_exp = #{appvExp,jdbcType=VARCHAR},
+      require_did = #{requireDid,jdbcType=TINYINT},
       gender = #{gender,jdbcType=TINYINT},
       age_min = #{ageMin,jdbcType=INTEGER},
       age_max = #{ageMax,jdbcType=INTEGER},

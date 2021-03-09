@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
@@ -8,6 +11,8 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
     private String modelWhitelist;
 
     private String modelBlacklist;
+
+    private String customTags;
 
     public String getBrandWhitelist() {
         return brandWhitelist;
@@ -41,6 +46,14 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
         this.modelBlacklist = modelBlacklist == null ? null : modelBlacklist.trim();
     }
 
+    public String getCustomTags() {
+        return customTags;
+    }
+
+    public void setCustomTags(String customTags) {
+        this.customTags = customTags == null ? null : customTags.trim();
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -58,6 +71,10 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
             && (this.getCountries() == null ? other.getCountries() == null : this.getCountries().equals(other.getCountries()))
             && (this.getFrequency() == null ? other.getFrequency() == null : this.getFrequency().equals(other.getFrequency()))
             && (this.getConType() == null ? other.getConType() == null : this.getConType().equals(other.getConType()))
+            && (this.getOsvExp() == null ? other.getOsvExp() == null : this.getOsvExp().equals(other.getOsvExp()))
+            && (this.getSdkvExp() == null ? other.getSdkvExp() == null : this.getSdkvExp().equals(other.getSdkvExp()))
+            && (this.getAppvExp() == null ? other.getAppvExp() == null : this.getAppvExp().equals(other.getAppvExp()))
+            && (this.getRequireDid() == null ? other.getRequireDid() == null : this.getRequireDid().equals(other.getRequireDid()))
             && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
             && (this.getAgeMin() == null ? other.getAgeMin() == null : this.getAgeMin().equals(other.getAgeMin()))
             && (this.getAgeMax() == null ? other.getAgeMax() == null : this.getAgeMax().equals(other.getAgeMax()))
@@ -74,7 +91,8 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
             && (this.getBrandWhitelist() == null ? other.getBrandWhitelist() == null : this.getBrandWhitelist().equals(other.getBrandWhitelist()))
             && (this.getBrandBlacklist() == null ? other.getBrandBlacklist() == null : this.getBrandBlacklist().equals(other.getBrandBlacklist()))
             && (this.getModelWhitelist() == null ? other.getModelWhitelist() == null : this.getModelWhitelist().equals(other.getModelWhitelist()))
-            && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()));
+            && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()))
+            && (this.getCustomTags() == null ? other.getCustomTags() == null : this.getCustomTags().equals(other.getCustomTags()));
     }
 
     @Override
@@ -86,6 +104,10 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
         result = prime * result + ((getCountries() == null) ? 0 : getCountries().hashCode());
         result = prime * result + ((getFrequency() == null) ? 0 : getFrequency().hashCode());
         result = prime * result + ((getConType() == null) ? 0 : getConType().hashCode());
+        result = prime * result + ((getOsvExp() == null) ? 0 : getOsvExp().hashCode());
+        result = prime * result + ((getSdkvExp() == null) ? 0 : getSdkvExp().hashCode());
+        result = prime * result + ((getAppvExp() == null) ? 0 : getAppvExp().hashCode());
+        result = prime * result + ((getRequireDid() == null) ? 0 : getRequireDid().hashCode());
         result = prime * result + ((getGender() == null) ? 0 : getGender().hashCode());
         result = prime * result + ((getAgeMin() == null) ? 0 : getAgeMin().hashCode());
         result = prime * result + ((getAgeMax() == null) ? 0 : getAgeMax().hashCode());
@@ -103,6 +125,7 @@ public class OmPlacementRuleSegmentWithBLOBs extends OmPlacementRuleSegment {
         result = prime * result + ((getBrandBlacklist() == null) ? 0 : getBrandBlacklist().hashCode());
         result = prime * result + ((getModelWhitelist() == null) ? 0 : getModelWhitelist().hashCode());
         result = prime * result + ((getModelBlacklist() == null) ? 0 : getModelBlacklist().hashCode());
+        result = prime * result + ((getCustomTags() == null) ? 0 : getCustomTags().hashCode());
         return result;
     }
 }

@@ -25,15 +25,16 @@
     <result column="is_ready_false" jdbcType="INTEGER" property="isReadyFalse" />
     <result column="click" jdbcType="INTEGER" property="click" />
     <result column="impr" jdbcType="INTEGER" property="impr" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="bid_req" jdbcType="INTEGER" property="bidReq" />
     <result column="bid_resp" jdbcType="INTEGER" property="bidResp" />
     <result column="bid_resp_price" jdbcType="DECIMAL" property="bidRespPrice" />
     <result column="bid_win" jdbcType="INTEGER" property="bidWin" />
     <result column="bid_win_price" jdbcType="DECIMAL" property="bidWinPrice" />
     <result column="bid" jdbcType="TINYINT" property="bid" />
-    <result column="mediation_click" jdbcType="INTEGER" property="mediationClick" />
-    <result column="mediation_impr" jdbcType="INTEGER" property="mediationImpr" />
+    <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
+    <result column="sdk_version" jdbcType="VARCHAR" property="sdkVersion" />
+    <result column="os_version" jdbcType="VARCHAR" property="osVersion" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +69,8 @@
     id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, instance_id, 
     scene_id, adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
     video_start, video_complete, called_show, is_ready_true, is_ready_false, click, impr, 
-    create_time, bid_req, bid_resp, bid_resp_price, bid_win, bid_win_price, bid
+    bid_req, bid_resp, bid_resp_price, bid_win, bid_win_price, bid, app_version, sdk_version, 
+    os_version, create_time
   </sql>
   <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatLrCriteria" resultMap="BaseResultMap">
     select
@@ -107,9 +109,10 @@
       waterfall_filled, instance_request, instance_filled, 
       video_start, video_complete, called_show, 
       is_ready_true, is_ready_false, click, 
-      impr, create_time, bid_req, 
-      bid_resp, bid_resp_price, bid_win, 
-      bid_win_price, bid)
+      impr, bid_req, bid_resp, 
+      bid_resp_price, bid_win, bid_win_price, 
+      bid, app_version, sdk_version, 
+      os_version, create_time)
     values (#{day,jdbcType=DATE}, #{hour,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, 
       #{platform,jdbcType=TINYINT}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
       #{placementId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, #{sceneId,jdbcType=INTEGER}, 
@@ -117,9 +120,10 @@
       #{waterfallFilled,jdbcType=INTEGER}, #{instanceRequest,jdbcType=INTEGER}, #{instanceFilled,jdbcType=INTEGER}, 
       #{videoStart,jdbcType=INTEGER}, #{videoComplete,jdbcType=INTEGER}, #{calledShow,jdbcType=INTEGER}, 
       #{isReadyTrue,jdbcType=INTEGER}, #{isReadyFalse,jdbcType=INTEGER}, #{click,jdbcType=INTEGER}, 
-      #{impr,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{bidReq,jdbcType=INTEGER}, 
-      #{bidResp,jdbcType=INTEGER}, #{bidRespPrice,jdbcType=DECIMAL}, #{bidWin,jdbcType=INTEGER}, 
-      #{bidWinPrice,jdbcType=DECIMAL}, #{bid,jdbcType=TINYINT})
+      #{impr,jdbcType=INTEGER}, #{bidReq,jdbcType=INTEGER}, #{bidResp,jdbcType=INTEGER}, 
+      #{bidRespPrice,jdbcType=DECIMAL}, #{bidWin,jdbcType=INTEGER}, #{bidWinPrice,jdbcType=DECIMAL}, 
+      #{bid,jdbcType=TINYINT}, #{appVersion,jdbcType=VARCHAR}, #{sdkVersion,jdbcType=VARCHAR}, 
+      #{osVersion,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatLr">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -193,9 +197,6 @@
       <if test="impr != null">
         impr,
       </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
       <if test="bidReq != null">
         bid_req,
       </if>
@@ -213,6 +214,18 @@
       </if>
       <if test="bid != null">
         bid,
+      </if>
+      <if test="appVersion != null">
+        app_version,
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version,
+      </if>
+      <if test="osVersion != null">
+        os_version,
+      </if>
+      <if test="createTime != null">
+        create_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -282,9 +295,6 @@
       <if test="impr != null">
         #{impr,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="bidReq != null">
         #{bidReq,jdbcType=INTEGER},
       </if>
@@ -302,6 +312,18 @@
       </if>
       <if test="bid != null">
         #{bid,jdbcType=TINYINT},
+      </if>
+      <if test="appVersion != null">
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        #{osVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -371,9 +393,6 @@
       <if test="impr != null">
         impr = #{impr,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="bidReq != null">
         bid_req = #{bidReq,jdbcType=INTEGER},
       </if>
@@ -391,6 +410,18 @@
       </if>
       <if test="bid != null">
         bid = #{bid,jdbcType=TINYINT},
+      </if>
+      <if test="appVersion != null">
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        os_version = #{osVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -419,13 +450,16 @@
       is_ready_false = #{isReadyFalse,jdbcType=INTEGER},
       click = #{click,jdbcType=INTEGER},
       impr = #{impr,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       bid_req = #{bidReq,jdbcType=INTEGER},
       bid_resp = #{bidResp,jdbcType=INTEGER},
       bid_resp_price = #{bidRespPrice,jdbcType=DECIMAL},
       bid_win = #{bidWin,jdbcType=INTEGER},
       bid_win_price = #{bidWinPrice,jdbcType=DECIMAL},
-      bid = #{bid,jdbcType=TINYINT}
+      bid = #{bid,jdbcType=TINYINT},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      os_version = #{osVersion,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
       and day = #{day,jdbcType=DATE}
   </update>
@@ -501,6 +535,15 @@
     <if test="_parameter.containsKey('dimension_bid')">
       bid,
     </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
+    </if>
     sum(waterfall_request) as waterfall_request,sum(waterfall_filled) as waterfall_filled,
     sum(instance_request + bid_req) as instance_request, sum(instance_filled + bid_resp) as instance_filled,
     sum(video_start) as video_start,sum(video_complete) as video_complete,sum(called_show) as called_show,
@@ -551,6 +594,15 @@
     </if>
     <if test="_parameter.containsKey('dimension_bid')">
       bid,
+    </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
     </if>
     null
     <if test="_parameter.containsKey('orderByClause')">

@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -13,6 +16,14 @@ public class OmPlacementRuleSegment {
     private Integer frequency;
 
     private Byte conType;
+
+    private String osvExp;
+
+    private String sdkvExp;
+
+    private String appvExp;
+
+    private Byte requireDid;
 
     private Byte gender;
 
@@ -78,6 +89,38 @@ public class OmPlacementRuleSegment {
 
     public void setConType(Byte conType) {
         this.conType = conType;
+    }
+
+    public String getOsvExp() {
+        return osvExp;
+    }
+
+    public void setOsvExp(String osvExp) {
+        this.osvExp = osvExp == null ? null : osvExp.trim();
+    }
+
+    public String getSdkvExp() {
+        return sdkvExp;
+    }
+
+    public void setSdkvExp(String sdkvExp) {
+        this.sdkvExp = sdkvExp == null ? null : sdkvExp.trim();
+    }
+
+    public String getAppvExp() {
+        return appvExp;
+    }
+
+    public void setAppvExp(String appvExp) {
+        this.appvExp = appvExp == null ? null : appvExp.trim();
+    }
+
+    public Byte getRequireDid() {
+        return requireDid;
+    }
+
+    public void setRequireDid(Byte requireDid) {
+        this.requireDid = requireDid;
     }
 
     public Byte getGender() {
@@ -201,6 +244,10 @@ public class OmPlacementRuleSegment {
             && (this.getCountries() == null ? other.getCountries() == null : this.getCountries().equals(other.getCountries()))
             && (this.getFrequency() == null ? other.getFrequency() == null : this.getFrequency().equals(other.getFrequency()))
             && (this.getConType() == null ? other.getConType() == null : this.getConType().equals(other.getConType()))
+            && (this.getOsvExp() == null ? other.getOsvExp() == null : this.getOsvExp().equals(other.getOsvExp()))
+            && (this.getSdkvExp() == null ? other.getSdkvExp() == null : this.getSdkvExp().equals(other.getSdkvExp()))
+            && (this.getAppvExp() == null ? other.getAppvExp() == null : this.getAppvExp().equals(other.getAppvExp()))
+            && (this.getRequireDid() == null ? other.getRequireDid() == null : this.getRequireDid().equals(other.getRequireDid()))
             && (this.getGender() == null ? other.getGender() == null : this.getGender().equals(other.getGender()))
             && (this.getAgeMin() == null ? other.getAgeMin() == null : this.getAgeMin().equals(other.getAgeMin()))
             && (this.getAgeMax() == null ? other.getAgeMax() == null : this.getAgeMax().equals(other.getAgeMax()))
@@ -225,6 +272,10 @@ public class OmPlacementRuleSegment {
         result = prime * result + ((getCountries() == null) ? 0 : getCountries().hashCode());
         result = prime * result + ((getFrequency() == null) ? 0 : getFrequency().hashCode());
         result = prime * result + ((getConType() == null) ? 0 : getConType().hashCode());
+        result = prime * result + ((getOsvExp() == null) ? 0 : getOsvExp().hashCode());
+        result = prime * result + ((getSdkvExp() == null) ? 0 : getSdkvExp().hashCode());
+        result = prime * result + ((getAppvExp() == null) ? 0 : getAppvExp().hashCode());
+        result = prime * result + ((getRequireDid() == null) ? 0 : getRequireDid().hashCode());
         result = prime * result + ((getGender() == null) ? 0 : getGender().hashCode());
         result = prime * result + ((getAgeMin() == null) ? 0 : getAgeMin().hashCode());
         result = prime * result + ((getAgeMax() == null) ? 0 : getAgeMax().hashCode());

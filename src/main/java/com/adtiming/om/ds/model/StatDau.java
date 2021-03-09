@@ -22,6 +22,12 @@ public class StatDau extends StatDauKey {
 
     private Integer deu;
 
+    private String appVersion;
+
+    private String sdkVersion;
+
+    private String osVersion;
+
     private Date createTime;
 
     public Integer getPublisherId() {
@@ -88,6 +94,30 @@ public class StatDau extends StatDauKey {
         this.deu = deu;
     }
 
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion == null ? null : appVersion.trim();
+    }
+
+    public String getSdkVersion() {
+        return sdkVersion;
+    }
+
+    public void setSdkVersion(String sdkVersion) {
+        this.sdkVersion = sdkVersion == null ? null : sdkVersion.trim();
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion == null ? null : osVersion.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -109,16 +139,19 @@ public class StatDau extends StatDauKey {
         }
         StatDau other = (StatDau) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
-                && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
-                && (this.getIpCount() == null ? other.getIpCount() == null : this.getIpCount().equals(other.getIpCount()))
-                && (this.getDidCount() == null ? other.getDidCount() == null : this.getDidCount().equals(other.getDidCount()))
-                && (this.getDau() == null ? other.getDau() == null : this.getDau().equals(other.getDau()))
-                && (this.getDeu() == null ? other.getDeu() == null : this.getDeu().equals(other.getDeu()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
+            && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
+            && (this.getIpCount() == null ? other.getIpCount() == null : this.getIpCount().equals(other.getIpCount()))
+            && (this.getDidCount() == null ? other.getDidCount() == null : this.getDidCount().equals(other.getDidCount()))
+            && (this.getDau() == null ? other.getDau() == null : this.getDau().equals(other.getDau()))
+            && (this.getDeu() == null ? other.getDeu() == null : this.getDeu().equals(other.getDeu()))
+            && (this.getAppVersion() == null ? other.getAppVersion() == null : this.getAppVersion().equals(other.getAppVersion()))
+            && (this.getSdkVersion() == null ? other.getSdkVersion() == null : this.getSdkVersion().equals(other.getSdkVersion()))
+            && (this.getOsVersion() == null ? other.getOsVersion() == null : this.getOsVersion().equals(other.getOsVersion()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
     }
 
     @Override
@@ -135,6 +168,9 @@ public class StatDau extends StatDauKey {
         result = prime * result + ((getDidCount() == null) ? 0 : getDidCount().hashCode());
         result = prime * result + ((getDau() == null) ? 0 : getDau().hashCode());
         result = prime * result + ((getDeu() == null) ? 0 : getDeu().hashCode());
+        result = prime * result + ((getAppVersion() == null) ? 0 : getAppVersion().hashCode());
+        result = prime * result + ((getSdkVersion() == null) ? 0 : getSdkVersion().hashCode());
+        result = prime * result + ((getOsVersion() == null) ? 0 : getOsVersion().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         return result;
     }

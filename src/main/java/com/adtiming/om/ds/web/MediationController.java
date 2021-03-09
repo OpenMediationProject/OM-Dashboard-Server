@@ -262,7 +262,7 @@ public class MediationController extends BaseController {
                 dateEnd = DateUtils.addDays(currentDate, -1);
                 secondEcpmMap = this.getInstanceReportMap(pubAppId, placementId, dateBegin, dateEnd, countries);
             } else {
-                dateBegin = DateUtils.addDays(currentDate, -1);
+                dateBegin = DateUtils.addDays(currentDate, -2);
                 Date dateEnd = DateUtils.addDays(currentDate, -1);
                 firstEcpmMap = this.getInstanceReportMap(pubAppId, placementId, dateBegin, dateEnd, countries);
                 dateBegin = DateUtils.addDays(currentDate, -3);

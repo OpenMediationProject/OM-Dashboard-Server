@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -413,6 +416,276 @@ public class OmPlacementRuleSegmentCriteria {
 
         public Criteria andConTypeNotBetween(Byte value1, Byte value2) {
             addCriterion("con_type not between", value1, value2, "conType");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpIsNull() {
+            addCriterion("osv_exp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpIsNotNull() {
+            addCriterion("osv_exp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpEqualTo(String value) {
+            addCriterion("osv_exp =", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpNotEqualTo(String value) {
+            addCriterion("osv_exp <>", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpGreaterThan(String value) {
+            addCriterion("osv_exp >", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpGreaterThanOrEqualTo(String value) {
+            addCriterion("osv_exp >=", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpLessThan(String value) {
+            addCriterion("osv_exp <", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpLessThanOrEqualTo(String value) {
+            addCriterion("osv_exp <=", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpLike(String value) {
+            addCriterion("osv_exp like", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpNotLike(String value) {
+            addCriterion("osv_exp not like", value, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpIn(List<String> values) {
+            addCriterion("osv_exp in", values, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpNotIn(List<String> values) {
+            addCriterion("osv_exp not in", values, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpBetween(String value1, String value2) {
+            addCriterion("osv_exp between", value1, value2, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsvExpNotBetween(String value1, String value2) {
+            addCriterion("osv_exp not between", value1, value2, "osvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpIsNull() {
+            addCriterion("sdkv_exp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpIsNotNull() {
+            addCriterion("sdkv_exp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpEqualTo(String value) {
+            addCriterion("sdkv_exp =", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpNotEqualTo(String value) {
+            addCriterion("sdkv_exp <>", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpGreaterThan(String value) {
+            addCriterion("sdkv_exp >", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpGreaterThanOrEqualTo(String value) {
+            addCriterion("sdkv_exp >=", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpLessThan(String value) {
+            addCriterion("sdkv_exp <", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpLessThanOrEqualTo(String value) {
+            addCriterion("sdkv_exp <=", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpLike(String value) {
+            addCriterion("sdkv_exp like", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpNotLike(String value) {
+            addCriterion("sdkv_exp not like", value, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpIn(List<String> values) {
+            addCriterion("sdkv_exp in", values, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpNotIn(List<String> values) {
+            addCriterion("sdkv_exp not in", values, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpBetween(String value1, String value2) {
+            addCriterion("sdkv_exp between", value1, value2, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkvExpNotBetween(String value1, String value2) {
+            addCriterion("sdkv_exp not between", value1, value2, "sdkvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpIsNull() {
+            addCriterion("appv_exp is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpIsNotNull() {
+            addCriterion("appv_exp is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpEqualTo(String value) {
+            addCriterion("appv_exp =", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpNotEqualTo(String value) {
+            addCriterion("appv_exp <>", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpGreaterThan(String value) {
+            addCriterion("appv_exp >", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpGreaterThanOrEqualTo(String value) {
+            addCriterion("appv_exp >=", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpLessThan(String value) {
+            addCriterion("appv_exp <", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpLessThanOrEqualTo(String value) {
+            addCriterion("appv_exp <=", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpLike(String value) {
+            addCriterion("appv_exp like", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpNotLike(String value) {
+            addCriterion("appv_exp not like", value, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpIn(List<String> values) {
+            addCriterion("appv_exp in", values, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpNotIn(List<String> values) {
+            addCriterion("appv_exp not in", values, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpBetween(String value1, String value2) {
+            addCriterion("appv_exp between", value1, value2, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppvExpNotBetween(String value1, String value2) {
+            addCriterion("appv_exp not between", value1, value2, "appvExp");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidIsNull() {
+            addCriterion("require_did is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidIsNotNull() {
+            addCriterion("require_did is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidEqualTo(Byte value) {
+            addCriterion("require_did =", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidNotEqualTo(Byte value) {
+            addCriterion("require_did <>", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidGreaterThan(Byte value) {
+            addCriterion("require_did >", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidGreaterThanOrEqualTo(Byte value) {
+            addCriterion("require_did >=", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidLessThan(Byte value) {
+            addCriterion("require_did <", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidLessThanOrEqualTo(Byte value) {
+            addCriterion("require_did <=", value, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidIn(List<Byte> values) {
+            addCriterion("require_did in", values, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidNotIn(List<Byte> values) {
+            addCriterion("require_did not in", values, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidBetween(Byte value1, Byte value2) {
+            addCriterion("require_did between", value1, value2, "requireDid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRequireDidNotBetween(Byte value1, Byte value2) {
+            addCriterion("require_did not between", value1, value2, "requireDid");
             return (Criteria) this;
         }
 

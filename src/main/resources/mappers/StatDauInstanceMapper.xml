@@ -15,6 +15,9 @@
     <result column="did_count" jdbcType="INTEGER" property="didCount" />
     <result column="dau" jdbcType="INTEGER" property="dau" />
     <result column="deu" jdbcType="INTEGER" property="deu" />
+    <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
+    <result column="sdk_version" jdbcType="VARCHAR" property="sdkVersion" />
+    <result column="os_version" jdbcType="VARCHAR" property="osVersion" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -48,7 +51,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, day, publisher_id, pub_app_id, platform, country, placement_id, instance_id, 
-    adn_id, ip_count, did_count, dau, deu, create_time
+    adn_id, ip_count, did_count, dau, deu, app_version, sdk_version, os_version, create_time
   </sql>
   <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatDauInstanceCriteria" resultMap="BaseResultMap">
     select
@@ -84,11 +87,13 @@
       platform, country, placement_id, 
       instance_id, adn_id, ip_count, 
       did_count, dau, deu, 
+      app_version, sdk_version, os_version, 
       create_time)
     values (#{day,jdbcType=DATE}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
       #{platform,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, #{placementId,jdbcType=INTEGER}, 
       #{instanceId,jdbcType=INTEGER}, #{adnId,jdbcType=INTEGER}, #{ipCount,jdbcType=INTEGER}, 
       #{didCount,jdbcType=INTEGER}, #{dau,jdbcType=INTEGER}, #{deu,jdbcType=INTEGER}, 
+      #{appVersion,jdbcType=VARCHAR}, #{sdkVersion,jdbcType=VARCHAR}, #{osVersion,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatDauInstance">
@@ -133,6 +138,15 @@
       <if test="deu != null">
         deu,
       </if>
+      <if test="appVersion != null">
+        app_version,
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version,
+      </if>
+      <if test="osVersion != null">
+        os_version,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -173,6 +187,15 @@
       </if>
       <if test="deu != null">
         #{deu,jdbcType=INTEGER},
+      </if>
+      <if test="appVersion != null">
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        #{osVersion,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -215,6 +238,15 @@
       <if test="deu != null">
         deu = #{deu,jdbcType=INTEGER},
       </if>
+      <if test="appVersion != null">
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        os_version = #{osVersion,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -235,6 +267,9 @@
       did_count = #{didCount,jdbcType=INTEGER},
       dau = #{dau,jdbcType=INTEGER},
       deu = #{deu,jdbcType=INTEGER},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      os_version = #{osVersion,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
       and day = #{day,jdbcType=DATE}
@@ -296,6 +331,15 @@
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
     </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
+    </if>
     sum(ip_count) as ip_count,sum(did_count) as did_count,sum(dau) as dau, sum(deu) as deu
     from stat_dau_instance
     <if test="_parameter.containsKey('summaryWhereClause')">
@@ -325,6 +369,15 @@
     </if>
     <if test="_parameter.containsKey('dimension_instanceId')">
       instance_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
     </if>
     null
     <if test="_parameter.containsKey('orderByClause')">

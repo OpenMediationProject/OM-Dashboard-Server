@@ -159,19 +159,19 @@ public class OmPlacementRule {
         }
         OmPlacementRule other = (OmPlacementRule) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
-                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getSegmentId() == null ? other.getSegmentId() == null : this.getSegmentId().equals(other.getSegmentId()))
-                && (this.getAbTest() == null ? other.getAbTest() == null : this.getAbTest().equals(other.getAbTest()))
-                && (this.getAutoOpt() == null ? other.getAutoOpt() == null : this.getAutoOpt().equals(other.getAutoOpt()))
-                && (this.getSortType() == null ? other.getSortType() == null : this.getSortType().equals(other.getSortType()))
-                && (this.getPriority() == null ? other.getPriority() == null : this.getPriority().equals(other.getPriority()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getCreateUserId() == null ? other.getCreateUserId() == null : this.getCreateUserId().equals(other.getCreateUserId()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getSegmentId() == null ? other.getSegmentId() == null : this.getSegmentId().equals(other.getSegmentId()))
+            && (this.getAbTest() == null ? other.getAbTest() == null : this.getAbTest().equals(other.getAbTest()))
+            && (this.getAutoOpt() == null ? other.getAutoOpt() == null : this.getAutoOpt().equals(other.getAutoOpt()))
+            && (this.getSortType() == null ? other.getSortType() == null : this.getSortType().equals(other.getSortType()))
+            && (this.getPriority() == null ? other.getPriority() == null : this.getPriority().equals(other.getPriority()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getCreateUserId() == null ? other.getCreateUserId() == null : this.getCreateUserId().equals(other.getCreateUserId()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
 
     @Override

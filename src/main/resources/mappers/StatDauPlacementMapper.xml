@@ -9,11 +9,13 @@
     <result column="platform" jdbcType="TINYINT" property="platform" />
     <result column="country" jdbcType="VARCHAR" property="country" />
     <result column="placement_id" jdbcType="INTEGER" property="placementId" />
-    <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="ip_count" jdbcType="INTEGER" property="ipCount" />
     <result column="did_count" jdbcType="INTEGER" property="didCount" />
     <result column="dau" jdbcType="INTEGER" property="dau" />
     <result column="deu" jdbcType="INTEGER" property="deu" />
+    <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
+    <result column="sdk_version" jdbcType="VARCHAR" property="sdkVersion" />
+    <result column="os_version" jdbcType="VARCHAR" property="osVersion" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -46,8 +48,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, day, publisher_id, pub_app_id, platform, country, placement_id, adn_id, ip_count, 
-    did_count, dau, deu, create_time
+    id, day, publisher_id, pub_app_id, platform, country, placement_id, ip_count, did_count, 
+    dau, deu, app_version, sdk_version, os_version, create_time
   </sql>
   <select id="selectByExample" parameterType="com.adtiming.om.ds.model.StatDauPlacementCriteria" resultMap="BaseResultMap">
     select
@@ -81,14 +83,14 @@
     </selectKey>
     insert into stat_dau_placement (day, publisher_id, pub_app_id, 
       platform, country, placement_id, 
-      adn_id, ip_count, did_count, 
-      dau, deu, create_time
-      )
+      ip_count, did_count, dau, 
+      deu, app_version, sdk_version, 
+      os_version, create_time)
     values (#{day,jdbcType=DATE}, #{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, 
       #{platform,jdbcType=TINYINT}, #{country,jdbcType=VARCHAR}, #{placementId,jdbcType=INTEGER}, 
-      #{adnId,jdbcType=INTEGER}, #{ipCount,jdbcType=INTEGER}, #{didCount,jdbcType=INTEGER}, 
-      #{dau,jdbcType=INTEGER}, #{deu,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
-      )
+      #{ipCount,jdbcType=INTEGER}, #{didCount,jdbcType=INTEGER}, #{dau,jdbcType=INTEGER}, 
+      #{deu,jdbcType=INTEGER}, #{appVersion,jdbcType=VARCHAR}, #{sdkVersion,jdbcType=VARCHAR}, 
+      #{osVersion,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.StatDauPlacement">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -114,9 +116,6 @@
       <if test="placementId != null">
         placement_id,
       </if>
-      <if test="adnId != null">
-        adn_id,
-      </if>
       <if test="ipCount != null">
         ip_count,
       </if>
@@ -128,6 +127,15 @@
       </if>
       <if test="deu != null">
         deu,
+      </if>
+      <if test="appVersion != null">
+        app_version,
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version,
+      </if>
+      <if test="osVersion != null">
+        os_version,
       </if>
       <if test="createTime != null">
         create_time,
@@ -152,9 +160,6 @@
       <if test="placementId != null">
         #{placementId,jdbcType=INTEGER},
       </if>
-      <if test="adnId != null">
-        #{adnId,jdbcType=INTEGER},
-      </if>
       <if test="ipCount != null">
         #{ipCount,jdbcType=INTEGER},
       </if>
@@ -166,6 +171,15 @@
       </if>
       <if test="deu != null">
         #{deu,jdbcType=INTEGER},
+      </if>
+      <if test="appVersion != null">
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        #{osVersion,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -190,9 +204,6 @@
       <if test="placementId != null">
         placement_id = #{placementId,jdbcType=INTEGER},
       </if>
-      <if test="adnId != null">
-        adn_id = #{adnId,jdbcType=INTEGER},
-      </if>
       <if test="ipCount != null">
         ip_count = #{ipCount,jdbcType=INTEGER},
       </if>
@@ -204,6 +215,15 @@
       </if>
       <if test="deu != null">
         deu = #{deu,jdbcType=INTEGER},
+      </if>
+      <if test="appVersion != null">
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sdkVersion != null">
+        sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="osVersion != null">
+        os_version = #{osVersion,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -219,11 +239,13 @@
       platform = #{platform,jdbcType=TINYINT},
       country = #{country,jdbcType=VARCHAR},
       placement_id = #{placementId,jdbcType=INTEGER},
-      adn_id = #{adnId,jdbcType=INTEGER},
       ip_count = #{ipCount,jdbcType=INTEGER},
       did_count = #{didCount,jdbcType=INTEGER},
       dau = #{dau,jdbcType=INTEGER},
       deu = #{deu,jdbcType=INTEGER},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      sdk_version = #{sdkVersion,jdbcType=VARCHAR},
+      os_version = #{osVersion,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
       and day = #{day,jdbcType=DATE}
@@ -279,6 +301,15 @@
     <if test="_parameter.containsKey('dimension_placementId')">
       placement_id,
     </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
+    </if>
     sum(ip_count) as ip_count,sum(did_count) as did_count,sum(dau) as dau, sum(deu) as deu
     from stat_dau_placement
     <if test="_parameter.containsKey('summaryWhereClause')">
@@ -302,6 +333,15 @@
     </if>
     <if test="_parameter.containsKey('dimension_placementId')">
       placement_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_appVersion')">
+      app_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_sdkVersion')">
+      sdk_version,
+    </if>
+    <if test="_parameter.containsKey('dimension_osVersion')">
+      os_version,
     </if>
     null
     <if test="_parameter.containsKey('orderByClause')">

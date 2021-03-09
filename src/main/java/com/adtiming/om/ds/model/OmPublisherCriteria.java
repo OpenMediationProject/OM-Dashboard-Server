@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -19,20 +16,20 @@ public class OmPublisherCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -1559,6 +1556,66 @@ public class OmPublisherCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andImprCallbackSwitchIsNull() {
+            addCriterion("impr_callback_switch is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchIsNotNull() {
+            addCriterion("impr_callback_switch is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchEqualTo(Byte value) {
+            addCriterion("impr_callback_switch =", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchNotEqualTo(Byte value) {
+            addCriterion("impr_callback_switch <>", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchGreaterThan(Byte value) {
+            addCriterion("impr_callback_switch >", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchGreaterThanOrEqualTo(Byte value) {
+            addCriterion("impr_callback_switch >=", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchLessThan(Byte value) {
+            addCriterion("impr_callback_switch <", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchLessThanOrEqualTo(Byte value) {
+            addCriterion("impr_callback_switch <=", value, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchIn(List<Byte> values) {
+            addCriterion("impr_callback_switch in", values, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchNotIn(List<Byte> values) {
+            addCriterion("impr_callback_switch not in", values, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchBetween(Byte value1, Byte value2) {
+            addCriterion("impr_callback_switch between", value1, value2, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
+        public Criteria andImprCallbackSwitchNotBetween(Byte value1, Byte value2) {
+            addCriterion("impr_callback_switch not between", value1, value2, "imprCallbackSwitch");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -1704,6 +1761,38 @@ public class OmPublisherCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -1738,38 +1827,6 @@ public class OmPublisherCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

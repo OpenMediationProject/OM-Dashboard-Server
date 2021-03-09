@@ -353,6 +353,10 @@ public class MediationService extends BaseService {
         ruleSegment.setChannel(segmentDTO.getChannel());
         ruleSegment.setChannelBow(segmentDTO.getChannelBow());
         ruleSegment.setModelType(segmentDTO.getDeviceModelType());
+        ruleSegment.setCustomTags(segmentDTO.getCustomTags());
+        ruleSegment.setAppvExp(segmentDTO.getAppvExp());
+        ruleSegment.setSdkvExp(segmentDTO.getSdkvExp());
+        ruleSegment.setOsvExp(segmentDTO.getOsvExp());
         ruleSegment.setCreateTime(new Date());
         ruleSegment.setLastmodify(new Date());
         int result = this.omPlacementRuleSegmentMapper.insertSelective(ruleSegment);
@@ -409,6 +413,10 @@ public class MediationService extends BaseService {
         ruleSegment.setChannel(segmentDTO.getChannel());
         ruleSegment.setChannelBow(segmentDTO.getChannelBow());
         ruleSegment.setModelType(segmentDTO.getDeviceModelType());
+        ruleSegment.setCustomTags(segmentDTO.getCustomTags());
+        ruleSegment.setAppvExp(segmentDTO.getAppvExp());
+        ruleSegment.setSdkvExp(segmentDTO.getSdkvExp());
+        ruleSegment.setOsvExp(segmentDTO.getOsvExp());
         ruleSegment.setLastmodify(new Date());
         int id = this.omPlacementRuleSegmentMapper.updateByPrimaryKeySelective(ruleSegment);
         if (id <= 0) {

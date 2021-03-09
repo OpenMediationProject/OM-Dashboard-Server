@@ -118,7 +118,8 @@ public class ReportService extends BaseService {
             }
 
             List<JSONObject> resultReport = new ArrayList<>();
-            if (reportTypeSet.contains("api") && !dimensionSet.contains("sceneId")) {
+            if (reportTypeSet.contains("api") && !dimensionSet.contains("sceneId") && !dimensionSet.contains("appVersion")
+                    && !dimensionSet.contains("sdkVersion") && !dimensionSet.contains("osVersion")) {
                 List<StatAdnetwork> statAdNetworks = this.getAdNetworkReport(reportConditionDTO);
                 statAdNetworks.forEach(statAdNetwork -> resultReport.add((JSONObject) JSONObject.toJSON(statAdNetwork)));
             }
@@ -527,6 +528,38 @@ public class ReportService extends BaseService {
             criteria.andAdnIdIn(adnIds);
         }
 
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
+        }
+
         if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
             conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
         }
@@ -582,6 +615,38 @@ public class ReportService extends BaseService {
             criteria.andAdnIdIn(adnIds);
         }
 
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
+        }
+
         if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
             conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
         }
@@ -629,6 +694,38 @@ public class ReportService extends BaseService {
             criteria.andPlacementIdIn(placementIds);
         } else {
             criteria.andPlacementIdGreaterThan(0);
+        }
+
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
         }
 
         if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
@@ -686,6 +783,38 @@ public class ReportService extends BaseService {
         List<Integer> adnIds = Util.buildIntegerList(reportConditionDTO.getAdnId());
         if (!CollectionUtils.isEmpty(adnIds)) {
             criteria.andAdnIdIn(adnIds);
+        }
+
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
         }
 
         if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
@@ -756,6 +885,39 @@ public class ReportService extends BaseService {
         if (!CollectionUtils.isEmpty(countries)) {
             criteria.andCountryIn(countries);
         }
+
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
+        }
+
         if (!CollectionUtils.isEmpty(statDauCriteria.getOredCriteria())) {
             conditionMap.put("summaryWhereClause", statDauCriteria.getOredCriteria());
         }
@@ -835,6 +997,38 @@ public class ReportService extends BaseService {
         List<Byte> bids = Util.buildByteList(reportConditionDTO.getBid());
         if (!CollectionUtils.isEmpty(bids)) {
             criteria.andBidIn(bids);
+        }
+
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2){
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")){
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")){
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("[")){
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")){
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
         }
 
         if (!CollectionUtils.isEmpty(statLrCriteria.getOredCriteria())) {

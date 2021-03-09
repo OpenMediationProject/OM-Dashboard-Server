@@ -1,6 +1,5 @@
 // Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
 // Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -1536,66 +1535,6 @@ public class StatLrCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andCreateTimeIsNull() {
-            addCriterion("create_time is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIsNotNull() {
-            addCriterion("create_time is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeEqualTo(Date value) {
-            addCriterion("create_time =", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotEqualTo(Date value) {
-            addCriterion("create_time <>", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThan(Date value) {
-            addCriterion("create_time >", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("create_time >=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThan(Date value) {
-            addCriterion("create_time <", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
-            addCriterion("create_time <=", value, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeIn(List<Date> values) {
-            addCriterion("create_time in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotIn(List<Date> values) {
-            addCriterion("create_time not in", values, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeBetween(Date value1, Date value2) {
-            addCriterion("create_time between", value1, value2, "createTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
-            addCriterion("create_time not between", value1, value2, "createTime");
-            return (Criteria) this;
-        }
-
         public Criteria andBidReqIsNull() {
             addCriterion("bid_req is null");
             return (Criteria) this;
@@ -1953,6 +1892,276 @@ public class StatLrCriteria {
 
         public Criteria andBidNotBetween(Byte value1, Byte value2) {
             addCriterion("bid not between", value1, value2, "bid");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionIsNull() {
+            addCriterion("app_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionIsNotNull() {
+            addCriterion("app_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionEqualTo(String value) {
+            addCriterion("app_version =", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotEqualTo(String value) {
+            addCriterion("app_version <>", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionGreaterThan(String value) {
+            addCriterion("app_version >", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("app_version >=", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLessThan(String value) {
+            addCriterion("app_version <", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLessThanOrEqualTo(String value) {
+            addCriterion("app_version <=", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLike(String value) {
+            addCriterion("app_version like", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotLike(String value) {
+            addCriterion("app_version not like", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionIn(List<String> values) {
+            addCriterion("app_version in", values, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotIn(List<String> values) {
+            addCriterion("app_version not in", values, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionBetween(String value1, String value2) {
+            addCriterion("app_version between", value1, value2, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotBetween(String value1, String value2) {
+            addCriterion("app_version not between", value1, value2, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIsNull() {
+            addCriterion("sdk_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIsNotNull() {
+            addCriterion("sdk_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionEqualTo(String value) {
+            addCriterion("sdk_version =", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotEqualTo(String value) {
+            addCriterion("sdk_version <>", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionGreaterThan(String value) {
+            addCriterion("sdk_version >", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("sdk_version >=", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLessThan(String value) {
+            addCriterion("sdk_version <", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLessThanOrEqualTo(String value) {
+            addCriterion("sdk_version <=", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLike(String value) {
+            addCriterion("sdk_version like", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotLike(String value) {
+            addCriterion("sdk_version not like", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIn(List<String> values) {
+            addCriterion("sdk_version in", values, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotIn(List<String> values) {
+            addCriterion("sdk_version not in", values, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionBetween(String value1, String value2) {
+            addCriterion("sdk_version between", value1, value2, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotBetween(String value1, String value2) {
+            addCriterion("sdk_version not between", value1, value2, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIsNull() {
+            addCriterion("os_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIsNotNull() {
+            addCriterion("os_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionEqualTo(String value) {
+            addCriterion("os_version =", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotEqualTo(String value) {
+            addCriterion("os_version <>", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionGreaterThan(String value) {
+            addCriterion("os_version >", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("os_version >=", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLessThan(String value) {
+            addCriterion("os_version <", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLessThanOrEqualTo(String value) {
+            addCriterion("os_version <=", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLike(String value) {
+            addCriterion("os_version like", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotLike(String value) {
+            addCriterion("os_version not like", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIn(List<String> values) {
+            addCriterion("os_version in", values, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotIn(List<String> values) {
+            addCriterion("os_version not in", values, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionBetween(String value1, String value2) {
+            addCriterion("os_version between", value1, value2, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotBetween(String value1, String value2) {
+            addCriterion("os_version not between", value1, value2, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIsNull() {
+            addCriterion("create_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIsNotNull() {
+            addCriterion("create_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeEqualTo(Date value) {
+            addCriterion("create_time =", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotEqualTo(Date value) {
+            addCriterion("create_time <>", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThan(Date value) {
+            addCriterion("create_time >", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_time >=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThan(Date value) {
+            addCriterion("create_time <", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeLessThanOrEqualTo(Date value) {
+            addCriterion("create_time <=", value, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeIn(List<Date> values) {
+            addCriterion("create_time in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotIn(List<Date> values) {
+            addCriterion("create_time not in", values, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeBetween(Date value1, Date value2) {
+            addCriterion("create_time between", value1, value2, "createTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateTimeNotBetween(Date value1, Date value2) {
+            addCriterion("create_time not between", value1, value2, "createTime");
             return (Criteria) this;
         }
     }

@@ -1,6 +1,5 @@
 // Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
 // Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.util.ArrayList;
@@ -19,20 +18,20 @@ public class StatDauCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -745,6 +744,216 @@ public class StatDauCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andAppVersionIsNull() {
+            addCriterion("app_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionIsNotNull() {
+            addCriterion("app_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionEqualTo(String value) {
+            addCriterion("app_version =", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotEqualTo(String value) {
+            addCriterion("app_version <>", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionGreaterThan(String value) {
+            addCriterion("app_version >", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("app_version >=", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLessThan(String value) {
+            addCriterion("app_version <", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLessThanOrEqualTo(String value) {
+            addCriterion("app_version <=", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionLike(String value) {
+            addCriterion("app_version like", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotLike(String value) {
+            addCriterion("app_version not like", value, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionIn(List<String> values) {
+            addCriterion("app_version in", values, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotIn(List<String> values) {
+            addCriterion("app_version not in", values, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionBetween(String value1, String value2) {
+            addCriterion("app_version between", value1, value2, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAppVersionNotBetween(String value1, String value2) {
+            addCriterion("app_version not between", value1, value2, "appVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIsNull() {
+            addCriterion("sdk_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIsNotNull() {
+            addCriterion("sdk_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionEqualTo(String value) {
+            addCriterion("sdk_version =", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotEqualTo(String value) {
+            addCriterion("sdk_version <>", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionGreaterThan(String value) {
+            addCriterion("sdk_version >", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("sdk_version >=", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLessThan(String value) {
+            addCriterion("sdk_version <", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLessThanOrEqualTo(String value) {
+            addCriterion("sdk_version <=", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionLike(String value) {
+            addCriterion("sdk_version like", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotLike(String value) {
+            addCriterion("sdk_version not like", value, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionIn(List<String> values) {
+            addCriterion("sdk_version in", values, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotIn(List<String> values) {
+            addCriterion("sdk_version not in", values, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionBetween(String value1, String value2) {
+            addCriterion("sdk_version between", value1, value2, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andSdkVersionNotBetween(String value1, String value2) {
+            addCriterion("sdk_version not between", value1, value2, "sdkVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIsNull() {
+            addCriterion("os_version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIsNotNull() {
+            addCriterion("os_version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionEqualTo(String value) {
+            addCriterion("os_version =", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotEqualTo(String value) {
+            addCriterion("os_version <>", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionGreaterThan(String value) {
+            addCriterion("os_version >", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionGreaterThanOrEqualTo(String value) {
+            addCriterion("os_version >=", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLessThan(String value) {
+            addCriterion("os_version <", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLessThanOrEqualTo(String value) {
+            addCriterion("os_version <=", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionLike(String value) {
+            addCriterion("os_version like", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotLike(String value) {
+            addCriterion("os_version not like", value, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionIn(List<String> values) {
+            addCriterion("os_version in", values, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotIn(List<String> values) {
+            addCriterion("os_version not in", values, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionBetween(String value1, String value2) {
+            addCriterion("os_version between", value1, value2, "osVersion");
+            return (Criteria) this;
+        }
+
+        public Criteria andOsVersionNotBetween(String value1, String value2) {
+            addCriterion("os_version not between", value1, value2, "osVersion");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -830,6 +1039,38 @@ public class StatDauCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -864,38 +1105,6 @@ public class StatDauCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

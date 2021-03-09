@@ -52,6 +52,8 @@ public class OmPublisher implements Serializable {
 
     private Integer ownerUserId;
 
+    private Byte imprCallbackSwitch;
+
     private Date createTime;
 
     private Date lastmodify;
@@ -232,6 +234,14 @@ public class OmPublisher implements Serializable {
         this.ownerUserId = ownerUserId;
     }
 
+    public Byte getImprCallbackSwitch() {
+        return imprCallbackSwitch;
+    }
+
+    public void setImprCallbackSwitch(Byte imprCallbackSwitch) {
+        this.imprCallbackSwitch = imprCallbackSwitch;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -261,29 +271,30 @@ public class OmPublisher implements Serializable {
         }
         OmPublisher other = (OmPublisher) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getVerifyStatus() == null ? other.getVerifyStatus() == null : this.getVerifyStatus().equals(other.getVerifyStatus()))
-                && (this.getDomain() == null ? other.getDomain() == null : this.getDomain().equals(other.getDomain()))
-                && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
-                && (this.getContacts() == null ? other.getContacts() == null : this.getContacts().equals(other.getContacts()))
-                && (this.getRevenueSharing() == null ? other.getRevenueSharing() == null : this.getRevenueSharing().equals(other.getRevenueSharing()))
-                && (this.getImType() == null ? other.getImType() == null : this.getImType().equals(other.getImType()))
-                && (this.getPublisherManager() == null ? other.getPublisherManager() == null : this.getPublisherManager().equals(other.getPublisherManager()))
-                && (this.getAccountManager() == null ? other.getAccountManager() == null : this.getAccountManager().equals(other.getAccountManager()))
-                && (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
-                && (this.getTokenCreateTime() == null ? other.getTokenCreateTime() == null : this.getTokenCreateTime().equals(other.getTokenCreateTime()))
-                && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
-                && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
-                && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
-                && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-                && (this.getSkype() == null ? other.getSkype() == null : this.getSkype().equals(other.getSkype()))
-                && (this.getWechatQq() == null ? other.getWechatQq() == null : this.getWechatQq().equals(other.getWechatQq()))
-                && (this.getFacebookAccount() == null ? other.getFacebookAccount() == null : this.getFacebookAccount().equals(other.getFacebookAccount()))
-                && (this.getOwnerUserId() == null ? other.getOwnerUserId() == null : this.getOwnerUserId().equals(other.getOwnerUserId()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getVerifyStatus() == null ? other.getVerifyStatus() == null : this.getVerifyStatus().equals(other.getVerifyStatus()))
+            && (this.getDomain() == null ? other.getDomain() == null : this.getDomain().equals(other.getDomain()))
+            && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
+            && (this.getContacts() == null ? other.getContacts() == null : this.getContacts().equals(other.getContacts()))
+            && (this.getRevenueSharing() == null ? other.getRevenueSharing() == null : this.getRevenueSharing().equals(other.getRevenueSharing()))
+            && (this.getImType() == null ? other.getImType() == null : this.getImType().equals(other.getImType()))
+            && (this.getPublisherManager() == null ? other.getPublisherManager() == null : this.getPublisherManager().equals(other.getPublisherManager()))
+            && (this.getAccountManager() == null ? other.getAccountManager() == null : this.getAccountManager().equals(other.getAccountManager()))
+            && (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
+            && (this.getTokenCreateTime() == null ? other.getTokenCreateTime() == null : this.getTokenCreateTime().equals(other.getTokenCreateTime()))
+            && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
+            && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
+            && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
+            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
+            && (this.getSkype() == null ? other.getSkype() == null : this.getSkype().equals(other.getSkype()))
+            && (this.getWechatQq() == null ? other.getWechatQq() == null : this.getWechatQq().equals(other.getWechatQq()))
+            && (this.getFacebookAccount() == null ? other.getFacebookAccount() == null : this.getFacebookAccount().equals(other.getFacebookAccount()))
+            && (this.getOwnerUserId() == null ? other.getOwnerUserId() == null : this.getOwnerUserId().equals(other.getOwnerUserId()))
+            && (this.getImprCallbackSwitch() == null ? other.getImprCallbackSwitch() == null : this.getImprCallbackSwitch().equals(other.getImprCallbackSwitch()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
 
     @Override
@@ -312,6 +323,7 @@ public class OmPublisher implements Serializable {
         result = prime * result + ((getWechatQq() == null) ? 0 : getWechatQq().hashCode());
         result = prime * result + ((getFacebookAccount() == null) ? 0 : getFacebookAccount().hashCode());
         result = prime * result + ((getOwnerUserId() == null) ? 0 : getOwnerUserId().hashCode());
+        result = prime * result + ((getImprCallbackSwitch() == null) ? 0 : getImprCallbackSwitch().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastmodify() == null) ? 0 : getLastmodify().hashCode());
         return result;

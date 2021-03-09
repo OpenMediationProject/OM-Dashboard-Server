@@ -3,7 +3,6 @@
 
 package com.adtiming.om.ds.dto;
 
-import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,6 +48,12 @@ public class ReportConditionDTO {
     private Byte[] bid;
 
     private Integer[] creativeId;
+
+    private String[] appVersion;
+
+    private String[] sdkVersion;
+
+    private String osVersion;
 
     Set<String> dimensionSet;
 
@@ -186,6 +191,30 @@ public class ReportConditionDTO {
 
     public void setCreativeId(Integer[] creativeId) {
         this.creativeId = creativeId;
+    }
+
+    public String[] getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String[] appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    public String[] getSdkVersion() {
+        return sdkVersion;
+    }
+
+    public void setSdkVersion(String[] sdkVersion) {
+        this.sdkVersion = sdkVersion;
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
     }
 
     public Set<String> getDimensionSet() {

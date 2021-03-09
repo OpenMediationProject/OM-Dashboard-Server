@@ -5,7 +5,6 @@ package com.adtiming.om.ds.dao;
 
 import com.adtiming.om.ds.model.OmPlacementRule;
 import com.adtiming.om.ds.model.OmPlacementRuleCriteria;
-
 import java.util.List;
 
 public interface OmPlacementRuleMapper {
@@ -15,7 +14,7 @@ public interface OmPlacementRuleMapper {
 
     int insertSelective(OmPlacementRule record);
 
-    List<OmPlacementRule> select(OmPlacementRuleCriteria criteria);
+    List<OmPlacementRule> select(OmPlacementRuleCriteria example);
 
     OmPlacementRule selectByPrimaryKey(Integer id);
 

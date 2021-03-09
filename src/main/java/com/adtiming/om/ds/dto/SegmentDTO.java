@@ -70,6 +70,14 @@ public class SegmentDTO {
 
     private OmInstanceWithBLOBs[] headerbidding;
 
+    private String customTags;
+
+    private String appvExp;
+
+    private String sdkvExp;
+
+    private String osvExp;
+
     public Integer getId() {
         return id;
     }
@@ -300,5 +308,37 @@ public class SegmentDTO {
 
     public void setHeaderbidding(OmInstanceWithBLOBs[] headerbidding) {
         this.headerbidding = headerbidding;
+    }
+
+    public String getCustomTags() {
+        return customTags;
+    }
+
+    public void setCustomTags(String customTags) {
+        this.customTags = customTags;
+    }
+
+    public String getAppvExp() {
+        return appvExp;
+    }
+
+    public void setAppvExp(String appvExp) {
+        this.appvExp = appvExp;
+    }
+
+    public String getSdkvExp() {
+        return sdkvExp;
+    }
+
+    public void setSdkvExp(String sdkvExp) {
+        this.sdkvExp = sdkvExp;
+    }
+
+    public String getOsvExp() {
+        return osvExp;
+    }
+
+    public void setOsvExp(String osvExp) {
+        this.osvExp = osvExp;
     }
 }

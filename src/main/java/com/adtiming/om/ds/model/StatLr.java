@@ -1,6 +1,5 @@
 // Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
 // Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -49,12 +48,6 @@ public class StatLr extends StatLrKey {
 
     private Integer impr;
 
-    private Integer mediationClick;
-
-    private Integer mediationImpr;
-
-    private Date createTime;
-
     private Integer bidReq;
 
     private Integer bidResp;
@@ -66,6 +59,14 @@ public class StatLr extends StatLrKey {
     private BigDecimal bidWinPrice;
 
     private Byte bid;
+
+    private String appVersion;
+
+    private String sdkVersion;
+
+    private String osVersion;
+
+    private Date createTime;
 
     public Byte getHour() {
         return hour;
@@ -235,14 +236,6 @@ public class StatLr extends StatLrKey {
         this.impr = impr;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
     public Integer getBidReq() {
         return bidReq;
     }
@@ -291,20 +284,36 @@ public class StatLr extends StatLrKey {
         this.bid = bid;
     }
 
-    public Integer getMediationClick() {
-        return mediationClick;
+    public String getAppVersion() {
+        return appVersion;
     }
 
-    public void setMediationClick(Integer mediationClick) {
-        this.mediationClick = mediationClick;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion == null ? null : appVersion.trim();
     }
 
-    public Integer getMediationImpr() {
-        return mediationImpr;
+    public String getSdkVersion() {
+        return sdkVersion;
     }
 
-    public void setMediationImpr(Integer mediationImpr) {
-        this.mediationImpr = mediationImpr;
+    public void setSdkVersion(String sdkVersion) {
+        this.sdkVersion = sdkVersion == null ? null : sdkVersion.trim();
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion == null ? null : osVersion.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     @Override
@@ -342,13 +351,16 @@ public class StatLr extends StatLrKey {
             && (this.getIsReadyFalse() == null ? other.getIsReadyFalse() == null : this.getIsReadyFalse().equals(other.getIsReadyFalse()))
             && (this.getClick() == null ? other.getClick() == null : this.getClick().equals(other.getClick()))
             && (this.getImpr() == null ? other.getImpr() == null : this.getImpr().equals(other.getImpr()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getBidReq() == null ? other.getBidReq() == null : this.getBidReq().equals(other.getBidReq()))
             && (this.getBidResp() == null ? other.getBidResp() == null : this.getBidResp().equals(other.getBidResp()))
             && (this.getBidRespPrice() == null ? other.getBidRespPrice() == null : this.getBidRespPrice().equals(other.getBidRespPrice()))
             && (this.getBidWin() == null ? other.getBidWin() == null : this.getBidWin().equals(other.getBidWin()))
             && (this.getBidWinPrice() == null ? other.getBidWinPrice() == null : this.getBidWinPrice().equals(other.getBidWinPrice()))
-            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()));
+            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()))
+            && (this.getAppVersion() == null ? other.getAppVersion() == null : this.getAppVersion().equals(other.getAppVersion()))
+            && (this.getSdkVersion() == null ? other.getSdkVersion() == null : this.getSdkVersion().equals(other.getSdkVersion()))
+            && (this.getOsVersion() == null ? other.getOsVersion() == null : this.getOsVersion().equals(other.getOsVersion()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
     }
 
     @Override
@@ -378,13 +390,16 @@ public class StatLr extends StatLrKey {
         result = prime * result + ((getIsReadyFalse() == null) ? 0 : getIsReadyFalse().hashCode());
         result = prime * result + ((getClick() == null) ? 0 : getClick().hashCode());
         result = prime * result + ((getImpr() == null) ? 0 : getImpr().hashCode());
-        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getBidReq() == null) ? 0 : getBidReq().hashCode());
         result = prime * result + ((getBidResp() == null) ? 0 : getBidResp().hashCode());
         result = prime * result + ((getBidRespPrice() == null) ? 0 : getBidRespPrice().hashCode());
         result = prime * result + ((getBidWin() == null) ? 0 : getBidWin().hashCode());
         result = prime * result + ((getBidWinPrice() == null) ? 0 : getBidWinPrice().hashCode());
         result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
+        result = prime * result + ((getAppVersion() == null) ? 0 : getAppVersion().hashCode());
+        result = prime * result + ((getSdkVersion() == null) ? 0 : getSdkVersion().hashCode());
+        result = prime * result + ((getOsVersion() == null) ? 0 : getOsVersion().hashCode());
+        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         return result;
     }
 }
