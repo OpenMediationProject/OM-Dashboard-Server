@@ -332,7 +332,6 @@ public class AdNetworkService extends BaseService {
         return appChange;
     }
 
-    @Transactional
     private void addFacebookAccount(OmAdnetworkApp omAdnetworkApp) {
         List<ReportAdnetworkAccount> accounts = this.accountService.getPublisherAccounts(AdNetworkType.Facebook.ordinal(),
                 this.getCurrentUser().getPublisherId(), NormalStatus.Active, omAdnetworkApp.getAdnAppKey());

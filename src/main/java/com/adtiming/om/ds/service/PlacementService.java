@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param pubAppId
-     * @param placementTypes
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Byte[] placementTypes) {
@@ -60,8 +59,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param pubAppId
-     * @param placementId
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Integer placementId) {
@@ -71,8 +68,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database by pubAppId and status
      *
-     * @param pubAppId
-     * @param status
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, NormalStatus status) {
@@ -112,10 +107,6 @@ public class PlacementService extends BaseService {
     /**
      * Select all placements from database which related to current user
      *
-     * @param placementId
-     * @param status
-     * @param pubAppId
-     * @param placementTypes
      * @return placements
      */
     public List<OmPlacementWithBLOBs> getPlacements(Integer pubAppId, Byte[] placementTypes, Integer placementId, NormalStatus status) {
@@ -148,7 +139,6 @@ public class PlacementService extends BaseService {
     /**
      * Select placement by id
      *
-     * @param placementId
      * @return OmPlacement
      */
     public OmPlacementWithBLOBs getPlacement(Integer placementId) {
@@ -157,8 +147,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Sort placement by revenue
-     *
-     * @param placements
      */
     private void sortPlacementsByRevenue(List<OmPlacementWithBLOBs> placements) {
         try {
@@ -190,8 +178,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Build placement database object, and insert into database
-     *
-     * @param omPlacement
      */
     @Transactional
     public Response createPlacement(OmPlacementWithBLOBs omPlacement) {
@@ -223,8 +209,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Update placement database object, and insert into database
-     *
-     * @param omPlacement
      */
     @Transactional
     public Response updatePlacement(OmPlacementWithBLOBs omPlacement) {
@@ -240,7 +224,6 @@ public class PlacementService extends BaseService {
     /**
      * Select placement scenes by placement id
      *
-     * @param placementId
      * @return List<OmPlacementScene>
      */
     public List<OmPlacementScene> getPlacementScenes(Integer placementId) {
@@ -270,8 +253,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Select apps placements map
-     *
-     * @param pubAppIds
      */
     public Map<Integer, List<OmPlacement>> getAppPlacementsMap(List<Integer> pubAppIds) {
         if (CollectionUtils.isEmpty(pubAppIds)) {
@@ -292,7 +273,6 @@ public class PlacementService extends BaseService {
     /**
      * Build placement scene database object, and insert into database
      *
-     * @param omPlacementScene
      * @return Response
      */
     @Transactional
@@ -311,7 +291,6 @@ public class PlacementService extends BaseService {
     /**
      * Update placement scene database object, and insert into database
      *
-     * @param omPlacementScene
      * @return Response
      */
     @Transactional
@@ -328,7 +307,6 @@ public class PlacementService extends BaseService {
     /**
      * Select placement countries
      *
-     * @param placementId
      * @return placementCountries
      */
     public List<OmPlacementCountry> getPlacementCountries(Integer placementId) {
@@ -342,8 +320,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Build placement country database object, and insert into database
-     *
-     * @param omPlacementCountry
      */
     public Response createPlacementCountry(OmPlacementCountry omPlacementCountry) {
         try {
@@ -364,8 +340,6 @@ public class PlacementService extends BaseService {
 
     /**
      * Update placement country database object
-     *
-     * @param omPlacementCountry
      */
     public Response updatePlacementCountry(OmPlacementCountry omPlacementCountry) {
         try {

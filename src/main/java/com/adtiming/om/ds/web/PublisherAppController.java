@@ -157,8 +157,6 @@ public class PublisherAppController extends BaseController {
 
     /**
      * Update publisher app's info from app store
-     *
-     * @param appId
      */
     @RequestMapping(value = "/app/get", method = RequestMethod.GET)
     public Response updatePublisherApp(String appId) {

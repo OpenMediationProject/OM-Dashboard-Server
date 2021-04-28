@@ -327,7 +327,6 @@ public class AccountService extends BaseService {
         return Response.buildSuccess(account);
     }
 
-    @Transactional
     private Response isUserRelateToAccount(ReportAdnetworkAccount account) {
         UmUser currentUser = this.getCurrentUser();
         ReportAdnetworkAccountPublisherKey key = new ReportAdnetworkAccountPublisherKey();

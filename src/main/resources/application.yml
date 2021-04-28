@@ -12,7 +12,7 @@ server:
   tomcat:
     basedir: .
     accesslog:
-      directory: log
+      directory: /data/om-ds-server/log
       enabled: true
       file-date-format: .yyyyMMdd
       buffered: true
