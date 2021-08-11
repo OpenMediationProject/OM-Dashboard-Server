@@ -229,12 +229,18 @@ public class MediationService extends BaseService {
         if (ruleId != null) {
             instanceIdKeyRuleInstanceMap = getInstanceIdKeyRuleInstanceMap(placementInstances, ruleId);
         }
-
+        Map<Integer, List<JSONObject>> instanceCountriesMap = this.instanceService.getInstanceCountriesMap(placementId);
         JSONArray resultInstances = new JSONArray();
         for (OmInstanceWithBLOBs instance : placementInstances) {
             JSONObject resultInstance = (JSONObject) JSONObject.toJSON(instance);
             if (adNetworkMap.get(instance.getAdnId()) != null) {
                 resultInstance.put("className", adNetworkMap.get(instance.getAdnId()).getClassName());
+            }
+            List<JSONObject> instanceCountries = instanceCountriesMap.get(instance.getId());
+            if (!CollectionUtils.isEmpty(instanceCountries)){
+                resultInstance.put("instanceCountries", instanceCountries);
+            } else {
+                resultInstance.put("instanceCountries", new ArrayList<>());
             }
             OmPlacementRuleInstance placementRuleInstance = instanceIdKeyRuleInstanceMap.get(instance.getId());
             if (placementRuleInstance != null) {

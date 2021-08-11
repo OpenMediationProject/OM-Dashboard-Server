@@ -25,6 +25,8 @@
     <result column="is_ready_false" jdbcType="INTEGER" property="isReadyFalse" />
     <result column="click" jdbcType="INTEGER" property="click" />
     <result column="impr" jdbcType="INTEGER" property="impr" />
+    <result column="mediation_impr" jdbcType="INTEGER" property="mediationImpr" />
+    <result column="mediation_click" jdbcType="INTEGER" property="mediationClick" />
     <result column="bid_req" jdbcType="INTEGER" property="bidReq" />
     <result column="bid_resp" jdbcType="INTEGER" property="bidResp" />
     <result column="bid_resp_price" jdbcType="DECIMAL" property="bidRespPrice" />

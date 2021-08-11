@@ -7,7 +7,7 @@ app:
     timeout: 2000
 
 logging:
-  config: classpath:log4j2-prod.xml
+  config: classpath:log4j2-dev.xml
 
 om.adc.domain: replace_with_your_om.adc.domain
 

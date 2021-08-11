@@ -10,6 +10,7 @@
     <result column="billing_type" jdbcType="TINYINT" property="billingType" />
     <result column="revenue_sharing" jdbcType="DECIMAL" property="revenueSharing" />
     <result column="ecpm" jdbcType="DECIMAL" property="ecpm" />
+    <result column="manual_ecpm" jdbcType="DECIMAL" property="manualEcpm" />
     <result column="hour0" jdbcType="INTEGER" property="hour0" />
     <result column="hour1" jdbcType="INTEGER" property="hour1" />
     <result column="hour2" jdbcType="INTEGER" property="hour2" />
@@ -51,7 +52,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, placement_id, adn_id, instance_id, country, billing_type, revenue_sharing, ecpm, 
-    hour0, hour1, hour2, hour3, hour4, hour5, hour6, create_time, lastmodify
+    manual_ecpm, hour0, hour1, hour2, hour3, hour4, hour5, hour6, create_time, lastmodify
   </sql>
   <select id="select" parameterType="com.adtiming.om.ds.model.OmInstanceCountryCriteria" resultMap="BaseResultMap">
     select
@@ -83,16 +84,16 @@
     </selectKey>
     insert into om_instance_country (placement_id, adn_id, instance_id, 
       country, billing_type, revenue_sharing, 
-      ecpm, hour0, hour1, 
-      hour2, hour3, hour4, 
-      hour5, hour6, create_time, 
-      lastmodify)
+      ecpm, manual_ecpm, hour0, 
+      hour1, hour2, hour3, 
+      hour4, hour5, hour6, 
+      create_time, lastmodify)
     values (#{placementId,jdbcType=INTEGER}, #{adnId,jdbcType=TINYINT}, #{instanceId,jdbcType=INTEGER}, 
       #{country,jdbcType=CHAR}, #{billingType,jdbcType=TINYINT}, #{revenueSharing,jdbcType=DECIMAL}, 
-      #{ecpm,jdbcType=DECIMAL}, #{hour0,jdbcType=INTEGER}, #{hour1,jdbcType=INTEGER}, 
-      #{hour2,jdbcType=INTEGER}, #{hour3,jdbcType=INTEGER}, #{hour4,jdbcType=INTEGER}, 
-      #{hour5,jdbcType=INTEGER}, #{hour6,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{lastmodify,jdbcType=TIMESTAMP})
+      #{ecpm,jdbcType=DECIMAL}, #{manualEcpm,jdbcType=DECIMAL}, #{hour0,jdbcType=INTEGER}, 
+      #{hour1,jdbcType=INTEGER}, #{hour2,jdbcType=INTEGER}, #{hour3,jdbcType=INTEGER}, 
+      #{hour4,jdbcType=INTEGER}, #{hour5,jdbcType=INTEGER}, #{hour6,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmInstanceCountry">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -120,6 +121,9 @@
       </if>
       <if test="ecpm != null">
         ecpm,
+      </if>
+      <if test="manualEcpm != null">
+        manual_ecpm,
       </if>
       <if test="hour0 != null">
         hour0,
@@ -170,6 +174,9 @@
       </if>
       <if test="ecpm != null">
         #{ecpm,jdbcType=DECIMAL},
+      </if>
+      <if test="manualEcpm != null">
+        #{manualEcpm,jdbcType=DECIMAL},
       </if>
       <if test="hour0 != null">
         #{hour0,jdbcType=INTEGER},
@@ -224,6 +231,9 @@
       <if test="ecpm != null">
         ecpm = #{ecpm,jdbcType=DECIMAL},
       </if>
+      <if test="manualEcpm != null">
+        manual_ecpm = #{manualEcpm,jdbcType=DECIMAL},
+      </if>
       <if test="hour0 != null">
         hour0 = #{hour0,jdbcType=INTEGER},
       </if>
@@ -263,6 +273,7 @@
       billing_type = #{billingType,jdbcType=TINYINT},
       revenue_sharing = #{revenueSharing,jdbcType=DECIMAL},
       ecpm = #{ecpm,jdbcType=DECIMAL},
+      manual_ecpm = #{manualEcpm,jdbcType=DECIMAL},
       hour0 = #{hour0,jdbcType=INTEGER},
       hour1 = #{hour1,jdbcType=INTEGER},
       hour2 = #{hour2,jdbcType=INTEGER},

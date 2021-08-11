@@ -13,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -100,6 +101,17 @@ public class AdmobCallbackController extends BaseController {
         } catch (Exception e) {
             log.warn("Grant failed, authCode {} error:", authCode, e);
             return Response.failure(Response.CODE_RES_DATA_EXISTED, String.format("Grant failed,msg:%s", e.getMessage()));
+        }
+    }
+
+    @RequestMapping("/report/admob/refreshToken/save")
+    @Transactional
+    public Response saveAdmobRefreshToken(String authCode) {
+        try {
+            return admobService.saveAdmobTokenByCode(authCode);
+        } catch (Exception e) {
+            log.warn("Admob grant failed, authCode {} error:", authCode, e);
+            return Response.failure(500, "Admob grant failed,msg:" + e.getMessage());
         }
     }
 }

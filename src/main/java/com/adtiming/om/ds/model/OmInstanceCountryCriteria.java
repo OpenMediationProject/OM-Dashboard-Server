@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -19,20 +16,20 @@ public class OmInstanceCountryCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -596,6 +593,66 @@ public class OmInstanceCountryCriteria {
 
         public Criteria andEcpmNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("ecpm not between", value1, value2, "ecpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmIsNull() {
+            addCriterion("manual_ecpm is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmIsNotNull() {
+            addCriterion("manual_ecpm is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmEqualTo(BigDecimal value) {
+            addCriterion("manual_ecpm =", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmNotEqualTo(BigDecimal value) {
+            addCriterion("manual_ecpm <>", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmGreaterThan(BigDecimal value) {
+            addCriterion("manual_ecpm >", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("manual_ecpm >=", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmLessThan(BigDecimal value) {
+            addCriterion("manual_ecpm <", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("manual_ecpm <=", value, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmIn(List<BigDecimal> values) {
+            addCriterion("manual_ecpm in", values, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmNotIn(List<BigDecimal> values) {
+            addCriterion("manual_ecpm not in", values, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("manual_ecpm between", value1, value2, "manualEcpm");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEcpmNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("manual_ecpm not between", value1, value2, "manualEcpm");
             return (Criteria) this;
         }
 
@@ -1164,6 +1221,38 @@ public class OmInstanceCountryCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -1198,38 +1287,6 @@ public class OmInstanceCountryCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

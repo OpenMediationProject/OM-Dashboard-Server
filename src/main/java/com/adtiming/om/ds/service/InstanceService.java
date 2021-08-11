@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,37 @@ public class InstanceService extends BaseService {
 
     @Resource
     OmPlacementMapper omPlacementMapper;
+
+    public Map<Integer, List<JSONObject>> getInstanceCountriesMap(Integer placementId){
+        if (placementId == null){
+            return new HashMap<>();
+        }
+        OmInstanceCountryCriteria countryCriteria = new OmInstanceCountryCriteria();
+        OmInstanceCountryCriteria.Criteria criteria = countryCriteria.createCriteria();
+        criteria.andPlacementIdEqualTo(placementId);
+        List<OmInstanceCountry> instanceCountries = this.omInstanceCountryMapper.select(countryCriteria);
+        Map<Integer, List<OmInstanceCountry>> instanceCountriesMap = instanceCountries.stream()
+                .collect(Collectors.groupingBy(OmInstanceCountry::getInstanceId, Collectors.toList()));
+        Map<Integer, List<JSONObject>> instanceCountryMap = new HashMap<>();
+        for (Map.Entry<Integer, List<OmInstanceCountry>> entry : instanceCountriesMap.entrySet()){
+            Integer instanceId = entry.getKey();
+            List<OmInstanceCountry> ics = entry.getValue();
+            List<JSONObject> results = new ArrayList<>();
+            Map<BigDecimal, List<OmInstanceCountry>> ecpmIcsMap = ics.stream().collect(Collectors.groupingBy(OmInstanceCountry::getManualEcpm, Collectors.toList()));
+            for (Map.Entry<BigDecimal, List<OmInstanceCountry>> entry1 : ecpmIcsMap.entrySet()){
+                List<String> countries = new ArrayList<>();
+                for (OmInstanceCountry icy : entry1.getValue()){
+                    countries.add(icy.getCountry());
+                }
+                JSONObject result = new JSONObject();
+                result.put("manualEcpm", entry1.getKey());
+                result.put("country", StringUtils.join(countries, ","));
+                results.add(result);
+            }
+            instanceCountryMap.put(instanceId, results);
+        }
+        return instanceCountryMap;
+    }
 
     /**
      * Select instances
@@ -437,6 +469,7 @@ public class InstanceService extends BaseService {
      *
      * @param omInstance
      */
+    @Transactional
     public Response createInstance(OmInstanceWithBLOBs omInstance) {
         OmPlacementWithBLOBs placement = this.omPlacementMapper.selectByPrimaryKey(omInstance.getPlacementId());
         if (placement == null) {
@@ -458,7 +491,50 @@ public class InstanceService extends BaseService {
         if (result <= 0) {
             throw new RuntimeException("Create instance " + JSONObject.toJSON(omInstance) + " success");
         }
+        if (!CollectionUtils.isEmpty(omInstance.getInstanceCountries())){
+            this.addInstanceCountry(omInstance);
+        }
         return Response.buildSuccess(omInstance);
+    }
+
+    @Transactional
+    protected void addInstanceCountry(OmInstanceWithBLOBs instance){
+        for (OmInstanceCountry ic : instance.getInstanceCountries()){
+            for (String country : ic.getCountry().split(",")){
+                OmInstanceCountry instanceCountry = new OmInstanceCountry();
+                instanceCountry.setInstanceId(instance.getId());
+                instanceCountry.setAdnId(instance.getAdnId().byteValue());
+                instanceCountry.setPlacementId(instance.getPlacementId());
+                instanceCountry.setManualEcpm(ic.getManualEcpm());
+                instanceCountry.setCountry(country);
+                int result = this.omInstanceCountryMapper.insertSelective(instanceCountry);
+                if (result <= 0){
+                    throw new RuntimeException("Add instance country " + JSONObject.toJSONString(instanceCountry) + " failed!");
+                }
+            }
+        }
+    }
+
+    @Transactional
+    protected void updateInstanceCountries(OmInstanceWithBLOBs instance){
+        OmInstanceCountryCriteria countryCriteria = new OmInstanceCountryCriteria();
+        OmInstanceCountryCriteria.Criteria criteria = countryCriteria.createCriteria();
+        criteria.andInstanceIdEqualTo(instance.getId());
+        List<OmInstanceCountry> instanceCountries = omInstanceCountryMapper.select(countryCriteria);
+        if (CollectionUtils.isEmpty(instanceCountries) && CollectionUtils.isEmpty(instance.getInstanceCountries())){
+            return;
+        }
+
+        for (OmInstanceCountry instanceCountry : instanceCountries){
+            int result = this.omInstanceCountryMapper.deleteByPrimaryKey(instanceCountry.getId());
+            if (result <= 0){
+                throw new RuntimeException("Delete InstanceCountry " + JSONObject.toJSONString(instanceCountry) + " error");
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(instance.getInstanceCountries())){
+            this.addInstanceCountry(instance);
+        }
     }
 
     /**
@@ -526,12 +602,13 @@ public class InstanceService extends BaseService {
         if (result <= 0) {
             throw new RuntimeException("Update instance " + omInstance.getId() + " failed!");
         }
-        instancePlacementKeyChange(instance, omInstance);
+        this.updateInstanceCountries(omInstance);
+        this.instancePlacementKeyChange(instance, omInstance);
         return Response.build();
     }
 
     @Transactional
-    private void instancePlacementKeyChange(OmInstance oldInstance, OmInstance newInstance) {
+    protected void instancePlacementKeyChange(OmInstance oldInstance, OmInstance newInstance) {
         if (StringUtils.isNotBlank(oldInstance.getPlacementKey()) && StringUtils.isNotBlank(newInstance.getPlacementKey())
                 && !oldInstance.getPlacementKey().equals(newInstance.getPlacementKey())) {
             OmAdnetworkApp adnApp = omAdnetworkAppMapper.selectByPrimaryKey(oldInstance.getAdnAppId());

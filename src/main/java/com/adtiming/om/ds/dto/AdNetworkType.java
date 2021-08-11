@@ -21,12 +21,17 @@ public enum AdNetworkType {
     ChartboostBid(17),
     Mint(18),
     CrossPromotion(19),
+    PubNative(20),
     Fyber(30);
 
     private int value;
 
     AdNetworkType(int value) {
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     public static AdNetworkType getAdNetworkType(int adNetworkType) {
@@ -69,6 +74,8 @@ public enum AdNetworkType {
                 return Mint;
             case 19:
                 return CrossPromotion;
+            case 20:
+                return PubNative;
             case 30:
                 return Fyber;
             default:

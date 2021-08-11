@@ -4,6 +4,7 @@
 package com.adtiming.om.ds.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class OmInstance {
     private Integer id;
@@ -57,6 +58,8 @@ public class OmInstance {
     private Integer priority;
 
     private Integer placementRuleInstanceId;
+
+    private List<OmInstanceCountry> instanceCountries;
 
     public Integer getId() {
         return id;
@@ -264,6 +267,14 @@ public class OmInstance {
 
     public void setPlacementRuleInstanceId(Integer placementRuleInstanceId) {
         this.placementRuleInstanceId = placementRuleInstanceId;
+    }
+
+    public List<OmInstanceCountry> getInstanceCountries() {
+        return instanceCountries;
+    }
+
+    public void setInstanceCountries(List<OmInstanceCountry> instanceCountries) {
+        this.instanceCountries = instanceCountries;
     }
 
     @Override

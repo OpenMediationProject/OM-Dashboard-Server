@@ -1,11 +1,7 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.dao;
 
 import com.adtiming.om.ds.model.OmInstanceCountry;
 import com.adtiming.om.ds.model.OmInstanceCountryCriteria;
-
 import java.util.List;
 
 public interface OmInstanceCountryMapper {
@@ -15,7 +11,7 @@ public interface OmInstanceCountryMapper {
 
     int insertSelective(OmInstanceCountry record);
 
-    List<OmInstanceCountry> select(OmInstanceCountryCriteria criteria);
+    List<OmInstanceCountry> select(OmInstanceCountryCriteria example);
 
     OmInstanceCountry selectByPrimaryKey(Integer id);
 

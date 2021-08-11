@@ -141,6 +141,7 @@ public class AdNetworkController extends BaseController {
             Map<Integer, List<OmInstanceWithBLOBs>> publisherInstanceMap = publisherInstances.stream()
                     .collect(Collectors.groupingBy(OmInstance::getPlacementId, Collectors.toList()));
             Map<Integer, OmAdnetwork> adNetworkMap = adNetworkService.getAdNetworkMap();
+            Map<Integer, List<JSONObject>> instanceCountriesMap = this.instanceService.getInstanceCountriesMap(placementId);
             JSONArray resultPlacements = new JSONArray();
             for (OmPlacementWithBLOBs placementWithBLOBs : placements) {
                 JSONObject resultPlacement = (JSONObject) JSONObject.toJSON(placementWithBLOBs);
@@ -154,6 +155,12 @@ public class AdNetworkController extends BaseController {
                             resultInstance.put("className", adNetworkMap.get(instanceWithBLOBs.getAdnId()).getClassName());
                         } else {
                             log.error("Adn id {} is not existed!", instanceWithBLOBs.getAdnId());
+                        }
+                        List<JSONObject> instanceCountries = instanceCountriesMap.get(instanceWithBLOBs.getId());
+                        if (!CollectionUtils.isEmpty(instanceCountries)){
+                            resultInstance.put("instanceCountries", instanceCountries);
+                        } else {
+                            resultInstance.put("instanceCountries", new ArrayList<>());
                         }
                         Util.buildBrandBlackWhiteType(resultInstance, instanceWithBLOBs.getBrandBlacklist(), instanceWithBLOBs.getBrandWhitelist());
                         Util.buildModelBlackWhiteType(resultInstance, instanceWithBLOBs.getModelBlacklist(), instanceWithBLOBs.getModelWhitelist());

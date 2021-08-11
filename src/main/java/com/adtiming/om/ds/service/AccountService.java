@@ -164,6 +164,7 @@ public class AccountService extends BaseService {
             case Vungle:
             case AppLovin:
             case Mopub:
+            case PubNative:
             case Mintegral: {
                 criteria.andAdnApiKeyEqualTo(account.getAdnApiKey());
                 primaryKey = account.getAdnApiKey();
@@ -206,6 +207,13 @@ public class AccountService extends BaseService {
     public Response createAccount(ReportAdnetworkAccount account) {
         if (account.getAdnId() == AdNetworkType.AdMob.ordinal() && account.getAuthType() == 2) {
             Response response = admobService.getAdmobPublisherId(account.getAdnApiKey(),
+                    account.getUserSignature(), account.getAdnAppToken());
+            if (response.getCode() != Response.SUCCESS_CODE) {
+                return response;
+            }
+            account.setUserId(response.getData().toString());
+        } else if (account.getAdnId() == AdNetworkType.AdMob.ordinal() && account.getAuthType() == 4) {
+            Response response = admobService.getAdmobPublisherIdByAdMob(account.getAdnApiKey(),
                     account.getUserSignature(), account.getAdnAppToken());
             if (response.getCode() != Response.SUCCESS_CODE) {
                 return response;
@@ -328,7 +336,7 @@ public class AccountService extends BaseService {
     }
 
     @Transactional
-    private Response isUserRelateToAccount(ReportAdnetworkAccount account) {
+    protected Response isUserRelateToAccount(ReportAdnetworkAccount account) {
         UmUser currentUser = this.getCurrentUser();
         ReportAdnetworkAccountPublisherKey key = new ReportAdnetworkAccountPublisherKey();
         key.setPublisherId(currentUser.getPublisherId());
@@ -446,6 +454,12 @@ public class AccountService extends BaseService {
                 }
                 if (StringUtils.isBlank(account.getUserSignature())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Mintegral's [Report API Secret] must be not null");
+                }
+                break;
+            }
+            case PubNative: {
+                if (StringUtils.isBlank(account.getAdnApiKey())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "PubNative's [Ad Reporting API Key] must be not null");
                 }
                 break;
             }

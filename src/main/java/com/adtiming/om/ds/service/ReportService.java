@@ -124,17 +124,18 @@ public class ReportService extends BaseService {
                 statAdNetworks.forEach(statAdNetwork -> resultReport.add((JSONObject) JSONObject.toJSON(statAdNetwork)));
             }
 
-            if (reportTypeSet.contains("lr")) {
-                List<StatLr> statLrs = this.getLrReport(reportConditionDTO);
-                for (StatLr statLr : statLrs) {
-                    if (dimensionSet.contains("adnId") && statLr.getAdnId() == 0) {
-                        continue;
-                    }
-                    if (dimensionSet.contains("instanceId") && statLr.getInstanceId() == 0) {
-                        continue;
-                    }
-                    resultReport.add((JSONObject) JSONObject.toJSON(statLr));
+            List<StatLr> statLrs = this.getLrReport(reportConditionDTO);
+            for (StatLr statLr : statLrs) {
+                if (dimensionSet.contains("adnId") && statLr.getAdnId() == 0) {
+                    continue;
                 }
+                if (dimensionSet.contains("instanceId") && statLr.getInstanceId() == 0) {
+                    continue;
+                }
+                if (dimensionSet.contains("placementId") && statLr.getPlacementId() == 0) {
+                    continue;
+                }
+                resultReport.add((JSONObject) JSONObject.toJSON(statLr));
             }
 
             if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
@@ -192,6 +193,8 @@ public class ReportService extends BaseService {
                     result.put("isReadyFalse", Util.getInt(result, "isReadyFalse") + Util.getInt(report, "isReadyFalse"));
                     result.put("mediationImpr", Util.getInt(result, "mediationImpr") + Util.getInt(report, "mediationImpr"));
                     result.put("mediationClick", Util.getInt(result, "mediationClick") + Util.getInt(report, "mediationClick"));
+                    result.put("impr", Util.getInt(result, "impr") + Util.getInt(report, "impr"));
+                    result.put("click", Util.getInt(result, "click") + Util.getInt(report, "click"));
 
                     result.put("bidReq", Util.getInt(result, "bidReq") + Util.getInt(report, "bidReq"));
                     result.put("bidResp", Util.getInt(result, "bidResp") + Util.getInt(report, "bidResp"));
@@ -405,7 +408,7 @@ public class ReportService extends BaseService {
                 conditionMap.put("dimension_" + dimension, dimension);
             }
         }
-        if (conditionMap.containsKey("dimension_adnId")) {
+        if (conditionMap.containsKey("dimension_adnId") && (reportConditionDTO.getBid() == null || reportConditionDTO.getBid().length == 0)) {
             conditionMap.put("dimension_show_inapp_bid", "dimension_show_inapp_bid");
             conditionMap.remove("dimension_adnId");
         }
@@ -551,7 +554,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){
@@ -638,7 +641,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){
@@ -719,7 +722,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){
@@ -808,7 +811,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){
@@ -909,7 +912,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){
@@ -1022,7 +1025,7 @@ public class ReportService extends BaseService {
                 if (osVersion.startsWith("(")){
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("[")){
+                if (osVersion.endsWith("]")){
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
                 if (osVersion.endsWith(")")){

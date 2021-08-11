@@ -66,6 +66,10 @@ public class StatLr extends StatLrKey {
 
     private String osVersion;
 
+    private Integer mediationImpr;
+
+    private Integer mediationClick;
+
     private Date createTime;
 
     public Byte getHour() {
@@ -314,6 +318,22 @@ public class StatLr extends StatLrKey {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getMediationImpr() {
+        return mediationImpr;
+    }
+
+    public void setMediationImpr(Integer mediationImpr) {
+        this.mediationImpr = mediationImpr;
+    }
+
+    public Integer getMediationClick() {
+        return mediationClick;
+    }
+
+    public void setMediationClick(Integer mediationClick) {
+        this.mediationClick = mediationClick;
     }
 
     @Override

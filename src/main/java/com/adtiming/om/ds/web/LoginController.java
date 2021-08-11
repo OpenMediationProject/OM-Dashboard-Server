@@ -15,6 +15,7 @@ import com.adtiming.om.ds.service.PublisherService;
 import com.adtiming.om.ds.service.RoleService;
 import com.adtiming.om.ds.service.UserService;
 import com.adtiming.om.ds.web.shiro.OmShiroRealm;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,57 +68,62 @@ public class LoginController extends BaseController {
      */
     @PostMapping("/login")
     public Response login(@RequestBody UmUser user, boolean rememberMe) {
-        String email = user.getEmail();
-        String password = user.getPassword();
+        try {
+            String email = user.getEmail();
+            String password = user.getPassword();
 
-        if (StringUtils.isBlank(email)) {
-            email = user.getUsername();
-            user.setEmail(email);
-        }
-
-        if (StringUtils.isBlank(email)) {
-            return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User email is null!");
-        }
-
-        if (StringUtils.isBlank(password)) {
-            return Response.build().msg("Password is null!");
-        }
-
-        UmUser umUser = this.userService.getUserInfoByName(user.getEmail());
-        if (umUser == null) {
-            return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User is not existed!");
-        }
-
-        if (umUser.getStatus().intValue() == SwitchStatus.OFF.ordinal()) {
-            return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User is disable!");
-        }
-
-        boolean allPublisherValid = false;
-        List<UmUser> publisherRoleUsers = this.userService.getUsers(umUser.getEmail());
-        if (CollectionUtils.isEmpty(publisherRoleUsers)) {
-            log.error("User {} does not belong to any organization", umUser.getEmail());
-            return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User does not belong to any organization!");
-        }
-        for (UmUser publisherRoleUser : publisherRoleUsers) {
-            if (publisherRoleUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
-                allPublisherValid = true;
-                break;
+            if (StringUtils.isBlank(email)) {
+                email = user.getUsername();
+                user.setEmail(email);
             }
-            if (publisherRoleUser.getPublisherId() > 0) {
-                OmPublisher publisher = this.publisherService.getPublisher(publisherRoleUser.getPublisherId());
-                if (publisher.getStatus() == SwitchStatus.ON.ordinal()) {
+
+            if (StringUtils.isBlank(email)) {
+                return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User email is null!");
+            }
+
+            if (StringUtils.isBlank(password)) {
+                return Response.build().msg("Password is null!");
+            }
+
+            UmUser umUser = this.userService.getUserInfoByName(user.getEmail());
+            if (umUser == null) {
+                return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User is not existed!");
+            }
+
+            if (umUser.getStatus().intValue() == SwitchStatus.OFF.ordinal()) {
+                return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User is disable!");
+            }
+
+            boolean allPublisherValid = false;
+            List<UmUser> publisherRoleUsers = this.userService.getUsers(umUser.getEmail());
+            if (CollectionUtils.isEmpty(publisherRoleUsers)) {
+                log.error("User {} does not belong to any organization", umUser.getEmail());
+                return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User does not belong to any organization!");
+            }
+            for (UmUser publisherRoleUser : publisherRoleUsers) {
+                if (publisherRoleUser.getRoleId() == RoleType.ADMINISTRATOR.getId()) {
                     allPublisherValid = true;
                     break;
                 }
+                if (publisherRoleUser.getPublisherId() > 0) {
+                    OmPublisher publisher = this.publisherService.getPublisher(publisherRoleUser.getPublisherId());
+                    if (publisher.getStatus() == SwitchStatus.ON.ordinal()) {
+                        allPublisherValid = true;
+                        break;
+                    }
+                }
             }
-        }
-        if (!allPublisherValid) {
-            return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User organization are all disable!");
-        }
+            if (!allPublisherValid) {
+                return Response.build().code(Response.CODE_PARAMETER_ERROR).msg("User organization are all disable!");
+            }
 
-        UmUser loginUser = userService.login(email, password, rememberMe);
-        // login successful to result token
-        return Response.buildSuccess(loginUser.getToken());
+            UmUser loginUser = userService.login(email, password, rememberMe);
+            // login successful to result token
+            return Response.buildSuccess(loginUser.getToken());
+        } catch (Exception e){
+            log.error("Login {} error:", JSONObject.toJSONString(user), e);
+        }
+        return Response.RES_FAILED;
     }
 
     @RequestMapping(value = "/login/switch/publisher", method = RequestMethod.GET)
