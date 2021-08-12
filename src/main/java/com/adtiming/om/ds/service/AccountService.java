@@ -369,7 +369,7 @@ public class AccountService extends BaseService {
                     if (StringUtils.isBlank(account.getAdnAppToken())) {
                         return Response.failure(Response.CODE_PARAMETER_NULL, "Admob's [Client JSON] must be not null");
                     }
-                } else if (account.getAuthType() != null && account.getAuthType().intValue() == 2) {
+                } else if (account.getAuthType() != null && (account.getAuthType().intValue() == 2 || account.getAuthType().intValue() == 4)) {
                     if (StringUtils.isBlank(account.getAdnAppId())) {
                         return Response.failure(Response.CODE_PARAMETER_NULL, "Admob's [API key] must be not null");
                     }
@@ -382,7 +382,7 @@ public class AccountService extends BaseService {
                     if (StringUtils.isBlank(account.getAdnAppToken())) {
                         return Response.failure(Response.CODE_PARAMETER_NULL, "Admob's [Refresh Token] must be not null");
                     }
-                } else if (account.getAuthType() != null && account.getAuthType().intValue() == 1) {
+                } else if (account.getAuthType() != null && (account.getAuthType().intValue() == 1 || account.getAuthType().intValue() == 3)) {
                     if (StringUtils.isBlank(account.getUserId())) {
                         return Response.failure(Response.CODE_PARAMETER_NULL, "Admob's [Publisher ID] must be not null");
                     }

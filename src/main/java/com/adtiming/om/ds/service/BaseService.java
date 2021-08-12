@@ -11,14 +11,20 @@ import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.RoleType;
 import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +36,13 @@ import java.util.List;
 public class BaseService {
 
     protected static final Logger log = LogManager.getLogger();
+
+    public HttpHost httpProxy;
+
+    public Proxy proxy;
+
+    @Value("${http.proxy}")
+    public String httpProxyStr;
 
     @Resource
     protected OmPublisherAppMapper omPublisherAppMapper;
@@ -45,6 +58,14 @@ public class BaseService {
 
     @Resource
     protected UmUserRoleMapper umUserRoleMapper;
+
+    @PostConstruct
+    private void init() {
+        if (StringUtils.isNotBlank(httpProxyStr)) {
+            httpProxy = HttpHost.create(httpProxyStr);
+            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(httpProxy.getHostName(), httpProxy.getPort()));
+        }
+    }
 
     public UmUser getCurrentUser() {
         Subject subject = SecurityUtils.getSubject();

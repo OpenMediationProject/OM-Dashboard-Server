@@ -21,7 +21,10 @@ public enum AdNetworkType {
     ChartboostBid(17),
     Mint(18),
     CrossPromotion(19),
-    PubNative(20),
+    SigMob(20),
+    KuaiShou(21),
+    Ogury(22),
+    PubNative(23),
     Fyber(30);
 
     private int value;
@@ -74,7 +77,7 @@ public enum AdNetworkType {
                 return Mint;
             case 19:
                 return CrossPromotion;
-            case 20:
+            case 23:
                 return PubNative;
             case 30:
                 return Fyber;

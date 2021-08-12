@@ -26,3 +26,4 @@ spring:
 
 
 
+http.proxy:

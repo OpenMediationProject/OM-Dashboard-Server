@@ -188,7 +188,7 @@ public class AdmobService extends BaseService {
         // Exchange auth code for access token
         //GoogleClientSecrets clientSecrets = getClientSecrets();
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
-                new NetHttpTransport.Builder().build(),
+                new NetHttpTransport.Builder().setProxy(proxy).build(),
                 JacksonFactory.getDefaultInstance(),
                 "https://oauth2.googleapis.com/token",//clientSecrets.getDetails().getTokenUri(),
                 omClientId,//clientSecrets.getDetails().getClientId(),
@@ -217,7 +217,7 @@ public class AdmobService extends BaseService {
 
     public Response getAdmobPublisherIdByAdMob(String clientId, String clientSecret, String refreshToken) {
         try {
-            NetHttpTransport transport = new NetHttpTransport.Builder().build();
+            NetHttpTransport transport = new NetHttpTransport.Builder().setProxy(proxy).build();
             GoogleCredential credential = new GoogleCredential.Builder()
                     .setJsonFactory(JacksonFactory.getDefaultInstance())
                     .setTransport(transport)
