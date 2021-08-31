@@ -21,6 +21,7 @@
     <result column="batch_size" jdbcType="TINYINT" property="batchSize" />
     <result column="inventory_count" jdbcType="TINYINT" property="inventoryCount" />
     <result column="inventory_interval" jdbcType="INTEGER" property="inventoryInterval" />
+    <result column="inventory_interval_step" jdbcType="VARCHAR" property="inventoryIntervalStep" />
     <result column="reload_interval" jdbcType="INTEGER" property="reloadInterval" />
     <result column="frequency_cap" jdbcType="INTEGER" property="frequencyCap" />
     <result column="frequency_unit" jdbcType="INTEGER" property="frequencyUnit" />
@@ -74,8 +75,9 @@
   <sql id="Base_Column_List">
     id, publisher_id, pub_app_id, main_placement, name, ad_type, descn, status, preload_timeout, 
     ab_test_status, preview_url, ic_url, floor_price, floor_price_switch, hb_status, 
-    fan_out, batch_size, inventory_count, inventory_interval, reload_interval, frequency_cap, 
-    frequency_unit, frequency_interval, create_time, lastmodify, osv_max, osv_min
+    fan_out, batch_size, inventory_count, inventory_interval, inventory_interval_step, 
+    reload_interval, frequency_cap, frequency_unit, frequency_interval, create_time, 
+    lastmodify, osv_max, osv_min
   </sql>
   <sql id="Blob_Column_List">
     osv_whitelist, osv_blacklist, make_whitelist, make_blacklist, brand_whitelist, brand_blacklist, 
@@ -133,26 +135,28 @@
       preview_url, ic_url, floor_price, 
       floor_price_switch, hb_status, fan_out, 
       batch_size, inventory_count, inventory_interval, 
-      reload_interval, frequency_cap, frequency_unit, 
-      frequency_interval, create_time, lastmodify, 
-      osv_max, osv_min, osv_whitelist, 
-      osv_blacklist, make_whitelist, make_blacklist, 
-      brand_whitelist, brand_blacklist, 
-      model_whitelist, model_blacklist, 
-      did_blacklist, sdkv_blacklist)
+      inventory_interval_step, reload_interval, 
+      frequency_cap, frequency_unit, frequency_interval, 
+      create_time, lastmodify, osv_max, 
+      osv_min, osv_whitelist, osv_blacklist, 
+      make_whitelist, make_blacklist, brand_whitelist, 
+      brand_blacklist, model_whitelist, 
+      model_blacklist, did_blacklist, sdkv_blacklist
+      )
     values (#{publisherId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, #{mainPlacement,jdbcType=TINYINT}, 
       #{name,jdbcType=VARCHAR}, #{adType,jdbcType=TINYINT}, #{descn,jdbcType=VARCHAR}, 
       #{status,jdbcType=TINYINT}, #{preloadTimeout,jdbcType=TINYINT}, #{abTestStatus,jdbcType=TINYINT}, 
       #{previewUrl,jdbcType=VARCHAR}, #{icUrl,jdbcType=VARCHAR}, #{floorPrice,jdbcType=DECIMAL}, 
       #{floorPriceSwitch,jdbcType=TINYINT}, #{hbStatus,jdbcType=TINYINT}, #{fanOut,jdbcType=TINYINT}, 
       #{batchSize,jdbcType=TINYINT}, #{inventoryCount,jdbcType=TINYINT}, #{inventoryInterval,jdbcType=INTEGER}, 
-      #{reloadInterval,jdbcType=INTEGER}, #{frequencyCap,jdbcType=INTEGER}, #{frequencyUnit,jdbcType=INTEGER}, 
-      #{frequencyInterval,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
-      #{osvMax,jdbcType=VARCHAR}, #{osvMin,jdbcType=VARCHAR}, #{osvWhitelist,jdbcType=LONGVARCHAR}, 
-      #{osvBlacklist,jdbcType=LONGVARCHAR}, #{makeWhitelist,jdbcType=LONGVARCHAR}, #{makeBlacklist,jdbcType=LONGVARCHAR}, 
-      #{brandWhitelist,jdbcType=LONGVARCHAR}, #{brandBlacklist,jdbcType=LONGVARCHAR}, 
-      #{modelWhitelist,jdbcType=LONGVARCHAR}, #{modelBlacklist,jdbcType=LONGVARCHAR}, 
-      #{didBlacklist,jdbcType=LONGVARCHAR}, #{sdkvBlacklist,jdbcType=LONGVARCHAR})
+      #{inventoryIntervalStep,jdbcType=VARCHAR}, #{reloadInterval,jdbcType=INTEGER}, 
+      #{frequencyCap,jdbcType=INTEGER}, #{frequencyUnit,jdbcType=INTEGER}, #{frequencyInterval,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, #{osvMax,jdbcType=VARCHAR}, 
+      #{osvMin,jdbcType=VARCHAR}, #{osvWhitelist,jdbcType=LONGVARCHAR}, #{osvBlacklist,jdbcType=LONGVARCHAR}, 
+      #{makeWhitelist,jdbcType=LONGVARCHAR}, #{makeBlacklist,jdbcType=LONGVARCHAR}, #{brandWhitelist,jdbcType=LONGVARCHAR}, 
+      #{brandBlacklist,jdbcType=LONGVARCHAR}, #{modelWhitelist,jdbcType=LONGVARCHAR}, 
+      #{modelBlacklist,jdbcType=LONGVARCHAR}, #{didBlacklist,jdbcType=LONGVARCHAR}, #{sdkvBlacklist,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmPlacementWithBLOBs">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -213,6 +217,9 @@
       </if>
       <if test="inventoryInterval != null">
         inventory_interval,
+      </if>
+      <if test="inventoryIntervalStep != null">
+        inventory_interval_step,
       </if>
       <if test="reloadInterval != null">
         reload_interval,
@@ -323,6 +330,9 @@
       </if>
       <if test="inventoryInterval != null">
         #{inventoryInterval,jdbcType=INTEGER},
+      </if>
+      <if test="inventoryIntervalStep != null">
+        #{inventoryIntervalStep,jdbcType=VARCHAR},
       </if>
       <if test="reloadInterval != null">
         #{reloadInterval,jdbcType=INTEGER},
@@ -437,6 +447,9 @@
       <if test="inventoryInterval != null">
         inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
       </if>
+      <if test="inventoryIntervalStep != null">
+        inventory_interval_step = #{inventoryIntervalStep,jdbcType=VARCHAR},
+      </if>
       <if test="reloadInterval != null">
         reload_interval = #{reloadInterval,jdbcType=INTEGER},
       </if>
@@ -514,6 +527,7 @@
       batch_size = #{batchSize,jdbcType=TINYINT},
       inventory_count = #{inventoryCount,jdbcType=TINYINT},
       inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
+      inventory_interval_step = #{inventoryIntervalStep,jdbcType=VARCHAR},
       reload_interval = #{reloadInterval,jdbcType=INTEGER},
       frequency_cap = #{frequencyCap,jdbcType=INTEGER},
       frequency_unit = #{frequencyUnit,jdbcType=INTEGER},
@@ -554,6 +568,7 @@
       batch_size = #{batchSize,jdbcType=TINYINT},
       inventory_count = #{inventoryCount,jdbcType=TINYINT},
       inventory_interval = #{inventoryInterval,jdbcType=INTEGER},
+      inventory_interval_step = #{inventoryIntervalStep,jdbcType=VARCHAR},
       reload_interval = #{reloadInterval,jdbcType=INTEGER},
       frequency_cap = #{frequencyCap,jdbcType=INTEGER},
       frequency_unit = #{frequencyUnit,jdbcType=INTEGER},

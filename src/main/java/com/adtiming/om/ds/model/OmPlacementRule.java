@@ -30,6 +30,8 @@ public class OmPlacementRule {
 
     private Integer createUserId;
 
+    private String countries;
+
     private Date createTime;
 
     private Date lastmodify;
@@ -128,6 +130,14 @@ public class OmPlacementRule {
 
     public void setCreateUserId(Integer createUserId) {
         this.createUserId = createUserId;
+    }
+
+    public String getCountries() {
+        return countries;
+    }
+
+    public void setCountries(String countries) {
+        this.countries = countries;
     }
 
     public Date getCreateTime() {

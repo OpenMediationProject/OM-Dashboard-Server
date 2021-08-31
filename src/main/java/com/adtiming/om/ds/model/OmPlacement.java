@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -44,6 +41,8 @@ public class OmPlacement {
     private Byte inventoryCount;
 
     private Integer inventoryInterval;
+
+    private String inventoryIntervalStep;
 
     private Integer reloadInterval;
 
@@ -215,6 +214,14 @@ public class OmPlacement {
         this.inventoryInterval = inventoryInterval;
     }
 
+    public String getInventoryIntervalStep() {
+        return inventoryIntervalStep;
+    }
+
+    public void setInventoryIntervalStep(String inventoryIntervalStep) {
+        this.inventoryIntervalStep = inventoryIntervalStep == null ? null : inventoryIntervalStep.trim();
+    }
+
     public Integer getReloadInterval() {
         return reloadInterval;
     }
@@ -300,32 +307,33 @@ public class OmPlacement {
         }
         OmPlacement other = (OmPlacement) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getMainPlacement() == null ? other.getMainPlacement() == null : this.getMainPlacement().equals(other.getMainPlacement()))
-                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
-                && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getPreloadTimeout() == null ? other.getPreloadTimeout() == null : this.getPreloadTimeout().equals(other.getPreloadTimeout()))
-                && (this.getAbTestStatus() == null ? other.getAbTestStatus() == null : this.getAbTestStatus().equals(other.getAbTestStatus()))
-                && (this.getPreviewUrl() == null ? other.getPreviewUrl() == null : this.getPreviewUrl().equals(other.getPreviewUrl()))
-                && (this.getIcUrl() == null ? other.getIcUrl() == null : this.getIcUrl().equals(other.getIcUrl()))
-                && (this.getFloorPrice() == null ? other.getFloorPrice() == null : this.getFloorPrice().equals(other.getFloorPrice()))
-                && (this.getFloorPriceSwitch() == null ? other.getFloorPriceSwitch() == null : this.getFloorPriceSwitch().equals(other.getFloorPriceSwitch()))
-                && (this.getHbStatus() == null ? other.getHbStatus() == null : this.getHbStatus().equals(other.getHbStatus()))
-                && (this.getFanOut() == null ? other.getFanOut() == null : this.getFanOut().equals(other.getFanOut()))
-                && (this.getBatchSize() == null ? other.getBatchSize() == null : this.getBatchSize().equals(other.getBatchSize()))
-                && (this.getInventoryCount() == null ? other.getInventoryCount() == null : this.getInventoryCount().equals(other.getInventoryCount()))
-                && (this.getInventoryInterval() == null ? other.getInventoryInterval() == null : this.getInventoryInterval().equals(other.getInventoryInterval()))
-                && (this.getReloadInterval() == null ? other.getReloadInterval() == null : this.getReloadInterval().equals(other.getReloadInterval()))
-                && (this.getFrequencyCap() == null ? other.getFrequencyCap() == null : this.getFrequencyCap().equals(other.getFrequencyCap()))
-                && (this.getFrequencyUnit() == null ? other.getFrequencyUnit() == null : this.getFrequencyUnit().equals(other.getFrequencyUnit()))
-                && (this.getFrequencyInterval() == null ? other.getFrequencyInterval() == null : this.getFrequencyInterval().equals(other.getFrequencyInterval()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
-                && (this.getOsvMax() == null ? other.getOsvMax() == null : this.getOsvMax().equals(other.getOsvMax()))
-                && (this.getOsvMin() == null ? other.getOsvMin() == null : this.getOsvMin().equals(other.getOsvMin()));
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getMainPlacement() == null ? other.getMainPlacement() == null : this.getMainPlacement().equals(other.getMainPlacement()))
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
+            && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getPreloadTimeout() == null ? other.getPreloadTimeout() == null : this.getPreloadTimeout().equals(other.getPreloadTimeout()))
+            && (this.getAbTestStatus() == null ? other.getAbTestStatus() == null : this.getAbTestStatus().equals(other.getAbTestStatus()))
+            && (this.getPreviewUrl() == null ? other.getPreviewUrl() == null : this.getPreviewUrl().equals(other.getPreviewUrl()))
+            && (this.getIcUrl() == null ? other.getIcUrl() == null : this.getIcUrl().equals(other.getIcUrl()))
+            && (this.getFloorPrice() == null ? other.getFloorPrice() == null : this.getFloorPrice().equals(other.getFloorPrice()))
+            && (this.getFloorPriceSwitch() == null ? other.getFloorPriceSwitch() == null : this.getFloorPriceSwitch().equals(other.getFloorPriceSwitch()))
+            && (this.getHbStatus() == null ? other.getHbStatus() == null : this.getHbStatus().equals(other.getHbStatus()))
+            && (this.getFanOut() == null ? other.getFanOut() == null : this.getFanOut().equals(other.getFanOut()))
+            && (this.getBatchSize() == null ? other.getBatchSize() == null : this.getBatchSize().equals(other.getBatchSize()))
+            && (this.getInventoryCount() == null ? other.getInventoryCount() == null : this.getInventoryCount().equals(other.getInventoryCount()))
+            && (this.getInventoryInterval() == null ? other.getInventoryInterval() == null : this.getInventoryInterval().equals(other.getInventoryInterval()))
+            && (this.getInventoryIntervalStep() == null ? other.getInventoryIntervalStep() == null : this.getInventoryIntervalStep().equals(other.getInventoryIntervalStep()))
+            && (this.getReloadInterval() == null ? other.getReloadInterval() == null : this.getReloadInterval().equals(other.getReloadInterval()))
+            && (this.getFrequencyCap() == null ? other.getFrequencyCap() == null : this.getFrequencyCap().equals(other.getFrequencyCap()))
+            && (this.getFrequencyUnit() == null ? other.getFrequencyUnit() == null : this.getFrequencyUnit().equals(other.getFrequencyUnit()))
+            && (this.getFrequencyInterval() == null ? other.getFrequencyInterval() == null : this.getFrequencyInterval().equals(other.getFrequencyInterval()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
+            && (this.getOsvMax() == null ? other.getOsvMax() == null : this.getOsvMax().equals(other.getOsvMax()))
+            && (this.getOsvMin() == null ? other.getOsvMin() == null : this.getOsvMin().equals(other.getOsvMin()));
     }
 
     @Override
@@ -351,6 +359,7 @@ public class OmPlacement {
         result = prime * result + ((getBatchSize() == null) ? 0 : getBatchSize().hashCode());
         result = prime * result + ((getInventoryCount() == null) ? 0 : getInventoryCount().hashCode());
         result = prime * result + ((getInventoryInterval() == null) ? 0 : getInventoryInterval().hashCode());
+        result = prime * result + ((getInventoryIntervalStep() == null) ? 0 : getInventoryIntervalStep().hashCode());
         result = prime * result + ((getReloadInterval() == null) ? 0 : getReloadInterval().hashCode());
         result = prime * result + ((getFrequencyCap() == null) ? 0 : getFrequencyCap().hashCode());
         result = prime * result + ((getFrequencyUnit() == null) ? 0 : getFrequencyUnit().hashCode());

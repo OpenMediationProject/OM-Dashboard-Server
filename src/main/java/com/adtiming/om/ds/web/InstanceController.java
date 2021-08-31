@@ -130,6 +130,28 @@ public class InstanceController extends BaseController {
     }
 
     /**
+     * Create placement instances
+     *
+     * @see OmInstanceWithBLOBs
+     */
+    @RequestMapping(value = "/create_instances", method = RequestMethod.POST)
+    public Response createInstances(@RequestBody List<OmInstanceWithBLOBs> omInstances) {
+        try {
+            for (OmInstanceWithBLOBs omInstanceWithBLOBs : omInstances) {
+                if (omInstanceWithBLOBs.getPubAppId() == null || omInstanceWithBLOBs.getName() == null || omInstanceWithBLOBs.getAdnAppId() == null) {
+                    log.error("Publisher id {} name {}", omInstanceWithBLOBs.getPubAppId(), omInstanceWithBLOBs.getName());
+                    return Response.RES_PARAMETER_ERROR;
+                }
+                this.instanceService.createInstance(omInstanceWithBLOBs);
+            }
+            return Response.buildSuccess(omInstances);
+        } catch (Exception e) {
+            log.error("Create instance {} error", JSONObject.toJSONString(omInstances), e);
+        }
+        return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, "Create instances failed!");
+    }
+
+    /**
      * Create a new placement instance, related to current user
      *
      * @see OmInstanceWithBLOBs

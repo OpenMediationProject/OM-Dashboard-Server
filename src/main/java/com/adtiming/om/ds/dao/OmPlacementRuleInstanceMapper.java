@@ -11,8 +11,6 @@ import java.util.List;
 public interface OmPlacementRuleInstanceMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(OmPlacementRuleInstance record);
-
     int insertSelective(OmPlacementRuleInstance record);
 
     List<OmPlacementRuleInstance> select(OmPlacementRuleInstanceCriteria criteria);

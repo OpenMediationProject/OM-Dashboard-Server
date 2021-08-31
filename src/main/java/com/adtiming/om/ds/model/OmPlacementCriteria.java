@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.math.BigDecimal;
@@ -19,20 +16,20 @@ public class OmPlacementCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -1289,6 +1286,76 @@ public class OmPlacementCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andInventoryIntervalStepIsNull() {
+            addCriterion("inventory_interval_step is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepIsNotNull() {
+            addCriterion("inventory_interval_step is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepEqualTo(String value) {
+            addCriterion("inventory_interval_step =", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepNotEqualTo(String value) {
+            addCriterion("inventory_interval_step <>", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepGreaterThan(String value) {
+            addCriterion("inventory_interval_step >", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepGreaterThanOrEqualTo(String value) {
+            addCriterion("inventory_interval_step >=", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepLessThan(String value) {
+            addCriterion("inventory_interval_step <", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepLessThanOrEqualTo(String value) {
+            addCriterion("inventory_interval_step <=", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepLike(String value) {
+            addCriterion("inventory_interval_step like", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepNotLike(String value) {
+            addCriterion("inventory_interval_step not like", value, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepIn(List<String> values) {
+            addCriterion("inventory_interval_step in", values, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepNotIn(List<String> values) {
+            addCriterion("inventory_interval_step not in", values, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepBetween(String value1, String value2) {
+            addCriterion("inventory_interval_step between", value1, value2, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
+        public Criteria andInventoryIntervalStepNotBetween(String value1, String value2) {
+            addCriterion("inventory_interval_step not between", value1, value2, "inventoryIntervalStep");
+            return (Criteria) this;
+        }
+
         public Criteria andReloadIntervalIsNull() {
             addCriterion("reload_interval is null");
             return (Criteria) this;
@@ -1814,6 +1881,38 @@ public class OmPlacementCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -1848,38 +1947,6 @@ public class OmPlacementCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }

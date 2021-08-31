@@ -2105,6 +2105,66 @@ public class StatLrCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andRuleIdIsNull() {
+            addCriterion("rule_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdIsNotNull() {
+            addCriterion("rule_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdEqualTo(Integer value) {
+            addCriterion("rule_id =", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotEqualTo(Integer value) {
+            addCriterion("rule_id <>", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdGreaterThan(Integer value) {
+            addCriterion("rule_id >", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("rule_id >=", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdLessThan(Integer value) {
+            addCriterion("rule_id <", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdLessThanOrEqualTo(Integer value) {
+            addCriterion("rule_id <=", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdIn(List<Integer> values) {
+            addCriterion("rule_id in", values, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotIn(List<Integer> values) {
+            addCriterion("rule_id not in", values, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdBetween(Integer value1, Integer value2) {
+            addCriterion("rule_id between", value1, value2, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("rule_id not between", value1, value2, "ruleId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

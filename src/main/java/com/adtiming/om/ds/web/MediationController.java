@@ -3,12 +3,11 @@
 
 package com.adtiming.om.ds.web;
 
+import com.adtiming.om.ds.dao.OmPlacementRuleGroupMapper;
 import com.adtiming.om.ds.dto.ReportConditionDTO;
 import com.adtiming.om.ds.dto.Response;
 import com.adtiming.om.ds.dto.SegmentDTO;
-import com.adtiming.om.ds.model.OmPlacementRule;
-import com.adtiming.om.ds.model.OmPlacementRuleInstance;
-import com.adtiming.om.ds.model.OmPlacementRuleSegmentWithBLOBs;
+import com.adtiming.om.ds.model.*;
 import com.adtiming.om.ds.service.MediationService;
 import com.adtiming.om.ds.service.ReportService;
 import com.adtiming.om.ds.util.Util;
@@ -21,11 +20,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,11 +40,14 @@ public class MediationController extends BaseController {
 
     protected static final Logger log = LogManager.getLogger();
 
-    @Autowired
-    protected MediationService mediationService;
+    @Resource
+    MediationService mediationService;
 
-    @Autowired
-    protected ReportService reportService;
+    @Resource
+    ReportService reportService;
+
+    @Resource
+    OmPlacementRuleGroupMapper omPlacementRuleGroupMapper;
 
     /**
      * create or update segment with instances together in one transaction
@@ -63,8 +67,33 @@ public class MediationController extends BaseController {
             } else {
                 this.mediationService.updateSegment(segmentDTO);
             }
-            this.mediationService.saveRuleMediation(segmentDTO.getId(), segmentDTO.getInstances());
-            this.mediationService.saveRuleMediation(segmentDTO.getId(), segmentDTO.getHeaderbidding());
+            Map<Integer, OmPlacementRuleGroup> instanceLevelGroupIdMap = this.mediationService.getInstanceLevelGroupIdMap(segmentDTO.getId());
+            Map<Integer, List<OmInstanceWithBLOBs>> groupIdInstanceMap = new HashMap<>();
+            for (OmInstanceWithBLOBs instance : segmentDTO.getInstances()) {
+                if (instance.getGroupLevel() == null) {
+                    instance.setGroupLevel(1);
+                }
+                if (instance.getAutoSwitch() == null) {
+                    instance.setAutoSwitch(2);
+                }
+                OmPlacementRuleGroup group = instanceLevelGroupIdMap.get(instance.getGroupLevel());
+                instance.setGroupId(group.getId());
+                List<OmInstanceWithBLOBs> groupIdInstances = groupIdInstanceMap.computeIfAbsent(instance.getGroupId(), k -> new ArrayList<>());
+                groupIdInstances.add(instance);
+            }
+            for (List<OmInstanceWithBLOBs> groupInstances : groupIdInstanceMap.values()) {
+                OmInstanceWithBLOBs instance = groupInstances.get(0);
+                OmPlacementRuleGroup group = instanceLevelGroupIdMap.get(instance.getGroupLevel());
+                if (group.getAutoSwitch() != instance.getAutoSwitch().byteValue()) {
+                    group.setAutoSwitch(instance.getAutoSwitch().byteValue());
+                    int result = this.omPlacementRuleGroupMapper.updateByPrimaryKeySelective(group);
+                    if (result <= 0) {
+                        throw new RuntimeException("Update group auto switch " + JSONObject.toJSONString(group) + " failed");
+                    }
+                }
+                this.mediationService.saveRuleMediation(segmentDTO.getId(), groupInstances);
+            }
+            this.mediationService.saveRuleMediation(segmentDTO.getId(), Arrays.asList(segmentDTO.getHeaderbidding()));
             return Response.buildSuccess(segmentDTO);
         } catch (Exception e) {
             log.error("Update segment {} error:", JSONObject.toJSON(segmentDTO), e);
@@ -199,17 +228,255 @@ public class MediationController extends BaseController {
      * @param countries
      */
     @RequestMapping(value = "/mediation/segment/list", method = RequestMethod.GET)
-    public Response getSegments(Integer pubAppId, Integer placementId, String[] countries) {
+    public Response getSegments(Integer pubAppId, Integer placementId, String[] countries, Integer lastDays) {
         try {
             if (pubAppId == null) {
                 log.error("Get segments error, publisher app id is null!");
                 return Response.RES_PARAMETER_ERROR;
             }
-            return this.mediationService.getSegments(pubAppId, placementId, countries);
+            List<JSONObject> rules = this.mediationService.getSegments(pubAppId, placementId, countries);
+            if (CollectionUtils.isEmpty(rules)) {
+                return Response.buildSuccess(rules);
+            }
+            List<Integer> ruleIds = new ArrayList<>();
+            for (JSONObject result : rules) {
+                Integer ruleId = result.getInteger("id");
+                if (ruleId != null) {
+                    ruleIds.add(ruleId);
+                }
+            }
+            if (lastDays == null || lastDays <= 0) {
+                lastDays = 1;
+            }
+            Date middleDay = DateUtils.addDays(new Date(), -lastDays);
+            Map<Integer, JSONObject> latestRuleReportMap = this.getRuleReportMap(pubAppId, placementId, ruleIds, middleDay, DateUtils.addDays(new Date(), -1), countries);
+            Map<Integer, JSONObject> secondRuleReportMap = this.getRuleReportMap(pubAppId, placementId, ruleIds, DateUtils.addDays(middleDay, -lastDays), DateUtils.addDays(middleDay, -1), countries);
+
+            for (JSONObject rule : rules) {
+                try {
+                    Integer ruleId = rule.getInteger("id");
+                    double fillRate = 0;
+                    double ecpm = 0;
+                    double fillRateB = 0;
+                    double ecpmB = 0;
+                    JSONObject ruleReport = latestRuleReportMap.get(ruleId);
+                    if (ruleReport != null) {
+                        float waterfallRequest = Util.getInt(ruleReport, "waterfallRequest");
+                        float waterfallFilled = Util.getInt(ruleReport, "waterfallFilled");
+                        if (waterfallRequest > 0) {
+                            fillRate = (int) (waterfallFilled * 10000 / waterfallRequest) / 100D;
+                        }
+                        ecpm = ruleReport.getDouble("apiEcpm");
+                    }
+                    rule.put("fillRate", fillRate);
+                    rule.put("ecpm", ecpm);
+                    JSONObject ruleReportB = secondRuleReportMap.get(ruleId);
+                    if (ruleReportB != null) {
+                        double waterfallRequest = Util.getInt(ruleReportB, "waterfallRequest");
+                        double waterfallFilled = Util.getInt(ruleReportB, "waterfallFilled");
+                        if (waterfallRequest > 0) {
+                            fillRateB = (int) (waterfallFilled * 10000 / waterfallRequest) / 100D;
+                        }
+                        ecpmB = ruleReportB.getDouble("apiEcpm");
+                    }
+                    rule.put("fillRateB", fillRateB);
+                    rule.put("ecpmB", ecpmB);
+                    double fillRateChainComparison = 0;
+                    double ecpmChainComparison = 0;
+                    if (fillRateB > 0) {
+                        fillRateChainComparison = (int) ((fillRate - fillRateB) * 10000 / fillRateB) / 100D;
+                    }
+                    if (ecpmB > 0) {
+                        ecpmChainComparison = (int) ((ecpm - ecpmB) * 10000 / ecpmB) / 100D;
+                    }
+                    rule.put("fillRateChainComparison", fillRateChainComparison);
+                    rule.put("ecpmChainComparison", ecpmChainComparison);
+                } catch (Exception e) {
+                    log.error("Fill rule {} report error:", rule, e);
+                }
+            }
+            return Response.buildSuccess(rules);
         } catch (Exception e) {
             log.error("Get placement rules error:", e);
         }
         return Response.RES_FAILED;
+    }
+
+    private Map<Integer, JSONObject> getRuleReportMap(Integer pubAppId, Integer placementId, List<Integer> ruleIds, Date dateBegin, Date dateEnd, String[] countries) {
+        Map<Integer, JSONObject> ruleReports = new HashMap<>();
+        try {
+            ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
+            reportConditionDTO.setDimension(new String[]{"pubAppId", "placementId", "ruleId"});
+            reportConditionDTO.setPubAppId(new Integer[]{pubAppId});
+            reportConditionDTO.setPlacementId(new Integer[]{placementId});
+            reportConditionDTO.setRuleId(ruleIds.toArray(new Integer[0]));
+            reportConditionDTO.setDateBegin(Util.getYYYYMMDD(dateBegin));
+            reportConditionDTO.setDateEnd(Util.getYYYYMMDD(dateEnd));
+            Set<String> reportTypeSet = new HashSet<>();
+            reportTypeSet.add("api");
+            if (countries != null && countries.length > 0) {
+                reportConditionDTO.setCountry(countries);
+            }
+            Response reportResponse = this.reportService.getReport(reportConditionDTO, reportTypeSet);
+            if (reportResponse.getCode() != Response.SUCCESS_CODE) {
+                return ruleReports;
+            }
+            List<JSONObject> reports = (List<JSONObject>) reportResponse.getData();
+            for (JSONObject report : reports) {
+                ruleReports.put(report.getInteger("ruleId"), report);
+            }
+        } catch (Exception e) {
+            log.error("Get placement {} rule reports error:", placementId, e);
+        }
+        return ruleReports;
+    }
+
+    @RequestMapping(value = "/mediation/rule/instance_list", method = RequestMethod.GET)
+    public Response getSegmentInstanceList(Integer pubAppId, Integer ruleId, Integer instanceId, String[] adNetworkIds,
+                                           Integer placementId, Integer lastDays, String[] countries) {
+        if (pubAppId == null) {
+            log.warn("Get segment instances publisher app id must not be null");
+            return Response.RES_PARAMETER_ERROR;
+        }
+        Response response = this.mediationService.getSegmentInstances(pubAppId, ruleId, instanceId, adNetworkIds, placementId);
+        if (response.failed()) {
+            return response;
+        }
+        OmPlacementRule rule = this.mediationService.getPlacementRule(ruleId);
+        if (rule == null) {
+            return response;
+        }
+        OmPlacementRuleSegmentWithBLOBs segment = this.mediationService.getPlacementRuleSegment(rule.getSegmentId());
+        Set<String> ruleCountrySet = new HashSet<>();
+        if (StringUtils.isNotBlank(segment.getCountries())) {
+            String[] ruleCountries = segment.getCountries().split(",");
+            Collections.addAll(ruleCountrySet, ruleCountries);
+            if (ruleCountrySet.contains("00")) {
+                ruleCountrySet.clear();
+            }
+        }
+        Set<String> countrySet = new HashSet<>();
+        if (countries != null) {
+            Collections.addAll(countrySet, countries);
+            if (countrySet.contains("00")) {
+                countrySet.clear();
+            }
+        }
+        if (!CollectionUtils.isEmpty(ruleCountrySet) && !CollectionUtils.isEmpty(countrySet)) {
+            countrySet.retainAll(ruleCountrySet);
+            if (CollectionUtils.isEmpty(countrySet)) {
+                return response;
+            }
+        } else {
+            countrySet.addAll(ruleCountrySet);
+        }
+        if (!CollectionUtils.isEmpty(countrySet)) {
+            countries = new String[countrySet.size()];
+            countrySet.toArray(countries);
+        } else {
+            countries = null;
+        }
+
+        Date middleDay = DateUtils.addDays(new Date(), -lastDays);
+        Map<Integer, JSONObject> latestReportMap = this.getReportMap(pubAppId, placementId, middleDay, DateUtils.addDays(new Date(), -1), countries, ruleId);
+        Map<Integer, JSONObject> secondLatestReportMap = this.getReportMap(pubAppId, placementId,
+                DateUtils.addDays(middleDay, -lastDays), DateUtils.addDays(middleDay, -1), countries, ruleId);
+
+        JSONArray resultInstances = (JSONArray) response.getData();
+        for (Object resultInstance : resultInstances) {
+            try {
+                JSONObject instance = (JSONObject) resultInstance;
+                Integer reportKey = Integer.parseInt(instance.getString("id"));
+                JSONObject latestReport = latestReportMap.get(reportKey);
+
+                if (latestReport != null) {
+                    instance.put("instanceRequestLatest", latestReport.get("instanceRequest"));
+                    instance.put("instanceFilledLatest", latestReport.get("instanceFilled"));
+                    instance.put("mediationImprLatest", latestReport.get("mediationImpr"));
+                    instance.put("apiImprLatest", latestReport.get("apiImpr"));
+                    instance.put("costLatest", latestReport.get("cost"));
+
+                    instance.put("bidRequestLatest", latestReport.get("bidReq"));
+                    instance.put("bidResponseLatest", latestReport.get("bidResp"));
+                    instance.put("bidWinLatest", latestReport.get("bidWin"));
+                    instance.put("bidImpressionLatest", latestReport.get("mediationImpr"));
+                    instance.put("bidWinPriceLatest", latestReport.get("bidWinPrice"));
+                } else {
+                    instance.put("instanceRequestLatest", 0);
+                    instance.put("instanceFilledLatest", 0);
+                    instance.put("mediationImprLatest", 0);
+                    instance.put("apiImprLatest", 0);
+                    instance.put("costLatest", 0);
+
+                    instance.put("bidRequestLatest", 0);
+                    instance.put("bidResponseLatest", 0);
+                    instance.put("bidWinLatest", 0);
+                    instance.put("bidImpressionLatest", 0);
+                    instance.put("bidWinPriceLatest", 0);
+                }
+
+                JSONObject secondReport = secondLatestReportMap.get(reportKey);
+                if (secondReport != null) {
+                    instance.put("instanceRequestSecondLatest", secondReport.get("instanceRequest"));
+                    instance.put("instanceFilledSecondLatest", secondReport.get("instanceFilled"));
+                    instance.put("mediationImprSecondLatest", secondReport.get("mediationImpr"));
+                    instance.put("apiImprSecondLatest", secondReport.get("apiImpr"));
+                    instance.put("costSecondLatest", secondReport.get("cost"));
+
+                    instance.put("bidRequestSecondLatest", secondReport.get("bidReq"));
+                    instance.put("bidResponseSecondLatest", secondReport.get("bidResp"));
+                    instance.put("bidWinSecondLatest", secondReport.get("bidWin"));
+                    instance.put("bidImpressionSecondLatest", secondReport.get("mediationImpr"));
+                    instance.put("bidWinPriceSecondLatest", secondReport.get("bidWinPrice"));
+                } else {
+                    instance.put("instanceRequestSecondLatest", 0);
+                    instance.put("instanceFilledSecondLatest", 0);
+                    instance.put("mediationImprSecondLatest", 0);
+                    instance.put("apiImprSecondLatest", 0);
+                    instance.put("costSecondLatest", 0);
+
+                    instance.put("bidRequestSecondLatest", 0);
+                    instance.put("bidResponseSecondLatest", 0);
+                    instance.put("bidWinSecondLatest", 0);
+                    instance.put("bidImpressionSecondLatest", 0);
+                    instance.put("bidWinPriceSecondLatest", 0);
+                }
+            } catch (Exception e) {
+                log.error("Fill report from instance {} error:", resultInstance, e);
+            }
+        }
+        return Response.buildSuccess(resultInstances);
+    }
+
+    private Map<Integer, JSONObject> getReportMap(Integer pubAppId, Integer placementId, Date dateBegin, Date dateEnd, String[] countries, Integer ruleId) {
+        Map<Integer, JSONObject> reportMap = new HashMap<>();
+        try {
+            ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
+            reportConditionDTO.setDimension(new String[]{"pubAppId", "placementId", "instanceId"});
+            reportConditionDTO.setPubAppId(new Integer[]{pubAppId});
+            reportConditionDTO.setPlacementId(new Integer[]{placementId});
+            reportConditionDTO.setDateBegin(Util.getYYYYMMDD(dateBegin));
+            reportConditionDTO.setDateEnd(Util.getYYYYMMDD(dateEnd));
+            if (ruleId != null) {
+                reportConditionDTO.setRuleId(new Integer[]{ruleId});
+            }
+            Set<String> reportTypeSet = new HashSet<>();
+            reportTypeSet.add("api");
+            if (countries != null && countries.length > 0) {
+                reportConditionDTO.setCountry(countries);
+            }
+            Response reportResponse = this.reportService.getReport(reportConditionDTO, reportTypeSet);
+            if (reportResponse.getCode() != Response.SUCCESS_CODE) {
+                return reportMap;
+            }
+            List<JSONObject> reports = (List<JSONObject>) reportResponse.getData();
+            for (JSONObject report : reports) {
+                reportMap.put(report.getInteger("instanceId"), report);
+            }
+        } catch (Exception e) {
+            log.error("Get {} reports error:", placementId, e);
+        }
+        return reportMap;
     }
 
     /**

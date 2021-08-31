@@ -36,6 +36,7 @@
     <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
     <result column="sdk_version" jdbcType="VARCHAR" property="sdkVersion" />
     <result column="os_version" jdbcType="VARCHAR" property="osVersion" />
+    <result column="rule_id" jdbcType="INTEGER" property="ruleId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -528,6 +529,9 @@
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
     </if>
+    <if test="_parameter.containsKey('dimension_ruleId')">
+      rule_id,
+    </if>
     <if test="_parameter.containsKey('dimension_abt')">
       abt,
     </if>
@@ -587,6 +591,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_adnId')">
       adn_id,
+    </if>
+    <if test="_parameter.containsKey('dimension_ruleId')">
+      rule_id,
     </if>
     <if test="_parameter.containsKey('dimension_abt')">
       abt,

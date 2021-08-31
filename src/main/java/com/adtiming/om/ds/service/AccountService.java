@@ -152,6 +152,7 @@ public class AccountService extends BaseService {
         switch (adNetworkType) {
             case AdMob:
             case Chartboost:
+            case SigMob:
             case ChartboostBid:
             case IronSource:
             case TencentAd:
@@ -502,6 +503,14 @@ public class AccountService extends BaseService {
             case Mint: {
                 if (StringUtils.isBlank(account.getAdnAppToken())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Mint's [App token] must be not null");
+                }
+                break;
+            } case SigMob: {
+                if (StringUtils.isBlank(account.getUserId())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "SigMob's [Public key] must be not null");
+                }
+                if (StringUtils.isBlank(account.getUserSignature())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "SigMob's [Secret Key] must be not null");
                 }
                 break;
             }

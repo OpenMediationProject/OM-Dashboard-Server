@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 public class OmPlacementWithBLOBs extends OmPlacement {
@@ -117,42 +114,43 @@ public class OmPlacementWithBLOBs extends OmPlacement {
         }
         OmPlacementWithBLOBs other = (OmPlacementWithBLOBs) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-                && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-                && (this.getMainPlacement() == null ? other.getMainPlacement() == null : this.getMainPlacement().equals(other.getMainPlacement()))
-                && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-                && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
-                && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
-                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getPreloadTimeout() == null ? other.getPreloadTimeout() == null : this.getPreloadTimeout().equals(other.getPreloadTimeout()))
-                && (this.getAbTestStatus() == null ? other.getAbTestStatus() == null : this.getAbTestStatus().equals(other.getAbTestStatus()))
-                && (this.getPreviewUrl() == null ? other.getPreviewUrl() == null : this.getPreviewUrl().equals(other.getPreviewUrl()))
-                && (this.getIcUrl() == null ? other.getIcUrl() == null : this.getIcUrl().equals(other.getIcUrl()))
-                && (this.getFloorPrice() == null ? other.getFloorPrice() == null : this.getFloorPrice().equals(other.getFloorPrice()))
-                && (this.getFloorPriceSwitch() == null ? other.getFloorPriceSwitch() == null : this.getFloorPriceSwitch().equals(other.getFloorPriceSwitch()))
-                && (this.getHbStatus() == null ? other.getHbStatus() == null : this.getHbStatus().equals(other.getHbStatus()))
-                && (this.getFanOut() == null ? other.getFanOut() == null : this.getFanOut().equals(other.getFanOut()))
-                && (this.getBatchSize() == null ? other.getBatchSize() == null : this.getBatchSize().equals(other.getBatchSize()))
-                && (this.getInventoryCount() == null ? other.getInventoryCount() == null : this.getInventoryCount().equals(other.getInventoryCount()))
-                && (this.getInventoryInterval() == null ? other.getInventoryInterval() == null : this.getInventoryInterval().equals(other.getInventoryInterval()))
-                && (this.getReloadInterval() == null ? other.getReloadInterval() == null : this.getReloadInterval().equals(other.getReloadInterval()))
-                && (this.getFrequencyCap() == null ? other.getFrequencyCap() == null : this.getFrequencyCap().equals(other.getFrequencyCap()))
-                && (this.getFrequencyUnit() == null ? other.getFrequencyUnit() == null : this.getFrequencyUnit().equals(other.getFrequencyUnit()))
-                && (this.getFrequencyInterval() == null ? other.getFrequencyInterval() == null : this.getFrequencyInterval().equals(other.getFrequencyInterval()))
-                && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-                && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
-                && (this.getOsvMax() == null ? other.getOsvMax() == null : this.getOsvMax().equals(other.getOsvMax()))
-                && (this.getOsvMin() == null ? other.getOsvMin() == null : this.getOsvMin().equals(other.getOsvMin()))
-                && (this.getOsvWhitelist() == null ? other.getOsvWhitelist() == null : this.getOsvWhitelist().equals(other.getOsvWhitelist()))
-                && (this.getOsvBlacklist() == null ? other.getOsvBlacklist() == null : this.getOsvBlacklist().equals(other.getOsvBlacklist()))
-                && (this.getMakeWhitelist() == null ? other.getMakeWhitelist() == null : this.getMakeWhitelist().equals(other.getMakeWhitelist()))
-                && (this.getMakeBlacklist() == null ? other.getMakeBlacklist() == null : this.getMakeBlacklist().equals(other.getMakeBlacklist()))
-                && (this.getBrandWhitelist() == null ? other.getBrandWhitelist() == null : this.getBrandWhitelist().equals(other.getBrandWhitelist()))
-                && (this.getBrandBlacklist() == null ? other.getBrandBlacklist() == null : this.getBrandBlacklist().equals(other.getBrandBlacklist()))
-                && (this.getModelWhitelist() == null ? other.getModelWhitelist() == null : this.getModelWhitelist().equals(other.getModelWhitelist()))
-                && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()))
-                && (this.getDidBlacklist() == null ? other.getDidBlacklist() == null : this.getDidBlacklist().equals(other.getDidBlacklist()))
-                && (this.getSdkvBlacklist() == null ? other.getSdkvBlacklist() == null : this.getSdkvBlacklist().equals(other.getSdkvBlacklist()));
+            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
+            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
+            && (this.getMainPlacement() == null ? other.getMainPlacement() == null : this.getMainPlacement().equals(other.getMainPlacement()))
+            && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getAdType() == null ? other.getAdType() == null : this.getAdType().equals(other.getAdType()))
+            && (this.getDescn() == null ? other.getDescn() == null : this.getDescn().equals(other.getDescn()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getPreloadTimeout() == null ? other.getPreloadTimeout() == null : this.getPreloadTimeout().equals(other.getPreloadTimeout()))
+            && (this.getAbTestStatus() == null ? other.getAbTestStatus() == null : this.getAbTestStatus().equals(other.getAbTestStatus()))
+            && (this.getPreviewUrl() == null ? other.getPreviewUrl() == null : this.getPreviewUrl().equals(other.getPreviewUrl()))
+            && (this.getIcUrl() == null ? other.getIcUrl() == null : this.getIcUrl().equals(other.getIcUrl()))
+            && (this.getFloorPrice() == null ? other.getFloorPrice() == null : this.getFloorPrice().equals(other.getFloorPrice()))
+            && (this.getFloorPriceSwitch() == null ? other.getFloorPriceSwitch() == null : this.getFloorPriceSwitch().equals(other.getFloorPriceSwitch()))
+            && (this.getHbStatus() == null ? other.getHbStatus() == null : this.getHbStatus().equals(other.getHbStatus()))
+            && (this.getFanOut() == null ? other.getFanOut() == null : this.getFanOut().equals(other.getFanOut()))
+            && (this.getBatchSize() == null ? other.getBatchSize() == null : this.getBatchSize().equals(other.getBatchSize()))
+            && (this.getInventoryCount() == null ? other.getInventoryCount() == null : this.getInventoryCount().equals(other.getInventoryCount()))
+            && (this.getInventoryInterval() == null ? other.getInventoryInterval() == null : this.getInventoryInterval().equals(other.getInventoryInterval()))
+            && (this.getInventoryIntervalStep() == null ? other.getInventoryIntervalStep() == null : this.getInventoryIntervalStep().equals(other.getInventoryIntervalStep()))
+            && (this.getReloadInterval() == null ? other.getReloadInterval() == null : this.getReloadInterval().equals(other.getReloadInterval()))
+            && (this.getFrequencyCap() == null ? other.getFrequencyCap() == null : this.getFrequencyCap().equals(other.getFrequencyCap()))
+            && (this.getFrequencyUnit() == null ? other.getFrequencyUnit() == null : this.getFrequencyUnit().equals(other.getFrequencyUnit()))
+            && (this.getFrequencyInterval() == null ? other.getFrequencyInterval() == null : this.getFrequencyInterval().equals(other.getFrequencyInterval()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()))
+            && (this.getOsvMax() == null ? other.getOsvMax() == null : this.getOsvMax().equals(other.getOsvMax()))
+            && (this.getOsvMin() == null ? other.getOsvMin() == null : this.getOsvMin().equals(other.getOsvMin()))
+            && (this.getOsvWhitelist() == null ? other.getOsvWhitelist() == null : this.getOsvWhitelist().equals(other.getOsvWhitelist()))
+            && (this.getOsvBlacklist() == null ? other.getOsvBlacklist() == null : this.getOsvBlacklist().equals(other.getOsvBlacklist()))
+            && (this.getMakeWhitelist() == null ? other.getMakeWhitelist() == null : this.getMakeWhitelist().equals(other.getMakeWhitelist()))
+            && (this.getMakeBlacklist() == null ? other.getMakeBlacklist() == null : this.getMakeBlacklist().equals(other.getMakeBlacklist()))
+            && (this.getBrandWhitelist() == null ? other.getBrandWhitelist() == null : this.getBrandWhitelist().equals(other.getBrandWhitelist()))
+            && (this.getBrandBlacklist() == null ? other.getBrandBlacklist() == null : this.getBrandBlacklist().equals(other.getBrandBlacklist()))
+            && (this.getModelWhitelist() == null ? other.getModelWhitelist() == null : this.getModelWhitelist().equals(other.getModelWhitelist()))
+            && (this.getModelBlacklist() == null ? other.getModelBlacklist() == null : this.getModelBlacklist().equals(other.getModelBlacklist()))
+            && (this.getDidBlacklist() == null ? other.getDidBlacklist() == null : this.getDidBlacklist().equals(other.getDidBlacklist()))
+            && (this.getSdkvBlacklist() == null ? other.getSdkvBlacklist() == null : this.getSdkvBlacklist().equals(other.getSdkvBlacklist()));
     }
 
     @Override
@@ -178,6 +176,7 @@ public class OmPlacementWithBLOBs extends OmPlacement {
         result = prime * result + ((getBatchSize() == null) ? 0 : getBatchSize().hashCode());
         result = prime * result + ((getInventoryCount() == null) ? 0 : getInventoryCount().hashCode());
         result = prime * result + ((getInventoryInterval() == null) ? 0 : getInventoryInterval().hashCode());
+        result = prime * result + ((getInventoryIntervalStep() == null) ? 0 : getInventoryIntervalStep().hashCode());
         result = prime * result + ((getReloadInterval() == null) ? 0 : getReloadInterval().hashCode());
         result = prime * result + ((getFrequencyCap() == null) ? 0 : getFrequencyCap().hashCode());
         result = prime * result + ((getFrequencyUnit() == null) ? 0 : getFrequencyUnit().hashCode());

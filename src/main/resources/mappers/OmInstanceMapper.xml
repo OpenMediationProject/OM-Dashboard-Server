@@ -116,33 +116,6 @@
     delete from om_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into om_instance (old_id, name, adn_id, 
-      adn_app_id, pub_app_id, placement_id, 
-      placement_key, weight, descn, 
-      status, osv_max, osv_min, 
-      frequency_cap, frequency_unit, frequency_interval, 
-      ab_test_mode, mediation_audience_segment, mediation_audience_segment_day, 
-      audience_segment, audience_segment_expected, 
-      hb_status, create_time, lastmodify, 
-      make_whitelist, make_blacklist, brand_whitelist, 
-      brand_blacklist, model_whitelist, 
-      model_blacklist)
-    values (#{oldId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{adnId,jdbcType=INTEGER}, 
-      #{adnAppId,jdbcType=INTEGER}, #{pubAppId,jdbcType=INTEGER}, #{placementId,jdbcType=INTEGER}, 
-      #{placementKey,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{descn,jdbcType=VARCHAR}, 
-      #{status,jdbcType=TINYINT}, #{osvMax,jdbcType=VARCHAR}, #{osvMin,jdbcType=VARCHAR}, 
-      #{frequencyCap,jdbcType=INTEGER}, #{frequencyUnit,jdbcType=INTEGER}, #{frequencyInterval,jdbcType=INTEGER}, 
-      #{abTestMode,jdbcType=TINYINT}, #{mediationAudienceSegment,jdbcType=TINYINT}, #{mediationAudienceSegmentDay,jdbcType=DATE}, 
-      #{audienceSegment,jdbcType=TINYINT}, #{audienceSegmentExpected,jdbcType=INTEGER}, 
-      #{hbStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastmodify,jdbcType=TIMESTAMP}, 
-      #{makeWhitelist,jdbcType=LONGVARCHAR}, #{makeBlacklist,jdbcType=LONGVARCHAR}, #{brandWhitelist,jdbcType=LONGVARCHAR}, 
-      #{brandBlacklist,jdbcType=LONGVARCHAR}, #{modelWhitelist,jdbcType=LONGVARCHAR}, 
-      #{modelBlacklist,jdbcType=LONGVARCHAR})
-  </insert>
   <insert id="insertSelective" parameterType="com.adtiming.om.ds.model.OmInstanceWithBLOBs">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()

@@ -57,6 +57,8 @@ public class ReportConditionDTO {
 
     Set<String> dimensionSet;
 
+    private Integer[] ruleId;
+
     public String getDateBegin() {
         return dateBegin;
     }
@@ -223,5 +225,13 @@ public class ReportConditionDTO {
 
     public void setDimensionSet(Set<String> dimensionSet) {
         this.dimensionSet = dimensionSet;
+    }
+
+    public Integer[] getRuleId() {
+        return ruleId;
+    }
+
+    public void setRuleId(Integer[] ruleId) {
+        this.ruleId = ruleId;
     }
 }

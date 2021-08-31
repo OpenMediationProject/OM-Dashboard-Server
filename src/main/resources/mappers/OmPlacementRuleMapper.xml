@@ -15,6 +15,7 @@
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="countries" jdbcType="VARCHAR" property="countries" />
     <result column="lastmodify" jdbcType="TIMESTAMP" property="lastmodify" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -57,6 +58,16 @@
     </if>
     <include refid="Base_Column_List" />
     from om_placement_rule
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectCountries" parameterType="com.adtiming.om.ds.model.OmPlacementRuleCriteria" resultMap="BaseResultMap">
+    select rule.id as id, segment.countries as countries
+    from om_placement_rule as rule left join om_placement_rule_segment as segment on rule.segment_id = segment.id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

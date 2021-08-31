@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,20 +32,23 @@ public class AdNetworkController extends BaseController {
 
     protected static final Logger log = LogManager.getLogger();
 
-    @Autowired
+    @Resource
     protected AdNetworkService adNetworkService;
 
-    @Autowired
+    @Resource
     protected PlacementService placementService;
 
-    @Autowired
+    @Resource
     protected InstanceService instanceService;
 
-    @Autowired
+    @Resource
     protected PublisherAppService publisherAppService;
 
-    @Autowired
+    @Resource
     protected AccountService accountService;
+
+    @Resource
+    protected MediationService mediationService;
 
     /**
      * Get all AdNetworks of publisher app
@@ -142,6 +146,7 @@ public class AdNetworkController extends BaseController {
                     .collect(Collectors.groupingBy(OmInstance::getPlacementId, Collectors.toList()));
             Map<Integer, OmAdnetwork> adNetworkMap = adNetworkService.getAdNetworkMap();
             Map<Integer, List<JSONObject>> instanceCountriesMap = this.instanceService.getInstanceCountriesMap(placementId);
+            Map<Integer, List<OmPlacementRuleInstance>> instanceRulesMap = this.mediationService.getInstanceRulesMap(pubAppId, placementId);
             JSONArray resultPlacements = new JSONArray();
             for (OmPlacementWithBLOBs placementWithBLOBs : placements) {
                 JSONObject resultPlacement = (JSONObject) JSONObject.toJSON(placementWithBLOBs);
@@ -161,6 +166,12 @@ public class AdNetworkController extends BaseController {
                             resultInstance.put("instanceCountries", instanceCountries);
                         } else {
                             resultInstance.put("instanceCountries", new ArrayList<>());
+                        }
+                        List<OmPlacementRuleInstance> ruleMediationList = instanceRulesMap.get(instanceWithBLOBs.getId());
+                        if (!CollectionUtils.isEmpty(ruleMediationList)) {
+                            resultInstance.put("relateRuleSize", ruleMediationList.size());
+                        } else {
+                            resultInstance.put("relateRuleSize", 0);
                         }
                         Util.buildBrandBlackWhiteType(resultInstance, instanceWithBLOBs.getBrandBlacklist(), instanceWithBLOBs.getBrandWhitelist());
                         Util.buildModelBlackWhiteType(resultInstance, instanceWithBLOBs.getModelBlacklist(), instanceWithBLOBs.getModelWhitelist());

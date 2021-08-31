@@ -16,6 +16,8 @@ public interface OmPlacementRuleMapper {
 
     List<OmPlacementRule> select(OmPlacementRuleCriteria example);
 
+    List<OmPlacementRule> selectCountries(OmPlacementRuleCriteria example);
+
     OmPlacementRule selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(OmPlacementRule record);

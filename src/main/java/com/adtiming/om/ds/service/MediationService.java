@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.service;
 
+import com.adtiming.om.ds.dao.OmPlacementRuleGroupMapper;
 import com.adtiming.om.ds.dao.OmPlacementRuleInstanceMapper;
 import com.adtiming.om.ds.dao.OmPlacementRuleMapper;
 import com.adtiming.om.ds.dao.OmPlacementRuleSegmentMapper;
@@ -36,10 +37,10 @@ public class MediationService extends BaseService {
 
     protected static final Logger log = LogManager.getLogger();
 
-    @Autowired
+    @Resource
     AdNetworkService adNetworkService;
 
-    @Autowired
+    @Resource
     InstanceService instanceService;
 
     @Resource
@@ -51,6 +52,9 @@ public class MediationService extends BaseService {
     @Resource
     OmPlacementRuleSegmentMapper omPlacementRuleSegmentMapper;
 
+    @Resource
+    OmPlacementRuleGroupMapper omPlacementRuleGroupMapper;
+
     /**
      * Save mediation by instances
      *
@@ -58,8 +62,8 @@ public class MediationService extends BaseService {
      * @param instanceArray
      * @return Response
      */
-    public void saveRuleMediation(Integer ruleId, OmInstanceWithBLOBs[] instanceArray) {
-        if (instanceArray == null || instanceArray.length <= 0) {
+    public void saveRuleMediation(Integer ruleId, List<OmInstanceWithBLOBs> instanceArray) {
+        if (CollectionUtils.isEmpty(instanceArray)) {
             return;
         }
         List<OmInstanceWithBLOBs> instances = new ArrayList<>();
@@ -93,6 +97,9 @@ public class MediationService extends BaseService {
                         ruleMediation.setPriority(1);
                     } else {
                         ruleMediation.setPriority(priority++);
+                        ruleMediation.setGroupId(instance.getGroupId());
+                        ruleMediation.setGroupLevel(instance.getGroupLevel());
+                        ruleMediation.setAutoSwitch(instance.getAutoSwitch());
                     }
 
                     int result;
@@ -116,6 +123,9 @@ public class MediationService extends BaseService {
                         ruleMediation.setPriority(1);
                     } else {
                         ruleMediation.setPriority(priority++);
+                        ruleMediation.setGroupId(instance.getGroupId());
+                        ruleMediation.setGroupLevel(instance.getGroupLevel());
+                        ruleMediation.setAutoSwitch(instance.getAutoSwitch());
                     }
                     int result = this.omPlacementRuleInstanceMapper.updateByPrimaryKeySelective(ruleMediation);
                     if (result <= 0) {
@@ -133,11 +143,11 @@ public class MediationService extends BaseService {
      * @param placementId
      * @param countries
      */
-    public Response getSegments(Integer pubAppId, Integer placementId, String[] countries) {
+    public List<JSONObject> getSegments(Integer pubAppId, Integer placementId, String[] countries) {
         List<OmPlacementRule> placementRules = getPlacementRules(pubAppId, placementId, null);
         if (CollectionUtils.isEmpty(placementRules)) {
             log.error("No segments for publisher app id {} placement id {}", pubAppId, placementId);
-            return Response.buildSuccess(new JSONArray());
+            return new ArrayList<>();
         }
 
         List<Integer> ruleIds = new ArrayList<>();
@@ -151,7 +161,7 @@ public class MediationService extends BaseService {
                 .collect(Collectors.groupingBy(OmPlacementRuleInstance::getRuleId, Collectors.toList()));
         Map<Integer, OmPlacementRuleSegmentWithBLOBs> placementRuleSegmentMap = getPlacementRuleSegmentMap(segmentIds, countries);
 
-        JSONArray resultRules = new JSONArray();
+        List<JSONObject> resultRules = new ArrayList<>();
         Map<Integer, OmAdnetwork> adNetworkMap = this.adNetworkService.getAdNetworkMap();
         Map<Integer, OmInstanceWithBLOBs> instanceMap = this.instanceService.getInstanceMap(pubAppId);
         for (OmPlacementRule placementRule : placementRules) {
@@ -160,7 +170,7 @@ public class MediationService extends BaseService {
                 resultRules.add(resultRule);
             }
         }
-        return Response.buildSuccess(resultRules);
+        return resultRules;
     }
 
     private JSONObject buildResultSegment(OmPlacementRule placementRule, Map<Integer, List<OmPlacementRuleInstance>> ruleInstancesMap,
@@ -189,7 +199,7 @@ public class MediationService extends BaseService {
         }
         List<OmPlacementRuleInstance> placementRuleInstances = ruleInstancesMap.get(placementRule.getId());
         if (!CollectionUtils.isEmpty(placementRuleInstances)) {
-            JSONArray resultRuleInstances = new JSONArray();
+            List<JSONObject> resultRuleInstances = new ArrayList<>();
             for (OmPlacementRuleInstance ruleInstance : placementRuleInstances) {
                 JSONObject resultRuleInstance = (JSONObject) JSONObject.toJSON(ruleInstance);
                 if (adNetworkMap.get(ruleInstance.getAdnId()) != null) {
@@ -230,6 +240,7 @@ public class MediationService extends BaseService {
             instanceIdKeyRuleInstanceMap = getInstanceIdKeyRuleInstanceMap(placementInstances, ruleId);
         }
         Map<Integer, List<JSONObject>> instanceCountriesMap = this.instanceService.getInstanceCountriesMap(placementId);
+        Map<Integer, List<JSONObject>> groupIdInstanceMap = new HashMap<>();
         JSONArray resultInstances = new JSONArray();
         for (OmInstanceWithBLOBs instance : placementInstances) {
             JSONObject resultInstance = (JSONObject) JSONObject.toJSON(instance);
@@ -244,22 +255,41 @@ public class MediationService extends BaseService {
             }
             OmPlacementRuleInstance placementRuleInstance = instanceIdKeyRuleInstanceMap.get(instance.getId());
             if (placementRuleInstance != null) {
+                if (placementRuleInstance.getGroupId() == null) {
+                    placementRuleInstance.setGroupId(1);
+                }
+                if (placementRuleInstance.getAutoSwitch() == null) {
+                    placementRuleInstance.setAutoSwitch(1);
+                }
+                if (placementRuleInstance.getGroupLevel() == null) {
+                    placementRuleInstance.setGroupLevel(1);
+                }
                 resultInstance.put("priority", placementRuleInstance.getPriority());
                 resultInstance.put("placementRuleInstanceId", placementRuleInstance.getId());
+                resultInstance.put("groupId", placementRuleInstance.getGroupId());
+                resultInstance.put("groupLevel", placementRuleInstance.getGroupLevel());
+                resultInstance.put("autoSwitch", placementRuleInstance.getAutoSwitch());
+                if (instance.getHbStatus() == 0 && placementRuleInstance.getAutoSwitch() == 1) {
+                    List<JSONObject> groupIdInstances = groupIdInstanceMap.computeIfAbsent(placementRuleInstance.getGroupId(), k -> new ArrayList<>());
+                    groupIdInstances.add(resultInstance);
+                }
             } else {
                 resultInstance.remove("priority");
             }
             resultInstances.add(resultInstance);
         }
-        this.sortByPriority(resultInstances);
+
+        for (List<JSONObject> groupIdInstances : groupIdInstanceMap.values()) {
+            this.sortByPriority(groupIdInstances);
+        }
         return Response.buildSuccess(resultInstances);
     }
 
-    private void sortByPriority(JSONArray results) {
+    private void sortByPriority(List<JSONObject> results) {
         try {
             results.sort((instance1, instance2) -> {
-                Integer priority1 = ((JSONObject) instance1).getInteger("priority");
-                Integer priority2 = ((JSONObject) instance2).getInteger("priority");
+                Integer priority1 = instance1.getInteger("priority");
+                Integer priority2 = instance2.getInteger("priority");
                 if (priority1 == null && priority2 == null) {
                     return 0;
                 }
@@ -510,6 +540,7 @@ public class MediationService extends BaseService {
         if (id <= 0) {
             throw new RuntimeException("Create placement rule id: " + omPlacementRule.getId());
         }
+        this.addPublisherPlacementRuleGroups(omPlacementRule.getId());
         this.resortRulePriority(omPlacementRule.getPlacementId());
         return Response.buildSuccess(omPlacementRule);
     }
@@ -818,5 +849,84 @@ public class MediationService extends BaseService {
      */
     public OmPlacementRuleSegmentWithBLOBs getPlacementRuleSegment(Integer segmentId) {
         return this.omPlacementRuleSegmentMapper.selectByPrimaryKey(segmentId);
+    }
+
+    public Map<Integer, List<OmPlacementRuleInstance>> getInstanceRulesMap(Integer pubAppId, Integer placementId) {
+        try {
+            List<OmInstanceWithBLOBs> instances = instanceService.getInstances(pubAppId, null, null, placementId);
+            if (CollectionUtils.isEmpty(instances)) {
+                return new HashMap<>();
+            }
+            List<Integer> instanceIds = new ArrayList<>();
+            for (OmInstanceWithBLOBs i : instances) {
+                instanceIds.add(i.getId());
+            }
+            OmPlacementRuleInstanceCriteria mediationCriteria = new OmPlacementRuleInstanceCriteria();
+            OmPlacementRuleInstanceCriteria.Criteria criteria = mediationCriteria.createCriteria();
+            criteria.andInstanceIdIn(instanceIds);
+            criteria.andStatusEqualTo(SwitchStatus.ON.ordinal());
+            List<OmPlacementRuleInstance> ruleMediationList = this.omPlacementRuleInstanceMapper.select(mediationCriteria);
+            return ruleMediationList.stream().collect(Collectors.groupingBy(OmPlacementRuleInstance::getInstanceId));
+        } catch (Exception e) {
+            log.error("getInstanceRulesMap {} {} error:", pubAppId, placementId, e);
+        }
+        return new HashMap<>();
+    }
+
+    @Transactional
+    protected void addPublisherPlacementRuleGroups(Integer ruleId) {
+        this.addPublisherPlacementRuleGroup(ruleId, 1);
+        this.addPublisherPlacementRuleGroup(ruleId, 2);
+        this.addPublisherPlacementRuleGroup(ruleId, 3);
+    }
+
+    @Transactional
+    public OmPlacementRuleGroup addPublisherPlacementRuleGroup(Integer ruleId, int level) {
+        List<OmPlacementRuleGroup> ruleGroups = this.getPublisherPlacementRuleGroup(ruleId, (byte) level);
+        if (!CollectionUtils.isEmpty(ruleGroups)) {
+            return ruleGroups.get(0);
+        }
+        OmPlacementRuleGroup tier = new OmPlacementRuleGroup();
+        tier.setGroupLevel((byte) level);
+        tier.setAutoSwitch((byte) 0);
+        tier.setRuleId(ruleId);
+        tier.setName("Tier " + level);
+        int result = this.omPlacementRuleGroupMapper.insert(tier);
+        if (result <= 0) {
+            throw new RuntimeException("add rule group " + JSONObject.toJSONString(tier) + " failed");
+        }
+        return tier;
+    }
+
+    @Transactional
+    public Map<Integer, OmPlacementRuleGroup> getInstanceLevelGroupIdMap(Integer ruleId) {
+        List<OmPlacementRuleGroup> instanceGroups = this.getPublisherPlacementRuleGroup(ruleId, null);
+        Map<Integer, OmPlacementRuleGroup> instanceLevelGroupIdMap = new HashMap<>();
+        for (OmPlacementRuleGroup ruleGroup : instanceGroups) {
+            instanceLevelGroupIdMap.put(ruleGroup.getGroupLevel().intValue(), ruleGroup);
+        }
+        if (!instanceLevelGroupIdMap.containsKey(1)) {
+            OmPlacementRuleGroup group = this.addPublisherPlacementRuleGroup(ruleId, 1);
+            instanceLevelGroupIdMap.put(1, group);
+        }
+        if (!instanceLevelGroupIdMap.containsKey(2)) {
+            OmPlacementRuleGroup group = this.addPublisherPlacementRuleGroup(ruleId, 2);
+            instanceLevelGroupIdMap.put(2, group);
+        }
+        if (!instanceLevelGroupIdMap.containsKey(3)) {
+            OmPlacementRuleGroup group = this.addPublisherPlacementRuleGroup(ruleId, 3);
+            instanceLevelGroupIdMap.put(3, group);
+        }
+        return instanceLevelGroupIdMap;
+    }
+
+    public List<OmPlacementRuleGroup> getPublisherPlacementRuleGroup(Integer ruleId, Byte level) {
+        OmPlacementRuleGroupCriteria groupCriteria = new OmPlacementRuleGroupCriteria();
+        OmPlacementRuleGroupCriteria.Criteria criteria = groupCriteria.createCriteria();
+        criteria.andRuleIdEqualTo(ruleId);
+        if (level != null && level > 0) {
+            criteria.andGroupLevelEqualTo(level);
+        }
+        return this.omPlacementRuleGroupMapper.select(groupCriteria);
     }
 }

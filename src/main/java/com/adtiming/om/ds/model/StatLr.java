@@ -66,6 +66,8 @@ public class StatLr extends StatLrKey {
 
     private String osVersion;
 
+    private Integer ruleId;
+
     private Integer mediationImpr;
 
     private Integer mediationClick;
@@ -312,12 +314,12 @@ public class StatLr extends StatLrKey {
         this.osVersion = osVersion == null ? null : osVersion.trim();
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Integer getRuleId() {
+        return ruleId;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setRuleId(Integer ruleId) {
+        this.ruleId = ruleId;
     }
 
     public Integer getMediationImpr() {
@@ -336,90 +338,12 @@ public class StatLr extends StatLrKey {
         this.mediationClick = mediationClick;
     }
 
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        StatLr other = (StatLr) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getDay() == null ? other.getDay() == null : this.getDay().equals(other.getDay()))
-            && (this.getHour() == null ? other.getHour() == null : this.getHour().equals(other.getHour()))
-            && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
-            && (this.getPlatform() == null ? other.getPlatform() == null : this.getPlatform().equals(other.getPlatform()))
-            && (this.getPublisherId() == null ? other.getPublisherId() == null : this.getPublisherId().equals(other.getPublisherId()))
-            && (this.getPubAppId() == null ? other.getPubAppId() == null : this.getPubAppId().equals(other.getPubAppId()))
-            && (this.getPlacementId() == null ? other.getPlacementId() == null : this.getPlacementId().equals(other.getPlacementId()))
-            && (this.getInstanceId() == null ? other.getInstanceId() == null : this.getInstanceId().equals(other.getInstanceId()))
-            && (this.getSceneId() == null ? other.getSceneId() == null : this.getSceneId().equals(other.getSceneId()))
-            && (this.getAdnId() == null ? other.getAdnId() == null : this.getAdnId().equals(other.getAdnId()))
-            && (this.getAbt() == null ? other.getAbt() == null : this.getAbt().equals(other.getAbt()))
-            && (this.getWaterfallRequest() == null ? other.getWaterfallRequest() == null : this.getWaterfallRequest().equals(other.getWaterfallRequest()))
-            && (this.getWaterfallFilled() == null ? other.getWaterfallFilled() == null : this.getWaterfallFilled().equals(other.getWaterfallFilled()))
-            && (this.getInstanceRequest() == null ? other.getInstanceRequest() == null : this.getInstanceRequest().equals(other.getInstanceRequest()))
-            && (this.getInstanceFilled() == null ? other.getInstanceFilled() == null : this.getInstanceFilled().equals(other.getInstanceFilled()))
-            && (this.getVideoStart() == null ? other.getVideoStart() == null : this.getVideoStart().equals(other.getVideoStart()))
-            && (this.getVideoComplete() == null ? other.getVideoComplete() == null : this.getVideoComplete().equals(other.getVideoComplete()))
-            && (this.getCalledShow() == null ? other.getCalledShow() == null : this.getCalledShow().equals(other.getCalledShow()))
-            && (this.getIsReadyTrue() == null ? other.getIsReadyTrue() == null : this.getIsReadyTrue().equals(other.getIsReadyTrue()))
-            && (this.getIsReadyFalse() == null ? other.getIsReadyFalse() == null : this.getIsReadyFalse().equals(other.getIsReadyFalse()))
-            && (this.getClick() == null ? other.getClick() == null : this.getClick().equals(other.getClick()))
-            && (this.getImpr() == null ? other.getImpr() == null : this.getImpr().equals(other.getImpr()))
-            && (this.getBidReq() == null ? other.getBidReq() == null : this.getBidReq().equals(other.getBidReq()))
-            && (this.getBidResp() == null ? other.getBidResp() == null : this.getBidResp().equals(other.getBidResp()))
-            && (this.getBidRespPrice() == null ? other.getBidRespPrice() == null : this.getBidRespPrice().equals(other.getBidRespPrice()))
-            && (this.getBidWin() == null ? other.getBidWin() == null : this.getBidWin().equals(other.getBidWin()))
-            && (this.getBidWinPrice() == null ? other.getBidWinPrice() == null : this.getBidWinPrice().equals(other.getBidWinPrice()))
-            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()))
-            && (this.getAppVersion() == null ? other.getAppVersion() == null : this.getAppVersion().equals(other.getAppVersion()))
-            && (this.getSdkVersion() == null ? other.getSdkVersion() == null : this.getSdkVersion().equals(other.getSdkVersion()))
-            && (this.getOsVersion() == null ? other.getOsVersion() == null : this.getOsVersion().equals(other.getOsVersion()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()));
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getDay() == null) ? 0 : getDay().hashCode());
-        result = prime * result + ((getHour() == null) ? 0 : getHour().hashCode());
-        result = prime * result + ((getCountry() == null) ? 0 : getCountry().hashCode());
-        result = prime * result + ((getPlatform() == null) ? 0 : getPlatform().hashCode());
-        result = prime * result + ((getPublisherId() == null) ? 0 : getPublisherId().hashCode());
-        result = prime * result + ((getPubAppId() == null) ? 0 : getPubAppId().hashCode());
-        result = prime * result + ((getPlacementId() == null) ? 0 : getPlacementId().hashCode());
-        result = prime * result + ((getInstanceId() == null) ? 0 : getInstanceId().hashCode());
-        result = prime * result + ((getSceneId() == null) ? 0 : getSceneId().hashCode());
-        result = prime * result + ((getAdnId() == null) ? 0 : getAdnId().hashCode());
-        result = prime * result + ((getAbt() == null) ? 0 : getAbt().hashCode());
-        result = prime * result + ((getWaterfallRequest() == null) ? 0 : getWaterfallRequest().hashCode());
-        result = prime * result + ((getWaterfallFilled() == null) ? 0 : getWaterfallFilled().hashCode());
-        result = prime * result + ((getInstanceRequest() == null) ? 0 : getInstanceRequest().hashCode());
-        result = prime * result + ((getInstanceFilled() == null) ? 0 : getInstanceFilled().hashCode());
-        result = prime * result + ((getVideoStart() == null) ? 0 : getVideoStart().hashCode());
-        result = prime * result + ((getVideoComplete() == null) ? 0 : getVideoComplete().hashCode());
-        result = prime * result + ((getCalledShow() == null) ? 0 : getCalledShow().hashCode());
-        result = prime * result + ((getIsReadyTrue() == null) ? 0 : getIsReadyTrue().hashCode());
-        result = prime * result + ((getIsReadyFalse() == null) ? 0 : getIsReadyFalse().hashCode());
-        result = prime * result + ((getClick() == null) ? 0 : getClick().hashCode());
-        result = prime * result + ((getImpr() == null) ? 0 : getImpr().hashCode());
-        result = prime * result + ((getBidReq() == null) ? 0 : getBidReq().hashCode());
-        result = prime * result + ((getBidResp() == null) ? 0 : getBidResp().hashCode());
-        result = prime * result + ((getBidRespPrice() == null) ? 0 : getBidRespPrice().hashCode());
-        result = prime * result + ((getBidWin() == null) ? 0 : getBidWin().hashCode());
-        result = prime * result + ((getBidWinPrice() == null) ? 0 : getBidWinPrice().hashCode());
-        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
-        result = prime * result + ((getAppVersion() == null) ? 0 : getAppVersion().hashCode());
-        result = prime * result + ((getSdkVersion() == null) ? 0 : getSdkVersion().hashCode());
-        result = prime * result + ((getOsVersion() == null) ? 0 : getOsVersion().hashCode());
-        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        return result;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
+
 }

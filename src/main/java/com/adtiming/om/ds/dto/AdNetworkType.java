@@ -77,6 +77,8 @@ public enum AdNetworkType {
                 return Mint;
             case 19:
                 return CrossPromotion;
+            case 20:
+                return SigMob;
             case 23:
                 return PubNative;
             case 30:

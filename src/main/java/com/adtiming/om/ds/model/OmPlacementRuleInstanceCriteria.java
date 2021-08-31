@@ -18,20 +18,20 @@ public class OmPlacementRuleInstanceCriteria {
         oredCriteria = new ArrayList<Criteria>();
     }
 
-    public String getOrderByClause() {
-        return orderByClause;
-    }
-
     public void setOrderByClause(String orderByClause) {
         this.orderByClause = orderByClause;
     }
 
-    public boolean isDistinct() {
-        return distinct;
+    public String getOrderByClause() {
+        return orderByClause;
     }
 
     public void setDistinct(boolean distinct) {
         this.distinct = distinct;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
     }
 
     public List<Criteria> getOredCriteria() {
@@ -718,6 +718,66 @@ public class OmPlacementRuleInstanceCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andGroupIdIsNull() {
+            addCriterion("group_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdIsNotNull() {
+            addCriterion("group_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdEqualTo(Integer value) {
+            addCriterion("group_id =", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdNotEqualTo(Integer value) {
+            addCriterion("group_id <>", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdGreaterThan(Integer value) {
+            addCriterion("group_id >", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("group_id >=", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdLessThan(Integer value) {
+            addCriterion("group_id <", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdLessThanOrEqualTo(Integer value) {
+            addCriterion("group_id <=", value, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdIn(List<Integer> values) {
+            addCriterion("group_id in", values, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdNotIn(List<Integer> values) {
+            addCriterion("group_id not in", values, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdBetween(Integer value1, Integer value2) {
+            addCriterion("group_id between", value1, value2, "groupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGroupIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("group_id not between", value1, value2, "groupId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -863,6 +923,38 @@ public class OmPlacementRuleInstanceCriteria {
 
         private String typeHandler;
 
+        public String getCondition() {
+            return condition;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public Object getSecondValue() {
+            return secondValue;
+        }
+
+        public boolean isNoValue() {
+            return noValue;
+        }
+
+        public boolean isSingleValue() {
+            return singleValue;
+        }
+
+        public boolean isBetweenValue() {
+            return betweenValue;
+        }
+
+        public boolean isListValue() {
+            return listValue;
+        }
+
+        public String getTypeHandler() {
+            return typeHandler;
+        }
+
         protected Criterion(String condition) {
             super();
             this.condition = condition;
@@ -897,38 +989,6 @@ public class OmPlacementRuleInstanceCriteria {
 
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
-        }
-
-        public String getCondition() {
-            return condition;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public Object getSecondValue() {
-            return secondValue;
-        }
-
-        public boolean isNoValue() {
-            return noValue;
-        }
-
-        public boolean isSingleValue() {
-            return singleValue;
-        }
-
-        public boolean isBetweenValue() {
-            return betweenValue;
-        }
-
-        public boolean isListValue() {
-            return listValue;
-        }
-
-        public String getTypeHandler() {
-            return typeHandler;
         }
     }
 }
