@@ -28,6 +28,8 @@ public class OmPlacementRuleInstance {
 
     private Integer groupId;
 
+    private Byte abTest;
+
     private Integer autoSwitch;
 
     private Integer groupLevel;
@@ -140,6 +142,14 @@ public class OmPlacementRuleInstance {
         this.groupLevel = groupLevel;
     }
 
+    public Byte getAbTest() {
+        return abTest;
+    }
+
+    public void setAbTest(Byte abTest) {
+        this.abTest = abTest;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -179,6 +189,7 @@ public class OmPlacementRuleInstance {
             && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getGroupId() == null ? other.getGroupId() == null : this.getGroupId().equals(other.getGroupId()))
+            && (this.getAbTest() == null ? other.getAbTest() == null : this.getAbTest().equals(other.getAbTest()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
@@ -198,6 +209,7 @@ public class OmPlacementRuleInstance {
         result = prime * result + ((getUserName() == null) ? 0 : getUserName().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getGroupId() == null) ? 0 : getGroupId().hashCode());
+        result = prime * result + ((getAbTest() == null) ? 0 : getAbTest().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastmodify() == null) ? 0 : getLastmodify().hashCode());
         return result;

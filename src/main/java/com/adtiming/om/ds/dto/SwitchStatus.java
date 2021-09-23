@@ -9,7 +9,10 @@ package com.adtiming.om.ds.dto;
 public enum SwitchStatus {
     OFF, ON;
 
-    public static SwitchStatus getSwitchStatus(int switchStatus) {
+    public static SwitchStatus getSwitchStatus(Integer switchStatus) {
+        if (switchStatus == null) {
+            return null;
+        }
         switch (switchStatus) {
             case 0:
                 return OFF;

@@ -49,8 +49,8 @@ public class InstanceService extends BaseService {
     @Resource
     OmPlacementMapper omPlacementMapper;
 
-    public Map<Integer, List<JSONObject>> getInstanceCountriesMap(Integer placementId){
-        if (placementId == null){
+    public Map<Integer, List<JSONObject>> getInstanceCountriesMap(Integer placementId) {
+        if (placementId == null) {
             return new HashMap<>();
         }
         OmInstanceCountryCriteria countryCriteria = new OmInstanceCountryCriteria();
@@ -60,14 +60,14 @@ public class InstanceService extends BaseService {
         Map<Integer, List<OmInstanceCountry>> instanceCountriesMap = instanceCountries.stream()
                 .collect(Collectors.groupingBy(OmInstanceCountry::getInstanceId, Collectors.toList()));
         Map<Integer, List<JSONObject>> instanceCountryMap = new HashMap<>();
-        for (Map.Entry<Integer, List<OmInstanceCountry>> entry : instanceCountriesMap.entrySet()){
+        for (Map.Entry<Integer, List<OmInstanceCountry>> entry : instanceCountriesMap.entrySet()) {
             Integer instanceId = entry.getKey();
             List<OmInstanceCountry> ics = entry.getValue();
             List<JSONObject> results = new ArrayList<>();
             Map<BigDecimal, List<OmInstanceCountry>> ecpmIcsMap = ics.stream().collect(Collectors.groupingBy(OmInstanceCountry::getManualEcpm, Collectors.toList()));
-            for (Map.Entry<BigDecimal, List<OmInstanceCountry>> entry1 : ecpmIcsMap.entrySet()){
+            for (Map.Entry<BigDecimal, List<OmInstanceCountry>> entry1 : ecpmIcsMap.entrySet()) {
                 List<String> countries = new ArrayList<>();
-                for (OmInstanceCountry icy : entry1.getValue()){
+                for (OmInstanceCountry icy : entry1.getValue()) {
                     countries.add(icy.getCountry());
                 }
                 JSONObject result = new JSONObject();
@@ -91,7 +91,7 @@ public class InstanceService extends BaseService {
     }
 
     public boolean isPlacementKeyDuplicated(OmInstanceWithBLOBs instance, OmInstanceWithBLOBs dbInstance) {
-        if (StringUtils.isEmpty(instance.getPlacementKey())){
+        if (StringUtils.isEmpty(instance.getPlacementKey())) {
             return false;
         }
 
@@ -99,7 +99,7 @@ public class InstanceService extends BaseService {
             return false;
         }
 
-        if (dbInstance != null && instance.getPlacementKey().equals(dbInstance.getPlacementKey())){
+        if (dbInstance != null && instance.getPlacementKey().equals(dbInstance.getPlacementKey())) {
             return false;
         }
 
@@ -115,7 +115,7 @@ public class InstanceService extends BaseService {
                 List<Integer> pubAppIds = new ArrayList<>();
                 pubAppIds.add(instance.getPubAppId());
                 List<OmInstanceWithBLOBs> instances = this.getInstance(instance.getAdnId(), pubAppIds, instance.getPlacementKey(), SwitchStatus.ON);
-                if (!CollectionUtils.isEmpty(instances)){
+                if (!CollectionUtils.isEmpty(instances)) {
                     return true;
                 }
                 return false;
@@ -127,11 +127,11 @@ public class InstanceService extends BaseService {
         if (omAdnetworkApp == null) {
             omAdnetworkApp = this.getOmAdNetworkApp(instance.getPubAppId(), instance.getAdnId());
         }
-        if (omAdnetworkApp == null){
+        if (omAdnetworkApp == null) {
             log.error("Publisher app id " + pubAppId + " does not existed! Adn:" + instance.getAdnId());
             return true;
         }
-        if (omAdnetworkApp.getReportAccountId() == null || omAdnetworkApp.getReportAccountId() == 0){
+        if (omAdnetworkApp.getReportAccountId() == null || omAdnetworkApp.getReportAccountId() == 0) {
             log.error("Publisher app " + pubAppId + " does not have valid report account!");
             return true;
         }
@@ -141,7 +141,7 @@ public class InstanceService extends BaseService {
         criteria.andReportAccountIdEqualTo(omAdnetworkApp.getReportAccountId());
         criteria.andAdnIdEqualTo(instance.getAdnId());
         List<OmAdnetworkApp> apps = this.omAdnetworkAppMapper.select(appCriteria);
-        if (CollectionUtils.isEmpty(apps)){
+        if (CollectionUtils.isEmpty(apps)) {
             log.error("Report account " + omAdnetworkApp.getReportAccountId() + " does not belong to any app!");
             return true;
         }
@@ -156,27 +156,27 @@ public class InstanceService extends BaseService {
 
     /**
      * instance修改记录内没有相同的pk
-     *     - instance修改记录仅有效3天
-     *     - 3天内这个pk不能有其他instance在用，避免该pk在其他instance上使用时，因为历史原因导致收益数据被混淆的情况
-     *     - 如果修改记录的instance所属app，和当前app是同一个app，则不限制
-     * **/
-    private boolean isInstancePlacementKeyUsed(OmInstanceWithBLOBs newInstance){
+     * - instance修改记录仅有效3天
+     * - 3天内这个pk不能有其他instance在用，避免该pk在其他instance上使用时，因为历史原因导致收益数据被混淆的情况
+     * - 如果修改记录的instance所属app，和当前app是同一个app，则不限制
+     **/
+    private boolean isInstancePlacementKeyUsed(OmInstanceWithBLOBs newInstance) {
         OmInstanceChangeCriteria changeCriteria = new OmInstanceChangeCriteria();
         OmInstanceChangeCriteria.Criteria criteria = changeCriteria.createCriteria();
         criteria.andAdnIdEqualTo(newInstance.getAdnId().byteValue());
         criteria.andPlacementKeyEqualTo(newInstance.getPlacementKey());
         Date today = Util.getDateYYYYMMDD(Util.getDateString(new Date()));
-        if (today == null){
+        if (today == null) {
             today = new Date();
         }
         criteria.andCreateTimeGreaterThan(DateUtils.addDays(today, -3));
         List<OmInstanceChange> instanceChanges = this.omInstanceChangeMapper.select(changeCriteria);
-        if (CollectionUtils.isEmpty(instanceChanges)){
+        if (CollectionUtils.isEmpty(instanceChanges)) {
             return false;
         }
         Iterator<OmInstanceChange> iterator = instanceChanges.listIterator();
-        while (iterator.hasNext()){
-            if (!iterator.next().getPubAppId().equals(newInstance.getPubAppId())){
+        while (iterator.hasNext()) {
+            if (!iterator.next().getPubAppId().equals(newInstance.getPubAppId())) {
                 return true;
             } else {
                 iterator.remove();
@@ -209,7 +209,7 @@ public class InstanceService extends BaseService {
         return this.omInstanceMapper.select(instanceCriteria);
     }
 
-    private OmAdnetworkApp getOmAdNetworkApp(Integer pubAppId, Integer adnId){
+    private OmAdnetworkApp getOmAdNetworkApp(Integer pubAppId, Integer adnId) {
         OmAdnetworkAppCriteria adNetworkAppCriteria = new OmAdnetworkAppCriteria();
         OmAdnetworkAppCriteria.Criteria criteria = adNetworkAppCriteria.createCriteria();
         criteria.andPubAppIdEqualTo(pubAppId);
@@ -443,12 +443,12 @@ public class InstanceService extends BaseService {
 
         List<OmInstanceWithBLOBs> instances = this.getInstances(placement.getPubAppId(),
                 AdNetworkType.CrossPromotion.ordinal(), null, placement.getId());
-        if (!CollectionUtils.isEmpty(instances)){
+        if (!CollectionUtils.isEmpty(instances)) {
             log.info("Cross promotion instance existed for placement {}", placement.getId());
             return;
         }
 
-        if(placement.getAdType() == 5){
+        if (placement.getAdType() == 5) {
             instance.setStatus((byte) NormalStatus.Active.ordinal());
             instance.setHbStatus((byte) NormalStatus.Pending.ordinal());
         } else {
@@ -459,7 +459,7 @@ public class InstanceService extends BaseService {
         instance.setPubAppId(placement.getPubAppId());
         instance.setAdnAppId(placement.getPubAppId());
         Response response = this.createInstance(instance);
-        if (response.failed()){
+        if (response.failed()) {
             throw new RuntimeException("Build default cross bid instance " + JSONObject.toJSON(instance) + " failed!");
         }
     }
@@ -491,16 +491,16 @@ public class InstanceService extends BaseService {
         if (result <= 0) {
             throw new RuntimeException("Create instance " + JSONObject.toJSON(omInstance) + " success");
         }
-        if (!CollectionUtils.isEmpty(omInstance.getInstanceCountries())){
+        if (!CollectionUtils.isEmpty(omInstance.getInstanceCountries())) {
             this.addInstanceCountry(omInstance);
         }
         return Response.buildSuccess(omInstance);
     }
 
     @Transactional
-    protected void addInstanceCountry(OmInstanceWithBLOBs instance){
-        for (OmInstanceCountry ic : instance.getInstanceCountries()){
-            for (String country : ic.getCountry().split(",")){
+    protected void addInstanceCountry(OmInstanceWithBLOBs instance) {
+        for (OmInstanceCountry ic : instance.getInstanceCountries()) {
+            for (String country : ic.getCountry().split(",")) {
                 OmInstanceCountry instanceCountry = new OmInstanceCountry();
                 instanceCountry.setInstanceId(instance.getId());
                 instanceCountry.setAdnId(instance.getAdnId().byteValue());
@@ -508,7 +508,7 @@ public class InstanceService extends BaseService {
                 instanceCountry.setManualEcpm(ic.getManualEcpm());
                 instanceCountry.setCountry(country);
                 int result = this.omInstanceCountryMapper.insertSelective(instanceCountry);
-                if (result <= 0){
+                if (result <= 0) {
                     throw new RuntimeException("Add instance country " + JSONObject.toJSONString(instanceCountry) + " failed!");
                 }
             }
@@ -516,23 +516,23 @@ public class InstanceService extends BaseService {
     }
 
     @Transactional
-    protected void updateInstanceCountries(OmInstanceWithBLOBs instance){
+    protected void updateInstanceCountries(OmInstanceWithBLOBs instance) {
         OmInstanceCountryCriteria countryCriteria = new OmInstanceCountryCriteria();
         OmInstanceCountryCriteria.Criteria criteria = countryCriteria.createCriteria();
         criteria.andInstanceIdEqualTo(instance.getId());
         List<OmInstanceCountry> instanceCountries = omInstanceCountryMapper.select(countryCriteria);
-        if (CollectionUtils.isEmpty(instanceCountries) && CollectionUtils.isEmpty(instance.getInstanceCountries())){
+        if (CollectionUtils.isEmpty(instanceCountries) && CollectionUtils.isEmpty(instance.getInstanceCountries())) {
             return;
         }
 
-        for (OmInstanceCountry instanceCountry : instanceCountries){
+        for (OmInstanceCountry instanceCountry : instanceCountries) {
             int result = this.omInstanceCountryMapper.deleteByPrimaryKey(instanceCountry.getId());
-            if (result <= 0){
+            if (result <= 0) {
                 throw new RuntimeException("Delete InstanceCountry " + JSONObject.toJSONString(instanceCountry) + " error");
             }
         }
 
-        if (!CollectionUtils.isEmpty(instance.getInstanceCountries())){
+        if (!CollectionUtils.isEmpty(instance.getInstanceCountries())) {
             this.addInstanceCountry(instance);
         }
     }

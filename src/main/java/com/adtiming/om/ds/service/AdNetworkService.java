@@ -375,7 +375,7 @@ public class AdNetworkService extends BaseService {
     @Transactional
     public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status, Integer cpAdnId, Integer pubAppId) {
         if (adNetworkAppId == null && cpAdnId != null && AdNetworkType.CrossPromotion.ordinal() == cpAdnId
-                && status == NormalStatus.Active.ordinal() && pubAppId != null){
+                && status == NormalStatus.Active.ordinal() && pubAppId != null) {
             adNetworkAppId = this.initCrossPromotion(pubAppId);
         }
 
@@ -398,10 +398,10 @@ public class AdNetworkService extends BaseService {
     }
 
     @Transactional
-    private Integer initCrossPromotion(Integer pubAppId){
+    private Integer initCrossPromotion(Integer pubAppId) {
         Byte status = (byte) NormalStatus.Active.ordinal();
         List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId, AdNetworkType.CrossPromotion.ordinal(), null);
-        if (!CollectionUtils.isEmpty(omAdNetworkApps)){
+        if (!CollectionUtils.isEmpty(omAdNetworkApps)) {
             OmAdnetworkApp omAdNetworkApp = omAdNetworkApps.get(0);
             omAdNetworkApp.setStatus(status);
             int result = this.omAdnetworkAppMapper.updateByPrimaryKeySelective(omAdNetworkApp);

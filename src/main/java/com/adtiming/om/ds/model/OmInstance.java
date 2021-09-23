@@ -42,6 +42,8 @@ public class OmInstance {
 
     private Byte abTestMode;
 
+    private Byte abTest;
+
     private Byte mediationAudienceSegment;
 
     private Date mediationAudienceSegmentDay;
@@ -306,5 +308,13 @@ public class OmInstance {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
+    }
+
+    public Byte getAbTest() {
+        return abTest;
+    }
+
+    public void setAbTest(Byte abTest) {
+        this.abTest = abTest;
     }
 }

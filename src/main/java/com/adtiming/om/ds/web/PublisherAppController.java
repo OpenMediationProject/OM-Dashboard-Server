@@ -172,16 +172,16 @@ public class PublisherAppController extends BaseController {
         if (result) {
             JSONObject appResult = (JSONObject) JSONObject.toJSON(omPublisherApp);
             OmApp app = this.publisherAppService.getApp(appId);
-            if (app != null){
+            if (app != null) {
                 appResult.put("ratingCount", app.getRatingCount());
                 appResult.put("ratingValue", app.getRatingValue());
             }
             return Response.buildSuccess(omPublisherApp);
-        } else  {
+        } else {
             OmApp app = this.publisherAppService.getApp(appId);
             if (app != null) {
                 app.setAppName(app.getName());
-                return new Response(Response.SUCCESS_CODE, Response.STATUS_ENABLE, "OK", (JSONObject)JSONObject.toJSON(app));
+                return new Response(Response.SUCCESS_CODE, Response.STATUS_ENABLE, "OK", (JSONObject) JSONObject.toJSON(app));
             }
         }
         return Response.RES_FAILED;

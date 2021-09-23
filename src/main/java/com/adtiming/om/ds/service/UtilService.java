@@ -63,22 +63,22 @@ public class UtilService {
 
     @Scheduled(cron = "0 */10 * * * *")
     @PostConstruct
-    protected void initOmDict(){
+    protected void initOmDict() {
         try {
             List<OmDict> omDictList = this.omDictMapper.selectWithBLOBs(new OmDictCriteria());
             omDictList.forEach(omDict -> omDictMap.put(omDict.getName(), omDict));
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Init om dict error:", e);
         }
     }
 
-    public OmDict getOmDict(String name){
+    public OmDict getOmDict(String name) {
         return omDictMap.get(name);
     }
 
-    public String getOmDictValue(String name){
+    public String getOmDictValue(String name) {
         OmDict omDict = omDictMap.get(name);
-        if (omDict != null){
+        if (omDict != null) {
             return omDict.getValue();
         }
         return "";

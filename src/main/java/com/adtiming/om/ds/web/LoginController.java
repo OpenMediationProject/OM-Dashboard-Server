@@ -120,7 +120,7 @@ public class LoginController extends BaseController {
             UmUser loginUser = userService.login(email, password, rememberMe);
             // login successful to result token
             return Response.buildSuccess(loginUser.getToken());
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Login {} error:", JSONObject.toJSONString(user), e);
         }
         return Response.RES_FAILED;

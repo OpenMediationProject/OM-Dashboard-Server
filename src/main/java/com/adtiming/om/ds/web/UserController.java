@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -148,7 +147,7 @@ public class UserController extends BaseController {
                 umUser.setOldPublisherId(umUser.getPublisherId());
                 JSONObject resultUser = (JSONObject) JSONObject.toJSON(umUser);
                 resultUser.remove("password");
-                if (isPublisherOwner){
+                if (isPublisherOwner) {
                     resultUser.put("isPublisherOwner", false);
                 } else {
                     if (umUser.getRoleId() == RoleType.ORGANIZATION_OWNER.getId()) {
@@ -219,7 +218,7 @@ public class UserController extends BaseController {
                 return Response.build(Response.CODE_RES_UNAUTHORIZED, Response.STATUS_DISABLE, "This Owner is assigned by Admin. You can't change.");
             }
             return this.userService.updateUser(umUser);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.info("Update user {} error", JSONObject.toJSONString(umUser), e);
             return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, e.getMessage());
         }
@@ -390,7 +389,7 @@ public class UserController extends BaseController {
                 return Response.RES_PARAMETER_ERROR;
             }
             return this.roleService.createUserRole(umUserRole.getUserId(), umUserRole.getRoleId(), umUserRole.getPubId());
-        } catch (Exception e){
+        } catch (Exception e) {
             return Response.build(Response.CODE_DATABASE_ERROR, Response.STATUS_DISABLE, e.getMessage());
         }
     }

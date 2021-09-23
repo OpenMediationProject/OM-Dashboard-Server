@@ -778,6 +778,66 @@ public class OmPlacementRuleInstanceCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andAbTestIsNull() {
+            addCriterion("ab_test is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestIsNotNull() {
+            addCriterion("ab_test is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestEqualTo(Byte value) {
+            addCriterion("ab_test =", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestNotEqualTo(Byte value) {
+            addCriterion("ab_test <>", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestGreaterThan(Byte value) {
+            addCriterion("ab_test >", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestGreaterThanOrEqualTo(Byte value) {
+            addCriterion("ab_test >=", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestLessThan(Byte value) {
+            addCriterion("ab_test <", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestLessThanOrEqualTo(Byte value) {
+            addCriterion("ab_test <=", value, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestIn(List<Byte> values) {
+            addCriterion("ab_test in", values, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestNotIn(List<Byte> values) {
+            addCriterion("ab_test not in", values, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestBetween(Byte value1, Byte value2) {
+            addCriterion("ab_test between", value1, value2, "abTest");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbTestNotBetween(Byte value1, Byte value2) {
+            addCriterion("ab_test not between", value1, value2, "abTest");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

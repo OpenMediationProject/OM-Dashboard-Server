@@ -77,10 +77,10 @@ public class CrossBidController extends BaseController {
             List<JSONObject> results = new ArrayList<>();
             Map<Integer, StatCp> crossBidCampaignReportMap = this.getCrossBidCampaignReportMap();
             List<CpCampaign> cpCampaigns = this.crossBidService.getCampaigns();
-            for (CpCampaign cpCampaign : cpCampaigns){
+            for (CpCampaign cpCampaign : cpCampaigns) {
                 JSONObject result = (JSONObject) JSONObject.toJSON(cpCampaign);
                 StatCp statCp = crossBidCampaignReportMap.get(cpCampaign.getId());
-                if (statCp != null){
+                if (statCp != null) {
                     result.put("click", statCp.getClick());
                     result.put("impression", statCp.getImpr());
                     result.put("imprCost", statCp.getWinPrice());
@@ -94,7 +94,7 @@ public class CrossBidController extends BaseController {
         return Response.RES_FAILED;
     }
 
-    private Map<Integer, StatCp> getCrossBidCampaignReportMap(){
+    private Map<Integer, StatCp> getCrossBidCampaignReportMap() {
         try {
             Map<Integer, StatCp> resultMap = new HashMap<>();
             ReportConditionDTO reportConditionDTO = new ReportConditionDTO();
@@ -106,7 +106,7 @@ public class CrossBidController extends BaseController {
             List<StatCp> statCpList = reportService.getCrossBidReport(reportConditionDTO);
             statCpList.forEach(statCp -> resultMap.put(statCp.getCampaignId(), statCp));
             return resultMap;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Get cross bid campaign report map failed!", e);
         }
         return new HashMap<>();

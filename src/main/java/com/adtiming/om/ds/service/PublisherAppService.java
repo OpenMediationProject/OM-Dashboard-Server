@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
@@ -62,11 +61,11 @@ public class PublisherAppService extends BaseService {
             }
 
             List<OmAppWithBLOBs> omApps = this.omAppMapper.selectWithBLOBs(new OmAppCriteria());
-            for (OmAppWithBLOBs dbOmApp : omApps){
+            for (OmAppWithBLOBs dbOmApp : omApps) {
                 try {
                     OmPublisherApp omPublisherApp = new OmPublisherApp();
                     omPublisherApp.setAppId(dbOmApp.getAppId());
-                    if (this.updatePublisherAppInfo(omPublisherApp)){
+                    if (this.updatePublisherAppInfo(omPublisherApp)) {
                         OmAppWithBLOBs omApp = this.buildOmApp(omPublisherApp);
                         omApp.setId(dbOmApp.getId());
                         omApp.setCreateTime(dbOmApp.getCreateTime());
@@ -76,11 +75,11 @@ public class PublisherAppService extends BaseService {
                             throw new RuntimeException("Update om app " + JSONObject.toJSONString(omApp) + " failed");
                         }
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     log.error("Update om app info {} error:", JSONObject.toJSON(dbOmApp));
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Update publisher app info error:", e);
         }
     }
@@ -253,7 +252,7 @@ public class PublisherAppService extends BaseService {
         return Response.build();
     }
 
-    public OmApp getApp(String appId){
+    public OmApp getApp(String appId) {
         OmAppCriteria appCriteria = new OmAppCriteria();
         OmAppCriteria.Criteria criteria = appCriteria.createCriteria();
         criteria.andAppIdEqualTo(appId);
@@ -332,12 +331,12 @@ public class PublisherAppService extends BaseService {
         return false;
     }
 
-    private void updateOmApp(OmPublisherApp omPublisherApp){
+    private void updateOmApp(OmPublisherApp omPublisherApp) {
         OmAppCriteria omAppCriteria = new OmAppCriteria();
         OmAppCriteria.Criteria criteria = omAppCriteria.createCriteria();
         criteria.andAppIdEqualTo(omPublisherApp.getAppId());
         List<OmAppWithBLOBs> apps = this.omAppMapper.selectWithBLOBs(omAppCriteria);
-        if (CollectionUtils.isEmpty(apps)){
+        if (CollectionUtils.isEmpty(apps)) {
             OmAppWithBLOBs omApp = this.buildOmApp(omPublisherApp);
             int result = this.omAppMapper.insertSelective(omApp);
             if (result <= 0) {
@@ -356,7 +355,7 @@ public class PublisherAppService extends BaseService {
         }
     }
 
-    private OmAppWithBLOBs buildOmApp(OmPublisherApp omPublisherApp){
+    private OmAppWithBLOBs buildOmApp(OmPublisherApp omPublisherApp) {
         OmAppWithBLOBs omApp = new OmAppWithBLOBs();
         omApp.setAppId(omPublisherApp.getAppId());
         omApp.setIcon(omPublisherApp.getIcon());

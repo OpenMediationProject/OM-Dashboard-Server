@@ -1,3 +1,6 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.service;
 
 import com.adtiming.om.ds.dao.ReportAdnetworkAccountMapper;
@@ -5,10 +8,8 @@ import com.adtiming.om.ds.dao.ReportAdnetworkAccountPublisherMapper;
 import com.adtiming.om.ds.dto.AdNetworkType;
 import com.adtiming.om.ds.dto.NormalStatus;
 import com.adtiming.om.ds.dto.Response;
-import com.adtiming.om.ds.dto.SwitchStatus;
 import com.adtiming.om.ds.model.*;
 import com.alibaba.fastjson.JSONObject;
-import com.google.api.client.auth.oauth2.TokenResponseException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -505,7 +506,8 @@ public class AccountService extends BaseService {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Mint's [App token] must be not null");
                 }
                 break;
-            } case SigMob: {
+            }
+            case SigMob: {
                 if (StringUtils.isBlank(account.getUserId())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "SigMob's [Public key] must be not null");
                 }

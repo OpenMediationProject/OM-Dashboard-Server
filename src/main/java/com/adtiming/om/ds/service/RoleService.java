@@ -74,7 +74,7 @@ public class RoleService extends BaseService {
         criteria.andPubIdEqualTo(publisherId);
         criteria.andUserIdEqualTo(userId);
         List<UmUserRole> umUserRoles = umUserRoleMapper.select(roleCriteria);
-        if (!CollectionUtils.isEmpty(umUserRoles)){
+        if (!CollectionUtils.isEmpty(umUserRoles)) {
             return umUserRoles.get(0);
         }
         return null;
@@ -96,7 +96,7 @@ public class RoleService extends BaseService {
             throw new RuntimeException("User account already exists.");
         }
         UmUserRole userPublisherRole = this.getRolesByPublisherUser(userId, pubId);
-        if (userPublisherRole != null){
+        if (userPublisherRole != null) {
             throw new RuntimeException("User account already exists.");
         }
         Date currentTime = new Date();

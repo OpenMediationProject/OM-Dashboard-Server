@@ -875,6 +875,66 @@ public class StatLrCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andAbtIdIsNull() {
+            addCriterion("abt_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdIsNotNull() {
+            addCriterion("abt_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdEqualTo(Integer value) {
+            addCriterion("abt_id =", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdNotEqualTo(Integer value) {
+            addCriterion("abt_id <>", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdGreaterThan(Integer value) {
+            addCriterion("abt_id >", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("abt_id >=", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdLessThan(Integer value) {
+            addCriterion("abt_id <", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdLessThanOrEqualTo(Integer value) {
+            addCriterion("abt_id <=", value, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdIn(List<Integer> values) {
+            addCriterion("abt_id in", values, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdNotIn(List<Integer> values) {
+            addCriterion("abt_id not in", values, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdBetween(Integer value1, Integer value2) {
+            addCriterion("abt_id between", value1, value2, "abtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAbtIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("abt_id not between", value1, value2, "abtId");
+            return (Criteria) this;
+        }
+
         public Criteria andWaterfallRequestIsNull() {
             addCriterion("waterfall_request is null");
             return (Criteria) this;
@@ -1895,6 +1955,66 @@ public class StatLrCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andRuleIdIsNull() {
+            addCriterion("rule_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdIsNotNull() {
+            addCriterion("rule_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdEqualTo(Integer value) {
+            addCriterion("rule_id =", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotEqualTo(Integer value) {
+            addCriterion("rule_id <>", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdGreaterThan(Integer value) {
+            addCriterion("rule_id >", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("rule_id >=", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdLessThan(Integer value) {
+            addCriterion("rule_id <", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdLessThanOrEqualTo(Integer value) {
+            addCriterion("rule_id <=", value, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdIn(List<Integer> values) {
+            addCriterion("rule_id in", values, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotIn(List<Integer> values) {
+            addCriterion("rule_id not in", values, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdBetween(Integer value1, Integer value2) {
+            addCriterion("rule_id between", value1, value2, "ruleId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("rule_id not between", value1, value2, "ruleId");
+            return (Criteria) this;
+        }
+
         public Criteria andAppVersionIsNull() {
             addCriterion("app_version is null");
             return (Criteria) this;
@@ -2102,66 +2222,6 @@ public class StatLrCriteria {
 
         public Criteria andOsVersionNotBetween(String value1, String value2) {
             addCriterion("os_version not between", value1, value2, "osVersion");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdIsNull() {
-            addCriterion("rule_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdIsNotNull() {
-            addCriterion("rule_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdEqualTo(Integer value) {
-            addCriterion("rule_id =", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdNotEqualTo(Integer value) {
-            addCriterion("rule_id <>", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdGreaterThan(Integer value) {
-            addCriterion("rule_id >", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("rule_id >=", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdLessThan(Integer value) {
-            addCriterion("rule_id <", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdLessThanOrEqualTo(Integer value) {
-            addCriterion("rule_id <=", value, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdIn(List<Integer> values) {
-            addCriterion("rule_id in", values, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdNotIn(List<Integer> values) {
-            addCriterion("rule_id not in", values, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdBetween(Integer value1, Integer value2) {
-            addCriterion("rule_id between", value1, value2, "ruleId");
-            return (Criteria) this;
-        }
-
-        public Criteria andRuleIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("rule_id not between", value1, value2, "ruleId");
             return (Criteria) this;
         }
 

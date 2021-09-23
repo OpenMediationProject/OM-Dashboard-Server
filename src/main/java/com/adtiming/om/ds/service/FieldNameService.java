@@ -100,7 +100,7 @@ public class FieldNameService {
                 List<CpCampaign> cpCampaigns = this.cpCampaignMapper.selectWithBLOBs(new CpCampaignCriteria());
                 cpCampaigns.forEach(campaign -> this.idNameMap.put("campaignId" + campaign.getId(), campaign.getName()));
                 log.info("Init campaign size: {}", instances.size());
-            } catch (Exception e){
+            } catch (Exception e) {
                 log.error("Init cross biding field name error:", e);
             }
         } catch (Exception e) {

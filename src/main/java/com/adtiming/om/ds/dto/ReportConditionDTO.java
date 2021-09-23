@@ -3,6 +3,7 @@
 
 package com.adtiming.om.ds.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Created by ruandianbo on 20-2-18.
  */
-public class ReportConditionDTO {
+public class ReportConditionDTO  implements Cloneable{
 
     protected static final Logger log = LogManager.getLogger();
 
@@ -45,6 +46,8 @@ public class ReportConditionDTO {
 
     private Byte[] abt;
 
+    private Integer[] abtId;
+
     private Byte[] bid;
 
     private Integer[] creativeId;
@@ -58,6 +61,16 @@ public class ReportConditionDTO {
     Set<String> dimensionSet;
 
     private Integer[] ruleId;
+
+    @Override
+    public ReportConditionDTO clone() {
+        try {
+            return (ReportConditionDTO) super.clone();
+        } catch (CloneNotSupportedException e) {
+            log.error("Clone ReportConditionDTO {} error:", JSONObject.toJSON(this), e);
+        }
+        return this;
+    }
 
     public String getDateBegin() {
         return dateBegin;
@@ -177,6 +190,14 @@ public class ReportConditionDTO {
 
     public void setAbt(Byte[] abt) {
         this.abt = abt;
+    }
+
+    public Integer[] getAbtId() {
+        return abtId;
+    }
+
+    public void setAbtId(Integer[] abtId) {
+        this.abtId = abtId;
     }
 
     public Byte[] getBid() {

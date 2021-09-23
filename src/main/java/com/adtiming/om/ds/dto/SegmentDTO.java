@@ -22,6 +22,8 @@ public class SegmentDTO {
 
     private String name;
 
+    private String testName;
+
     private Integer segmentId;
 
     private Byte abTest;
@@ -116,6 +118,14 @@ public class SegmentDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
 
     public Integer getSegmentId() {

@@ -36,6 +36,8 @@ public class Response {
 
     public static final int CODE_PARAMETER_INVALID = 1012;
 
+    public static final int CODE_STOP_ABTEST_FAILED = 1013;
+
     public static final Response RES_UNAUTHORIZED = new Response(CODE_RES_UNAUTHORIZED, STATUS_DISABLE, "Insufficient authority");
 
     public static final Response RES_FAILED = new Response(CODE_RES_FAILED, STATUS_DISABLE, "Request failed");
@@ -56,6 +58,7 @@ public class Response {
 
     public static final Response RES_CAN_NOT_CHANGE = new Response(CODE_CAN_NOT_CHANGE, STATUS_DISABLE, "Can not change!");
 
+    public static final Response STOP_ABTEST_FAILED = new Response(CODE_STOP_ABTEST_FAILED, STATUS_DISABLE, "Stop ABTest failed!");
 
     private int code;
 

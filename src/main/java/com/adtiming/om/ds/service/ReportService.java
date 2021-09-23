@@ -3,7 +3,6 @@
 
 package com.adtiming.om.ds.service;
 
-import com.adtiming.om.ds.dao.*;
 import com.adtiming.om.ds.dto.DauDimensionsDTO;
 import com.adtiming.om.ds.dto.ReportConditionDTO;
 import com.adtiming.om.ds.dto.Response;
@@ -15,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,8 +32,8 @@ public class ReportService extends ReportBaseService {
 
     private static final Logger log = LogManager.getLogger();
 
-    private static final Set<String> NON_IN_API_DIMS = new HashSet<>(Arrays.asList("ruleId", "sceneId", "appVersion", "sdkVersion", "platform", "osVersion"));
-
+    private static final Set<String> NON_IN_API_DIMS = new HashSet<>(
+            Arrays.asList("ruleId", "sceneId", "appVersion", "sdkVersion", "platform", "osVersion", "abt", "abtId"));
 
     @Resource
     FieldNameService fieldNameService;
@@ -58,8 +56,8 @@ public class ReportService extends ReportBaseService {
             }
             reportConditionDTO.setDimensionSet(dimensionSet);
 
-            if ((dimensionSet.contains(PLACEMENT_ID) || dimensionSet.contains(INSTANCE_ID) )
-                    && !dimensionSet.contains(PUB_APP_ID) ){
+            if ((dimensionSet.contains(PLACEMENT_ID) || dimensionSet.contains(INSTANCE_ID))
+                    && !dimensionSet.contains(PUB_APP_ID)) {
                 Set<String> dimensionSetTmp = new HashSet<>(dimensionSet);
                 dimensionSetTmp.add(PUB_APP_ID);
                 String[] dimension = new String[dimensionSetTmp.size() + 1];
@@ -110,9 +108,16 @@ public class ReportService extends ReportBaseService {
             }
 
             if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
-                List<JSONObject> statDauList = this.getDeuReport(reportConditionDTO);
-                if (!CollectionUtils.isEmpty(statDauList)) {
-                    resultReport.addAll(statDauList);
+                if (dimensionSet.contains("ruleId") || dimensionSet.contains("abt")) {
+                    List<JSONObject> statABTestDauList = this.getRuleABTestDauReport(reportConditionDTO);
+                    if (!CollectionUtils.isEmpty(statABTestDauList)) {
+                        resultReport.addAll(statABTestDauList);
+                    }
+                } else {
+                    List<JSONObject> statDauList = this.getDeuReport(reportConditionDTO);
+                    if (!CollectionUtils.isEmpty(statDauList)) {
+                        resultReport.addAll(statDauList);
+                    }
                 }
             }
 
@@ -121,10 +126,11 @@ public class ReportService extends ReportBaseService {
                 dimensionSet.add("adType");
             }
             List<JSONObject> results = this.businessMapReduce(resultReport, dimensionSet);
-            if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")) {
+            if (reportTypeSet.contains("dau") && !dimensionSet.contains("sceneId")
+                    && !dimensionSet.contains("ruleId")&& !dimensionSet.contains("abt")) {
                 this.fillPlacementInstanceDau(results, reportConditionDTO);
             }
-            this.computeEcpm(results, dimensionSet, reportConditionDTO);
+            this.computeEcpm(results, dimensionSet, reportConditionDTO.clone());
             this.fieldNameService.fillName(results);
             return Response.buildSuccess(results);
         } catch (Exception e) {
@@ -146,7 +152,7 @@ public class ReportService extends ReportBaseService {
                     break;
                 }
             }
-            if (!dimIntersection || dimensionSet.contains("instanceId")) {
+            if (!dimIntersection) {
                 for (JSONObject result : results) {
                     double cost = 0;
                     Double costValue = result.getDouble("cost");
@@ -168,8 +174,8 @@ public class ReportService extends ReportBaseService {
             }
             Map<Integer, List<JSONObject>> instanceCountryReportMap = this.getInstanceCountryReportMap(dimensionSet, reportConditionDTO);
             Map<String, List<JSONObject>> dimInstancesMap = this.getDimInstancesMap(dimensionSet, reportConditionDTO);
-            Map<Integer,String> ruleCountriesMap = new HashMap<>();
-            if (dimensionSet.contains("ruleId")){
+            Map<Integer, String> ruleCountriesMap = new HashMap<>();
+            if (dimensionSet.contains("ruleId")) {
                 List<Integer> ruleIds = new ArrayList<>();
                 for (JSONObject report : results) {
                     ruleIds.add(report.getInteger("ruleId"));
@@ -214,9 +220,9 @@ public class ReportService extends ReportBaseService {
                         int instanceId = dimInstance.getInteger("instanceId");
                         List<JSONObject> instanceCountryReportList = instanceCountryReportMap.get(instanceId);
                         for (JSONObject instanceReport : instanceCountryReportList) {
-                            if (dimensionSet.contains("ruleId")){
+                            if (dimensionSet.contains("ruleId")) {
                                 String country = instanceReport.getString("country");
-                                if (!"00".equals(country) && StringUtils.isNotBlank(ruleCountries) && StringUtils.isNotBlank(country) && !ruleCountries.contains(country)){
+                                if (!"00".equals(country) && StringUtils.isNotBlank(ruleCountries) && StringUtils.isNotBlank(country) && !ruleCountries.contains(country)) {
                                     continue;
                                 }
                             }
@@ -245,7 +251,9 @@ public class ReportService extends ReportBaseService {
                         report.put("notInApiDimImpr", apiImpr);
                         report.put("notInApiDimCost", cost);
                         cost = cost * instanceImprRate;
+                        report.put("cost", cost);
                         apiImpr = apiImpr * instanceImprRate;
+                        report.put("apiImpr", apiImpr);
                         double apiEcpm = 0;
                         if (apiImpr > 0) {
                             apiEcpm = (cost * 1000) / apiImpr;
@@ -257,7 +265,7 @@ public class ReportService extends ReportBaseService {
                     log.error("Compute instance impression rate {} error:", entry.getValue(), e);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Compute ecpm error:", e);
         }
     }
@@ -561,7 +569,7 @@ public class ReportService extends ReportBaseService {
                             return results;
                         }
                     } else if (dimensionSet.contains(PLACEMENT_ID) && dimensionSet.contains(ADN_ID)
-                            || (dimensionSet.contains(ADN_ID) && reportConditionDTO.getPlacementId() != null && reportConditionDTO.getPlacementId().length >0)) {
+                            || (dimensionSet.contains(ADN_ID) && reportConditionDTO.getPlacementId() != null && reportConditionDTO.getPlacementId().length > 0)) {
                         if (dauDimensionsDTO.getAdn_placement() != null && dauDimensionsDTO.getAdn_placement() == 1) {
                             List<StatDauAdnPlacement> statAdnPlacementDauSummary = this.getAdnPlacementDauReport(reportConditionDTO, dauConditionMap);
                             statAdnPlacementDauSummary.forEach(adnPlacementStatDau -> results.add((JSONObject) JSONObject.toJSON(adnPlacementStatDau)));
@@ -593,14 +601,14 @@ public class ReportService extends ReportBaseService {
         return new ArrayList<>();
     }
 
-    private void fillPlacementInstanceDau(List<JSONObject> reportList, ReportConditionDTO conditionDTO){
+    private void fillPlacementInstanceDau(List<JSONObject> reportList, ReportConditionDTO conditionDTO) {
         try {
-            if (CollectionUtils.isEmpty(reportList)){
+            if (CollectionUtils.isEmpty(reportList)) {
                 return;
             }
             Map<String, Object> dauConditionMap = this.buildDauConditionMap(conditionDTO);
             conditionDTO.setDimension(new String[]{"day", "pubAppId"});
-            if (conditionDTO.getDimensionSet().contains("country")){
+            if (conditionDTO.getDimensionSet().contains("country")) {
                 conditionDTO.setDimension(new String[]{"day", "pubAppId", "country"});
             }
             conditionDTO.setPublisherId(new Integer[]{this.getCurrentPublisherId()});
@@ -611,11 +619,11 @@ public class ReportService extends ReportBaseService {
                 StatDau sdkUser = appDeuMap.get(report.getString("day") + report.getString("country") + report.getString("pubAppId"));
                 if (sdkUser != null) {
                     report.put("dau", sdkUser.getDau());
-                } else if (!report.containsKey("dau")){
+                } else if (!report.containsKey("dau")) {
                     report.put("dau", 0);
                 }
             });
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("fillPlacementInstanceDau error:", e);
         }
     }

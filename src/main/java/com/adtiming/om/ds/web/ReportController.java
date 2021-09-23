@@ -52,7 +52,7 @@ public class ReportController extends BaseController {
             return Response.RES_PARAMETER_ERROR;
         }
         if (reportConditionDTO.getCountry() != null && reportConditionDTO.getCountry().length == 1
-                && "00".equals(reportConditionDTO.getCountry()[0])){
+                && "00".equals(reportConditionDTO.getCountry()[0])) {
             reportConditionDTO.setCountry(null);
         }
         Set<String> reportTypeSet = new HashSet<>(Arrays.asList(reportConditionDTO.getType()));
@@ -66,7 +66,7 @@ public class ReportController extends BaseController {
     public Response getDashboardHeadRevenue(Integer pubAppId) {
         try {
             return this.reportService.getDashboardHeadRevenue(pubAppId);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("GetDashboardHeadRevenue error:", e);
             return Response.build(Response.RES_FAILED.getCode(), Response.STATUS_DISABLE, e.getMessage());
         }
@@ -84,12 +84,12 @@ public class ReportController extends BaseController {
     public Response getCrossBidReport(@RequestBody ReportConditionDTO reportConditionDTO) {
         try {
             List<StatCp> statCpList = this.reportService.getCrossBidReport(reportConditionDTO);
-            if (CollectionUtils.isEmpty(statCpList)){
+            if (CollectionUtils.isEmpty(statCpList)) {
                 return Response.buildSuccess(new JSONArray());
             }
             List<JSONObject> results = new ArrayList<>();
             statCpList.forEach(statCp -> {
-                JSONObject result = (JSONObject)JSONObject.toJSON(statCp);
+                JSONObject result = (JSONObject) JSONObject.toJSON(statCp);
                 result.put("day", Util.getYYYYMMDD(statCp.getDay()));
                 result.put("impression", statCp.getImpr());
                 result.put("imprCost", statCp.getWinPrice());

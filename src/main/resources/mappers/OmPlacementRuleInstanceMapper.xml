@@ -13,6 +13,7 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="group_id" jdbcType="INTEGER" property="groupId" />
+    <result column="ab_test" jdbcType="TINYINT" property="abTest" />
     <result column="auto_switch" jdbcType="INTEGER" property="autoSwitch" />
     <result column="group_level" jdbcType="INTEGER" property="groupLevel" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -50,7 +51,7 @@
   <sql id="Base_Column_List">
     m.id as id, m.rule_id as rule_id, adn_id, instance_id, sort_type, priority, weight, user_id, user_name,
     status, group_id, m.create_time as create_time, m.lastmodify as lastmodify,
-    g.group_level as group_level, g.auto_switch as auto_switch
+    g.group_level as group_level, g.auto_switch as auto_switch, m.ab_test as ab_test
   </sql>
   <select id="select" parameterType="com.adtiming.om.ds.model.OmPlacementRuleInstanceCriteria" resultMap="BaseResultMap">
     select
@@ -70,7 +71,8 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from om_placement_rule_instance
+    from om_placement_rule_instance as m left join (select id as gid, group_level, auto_switch from om_placement_rule_group) as g
+    on m.group_id = g.gid
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -113,6 +115,9 @@
       <if test="groupId != null">
         group_id,
       </if>
+      <if test="abTest != null">
+        ab_test,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -150,6 +155,9 @@
       </if>
       <if test="groupId != null">
         #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="abTest != null">
+        #{abTest,jdbcType=TINYINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -192,6 +200,9 @@
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=INTEGER},
       </if>
+      <if test="abTest != null">
+        ab_test = #{abTest,jdbcType=TINYINT},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -213,6 +224,7 @@
       user_name = #{userName,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       group_id = #{groupId,jdbcType=INTEGER},
+      ab_test = #{abTest,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       lastmodify = #{lastmodify,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

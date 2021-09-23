@@ -20,7 +20,7 @@ import java.util.*;
  * @author dianbo ruan
  * @date 20210819
  */
-public class ReportBaseService extends BaseService{
+public class ReportBaseService extends BaseService {
 
     public static final String ADN_ID = "adnId";
 
@@ -46,6 +46,9 @@ public class ReportBaseService extends BaseService{
     StatDauAdnMapper statDauAdnMapper;
 
     @Resource
+    StatDauAbtestMapper statDauAbtestMapper;
+
+    @Resource
     StatLrMapper statLrMapper;
 
     @Resource
@@ -57,15 +60,15 @@ public class ReportBaseService extends BaseService{
     @Resource
     OmPlacementRuleMapper omPlacementRuleMapper;
 
-    protected Map<Integer,String> getRuleCountries(List<Integer> ruleIds){
-        if (CollectionUtils.isEmpty(ruleIds)){
+    protected Map<Integer, String> getRuleCountries(List<Integer> ruleIds) {
+        if (CollectionUtils.isEmpty(ruleIds)) {
             return new HashMap<>();
         }
         OmPlacementRuleCriteria ruleCriteria = new OmPlacementRuleCriteria();
         OmPlacementRuleCriteria.Criteria criteria = ruleCriteria.createCriteria();
         criteria.andIdIn(ruleIds);
         List<OmPlacementRule> rules = omPlacementRuleMapper.select(ruleCriteria);
-        Map<Integer,String> ruleCountriesMap = new HashMap<>();
+        Map<Integer, String> ruleCountriesMap = new HashMap<>();
         for (OmPlacementRule rule : rules) {
             String country = rule.getCountries();
             if (StringUtils.isNotBlank(country)) {
@@ -188,19 +191,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }
@@ -275,19 +278,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }
@@ -356,19 +359,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }
@@ -445,19 +448,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }
@@ -519,19 +522,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }
@@ -546,6 +549,93 @@ public class ReportBaseService extends BaseService{
         List<StatDau> statDauSummary = this.statDauMapper.selectSummary(conditionMap);
         log.info("Get DAU summary size {} condition {}", statDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
         return statDauSummary;
+    }
+
+    /**
+     * Get rule abtest deu report
+     *
+     * @param reportConditionDTO
+     */
+    public List<JSONObject> getRuleABTestDauReport(ReportConditionDTO reportConditionDTO) {
+        Map<String, Object> conditionMap = this.buildDauConditionMap(reportConditionDTO);
+        StatDauAbtestCriteria dauAbtestCriteria = new StatDauAbtestCriteria();
+        StatDauAbtestCriteria.Criteria criteria = dauAbtestCriteria.createCriteria();
+        criteria.andDayGreaterThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateBegin()));
+        criteria.andDayLessThanOrEqualTo(Util.getDateYYYYMMDD(reportConditionDTO.getDateEnd()));
+
+        List<Integer> publisherIds = Util.buildIntegerList(reportConditionDTO.getPublisherId());
+        if (!CollectionUtils.isEmpty(publisherIds)) {
+            criteria.andPublisherIdIn(publisherIds);
+        }
+
+        List<Integer> publisherAppIds = Util.buildIntegerList(reportConditionDTO.getPubAppId());
+        if (!CollectionUtils.isEmpty(publisherAppIds)) {
+            criteria.andPubAppIdIn(publisherAppIds);
+        }
+
+        List<Byte> platforms = Util.buildByteList(reportConditionDTO.getPlatform());
+        if (!CollectionUtils.isEmpty(platforms)) {
+            criteria.andPlatformIn(platforms);
+        }
+
+        List<Byte> abt = Util.buildByteList(reportConditionDTO.getAbt());
+        if (!CollectionUtils.isEmpty(abt)) {
+            criteria.andAbtIn(abt);
+        }
+
+        List<Integer> abtIds = Util.buildIntegerList(reportConditionDTO.getAbtId());
+        if (!CollectionUtils.isEmpty(abtIds)) {
+            criteria.andAbtIdIn(abtIds);
+        }
+
+        List<String> countries = Util.buildStringList(reportConditionDTO.getCountry());
+        if (!CollectionUtils.isEmpty(countries)) {
+            criteria.andCountryIn(countries);
+        }
+
+        List<String> appVersions = Util.buildStringList(reportConditionDTO.getAppVersion());
+        if (!CollectionUtils.isEmpty(appVersions)) {
+            criteria.andAppVersionIn(appVersions);
+        }
+
+        List<String> sdkVersions = Util.buildStringList(reportConditionDTO.getSdkVersion());
+        if (!CollectionUtils.isEmpty(sdkVersions)) {
+            criteria.andSdkVersionIn(sdkVersions);
+        }
+
+        if (!StringUtils.isEmpty(reportConditionDTO.getOsVersion())) {
+            String osVersion = reportConditionDTO.getOsVersion();
+            String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
+                    .replace("(", "").replace(")", "").split(",");
+            if (osVersionArr.length >= 2) {
+                String minOsVersion = osVersionArr[0];
+                String maxOsVersion = osVersionArr[1];
+                if (osVersion.startsWith("[")) {
+                    criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
+                }
+                if (osVersion.startsWith("(")) {
+                    criteria.andOsVersionGreaterThan(maxOsVersion);
+                }
+                if (osVersion.endsWith("]")) {
+                    criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
+                }
+                if (osVersion.endsWith(")")) {
+                    criteria.andOsVersionLessThan(maxOsVersion);
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(dauAbtestCriteria.getOredCriteria())) {
+            conditionMap.put("summaryWhereClause", dauAbtestCriteria.getOredCriteria());
+        }
+        dauAbtestCriteria.setOrderByClause(" day desc ");
+        conditionMap.put("orderByClause", dauAbtestCriteria.getOrderByClause());
+
+        List<StatDauAbtest> statDauSummary = this.statDauAbtestMapper.selectSummary(conditionMap);
+        log.info("Get DAU summary size {} condition {}", statDauSummary.size(), JSONObject.toJSONString(reportConditionDTO));
+        List<JSONObject> results = new ArrayList<>();
+        statDauSummary.forEach(abtestStatDeu -> results.add((JSONObject) JSONObject.toJSON(abtestStatDeu)));
+        return results;
     }
 
     /**
@@ -618,6 +708,11 @@ public class ReportBaseService extends BaseService{
             criteria.andAbtIn(abts);
         }
 
+        List<Integer> abtIds = Util.buildIntegerList(reportConditionDTO.getAbtId());
+        if (!CollectionUtils.isEmpty(abtIds)) {
+            criteria.andAbtIdIn(abtIds);
+        }
+
         List<Byte> bids = Util.buildByteList(reportConditionDTO.getBid());
         if (!CollectionUtils.isEmpty(bids)) {
             criteria.andBidIn(bids);
@@ -637,19 +732,19 @@ public class ReportBaseService extends BaseService{
             String osVersion = reportConditionDTO.getOsVersion();
             String[] osVersionArr = reportConditionDTO.getOsVersion().replace("[", "").replace("]", "")
                     .replace("(", "").replace(")", "").split(",");
-            if (osVersionArr.length >= 2){
+            if (osVersionArr.length >= 2) {
                 String minOsVersion = osVersionArr[0];
                 String maxOsVersion = osVersionArr[1];
-                if (osVersion.startsWith("[")){
+                if (osVersion.startsWith("[")) {
                     criteria.andOsVersionGreaterThanOrEqualTo(minOsVersion);
                 }
-                if (osVersion.startsWith("(")){
+                if (osVersion.startsWith("(")) {
                     criteria.andOsVersionGreaterThan(maxOsVersion);
                 }
-                if (osVersion.endsWith("]")){
+                if (osVersion.endsWith("]")) {
                     criteria.andOsVersionLessThanOrEqualTo(maxOsVersion);
                 }
-                if (osVersion.endsWith(")")){
+                if (osVersion.endsWith(")")) {
                     criteria.andOsVersionLessThan(maxOsVersion);
                 }
             }

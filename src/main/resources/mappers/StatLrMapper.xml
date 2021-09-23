@@ -14,6 +14,7 @@
     <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
     <result column="adn_id" jdbcType="INTEGER" property="adnId" />
     <result column="abt" jdbcType="TINYINT" property="abt" />
+    <result column="abt_id" jdbcType="INTEGER" property="abtId" />
     <result column="waterfall_request" jdbcType="INTEGER" property="waterfallRequest" />
     <result column="waterfall_filled" jdbcType="INTEGER" property="waterfallFilled" />
     <result column="instance_request" jdbcType="INTEGER" property="instanceRequest" />
@@ -70,7 +71,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, day, hour, country, platform, publisher_id, pub_app_id, placement_id, instance_id, 
-    scene_id, adn_id, abt, waterfall_request, waterfall_filled, instance_request, instance_filled, 
+    scene_id, adn_id, abt, abt_id, waterfall_request, waterfall_filled, instance_request, instance_filled,
     video_start, video_complete, called_show, is_ready_true, is_ready_false, click, impr, 
     bid_req, bid_resp, bid_resp_price, bid_win, bid_win_price, bid, app_version, sdk_version, 
     os_version, create_time
@@ -535,6 +536,9 @@
     <if test="_parameter.containsKey('dimension_abt')">
       abt,
     </if>
+    <if test="_parameter.containsKey('dimension_abtId')">
+      abt_id,
+    </if>
     <if test="_parameter.containsKey('dimension_hour')">
       hour,
     </if>
@@ -597,6 +601,9 @@
     </if>
     <if test="_parameter.containsKey('dimension_abt')">
       abt,
+    </if>
+    <if test="_parameter.containsKey('dimension_abtId')">
+      abt_id,
     </if>
     <if test="_parameter.containsKey('dimension_hour')">
       hour,

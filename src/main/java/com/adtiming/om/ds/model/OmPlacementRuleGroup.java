@@ -1,6 +1,3 @@
-// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
-// Licensed under the GNU Lesser General Public License Version 3
-
 package com.adtiming.om.ds.model;
 
 import java.util.Date;
@@ -15,6 +12,8 @@ public class OmPlacementRuleGroup {
     private Byte groupLevel;
 
     private Byte autoSwitch;
+
+    private Byte abTest;
 
     private Date createTime;
 
@@ -60,6 +59,14 @@ public class OmPlacementRuleGroup {
         this.autoSwitch = autoSwitch;
     }
 
+    public Byte getAbTest() {
+        return abTest;
+    }
+
+    public void setAbTest(Byte abTest) {
+        this.abTest = abTest;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -93,6 +100,7 @@ public class OmPlacementRuleGroup {
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getGroupLevel() == null ? other.getGroupLevel() == null : this.getGroupLevel().equals(other.getGroupLevel()))
             && (this.getAutoSwitch() == null ? other.getAutoSwitch() == null : this.getAutoSwitch().equals(other.getAutoSwitch()))
+            && (this.getAbTest() == null ? other.getAbTest() == null : this.getAbTest().equals(other.getAbTest()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getLastmodify() == null ? other.getLastmodify() == null : this.getLastmodify().equals(other.getLastmodify()));
     }
@@ -106,6 +114,7 @@ public class OmPlacementRuleGroup {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getGroupLevel() == null) ? 0 : getGroupLevel().hashCode());
         result = prime * result + ((getAutoSwitch() == null) ? 0 : getAutoSwitch().hashCode());
+        result = prime * result + ((getAbTest() == null) ? 0 : getAbTest().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getLastmodify() == null) ? 0 : getLastmodify().hashCode());
         return result;

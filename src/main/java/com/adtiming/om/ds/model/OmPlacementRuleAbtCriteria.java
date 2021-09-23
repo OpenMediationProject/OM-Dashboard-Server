@@ -1,17 +1,20 @@
+// Copyright 2020 ADTIMING TECHNOLOGY COMPANY LIMITED
+// Licensed under the GNU Lesser General Public License Version 3
+
 package com.adtiming.om.ds.model;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OmPlacementRuleGroupCriteria {
+public class OmPlacementRuleAbtCriteria {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public OmPlacementRuleGroupCriteria() {
+    public OmPlacementRuleAbtCriteria() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -295,183 +298,363 @@ public class OmPlacementRuleGroupCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelIsNull() {
-            addCriterion("group_level is null");
+        public Criteria andStatusIsNull() {
+            addCriterion("status is null");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelIsNotNull() {
-            addCriterion("group_level is not null");
+        public Criteria andStatusIsNotNull() {
+            addCriterion("status is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelEqualTo(Byte value) {
-            addCriterion("group_level =", value, "groupLevel");
+        public Criteria andStatusEqualTo(Integer value) {
+            addCriterion("status =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelNotEqualTo(Byte value) {
-            addCriterion("group_level <>", value, "groupLevel");
+        public Criteria andStatusNotEqualTo(Integer value) {
+            addCriterion("status <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelGreaterThan(Byte value) {
-            addCriterion("group_level >", value, "groupLevel");
+        public Criteria andStatusGreaterThan(Integer value) {
+            addCriterion("status >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelGreaterThanOrEqualTo(Byte value) {
-            addCriterion("group_level >=", value, "groupLevel");
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("status >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelLessThan(Byte value) {
-            addCriterion("group_level <", value, "groupLevel");
+        public Criteria andStatusLessThan(Integer value) {
+            addCriterion("status <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelLessThanOrEqualTo(Byte value) {
-            addCriterion("group_level <=", value, "groupLevel");
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("status <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelIn(List<Byte> values) {
-            addCriterion("group_level in", values, "groupLevel");
+        public Criteria andStatusIn(List<Integer> values) {
+            addCriterion("status in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelNotIn(List<Byte> values) {
-            addCriterion("group_level not in", values, "groupLevel");
+        public Criteria andStatusNotIn(List<Integer> values) {
+            addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelBetween(Byte value1, Byte value2) {
-            addCriterion("group_level between", value1, value2, "groupLevel");
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
+            addCriterion("status between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLevelNotBetween(Byte value1, Byte value2) {
-            addCriterion("group_level not between", value1, value2, "groupLevel");
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchIsNull() {
-            addCriterion("auto_switch is null");
+        public Criteria andResultAbIsNull() {
+            addCriterion("result_ab is null");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchIsNotNull() {
-            addCriterion("auto_switch is not null");
+        public Criteria andResultAbIsNotNull() {
+            addCriterion("result_ab is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchEqualTo(Byte value) {
-            addCriterion("auto_switch =", value, "autoSwitch");
+        public Criteria andResultAbEqualTo(Integer value) {
+            addCriterion("result_ab =", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchNotEqualTo(Byte value) {
-            addCriterion("auto_switch <>", value, "autoSwitch");
+        public Criteria andResultAbNotEqualTo(Integer value) {
+            addCriterion("result_ab <>", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchGreaterThan(Byte value) {
-            addCriterion("auto_switch >", value, "autoSwitch");
+        public Criteria andResultAbGreaterThan(Integer value) {
+            addCriterion("result_ab >", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchGreaterThanOrEqualTo(Byte value) {
-            addCriterion("auto_switch >=", value, "autoSwitch");
+        public Criteria andResultAbGreaterThanOrEqualTo(Integer value) {
+            addCriterion("result_ab >=", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchLessThan(Byte value) {
-            addCriterion("auto_switch <", value, "autoSwitch");
+        public Criteria andResultAbLessThan(Integer value) {
+            addCriterion("result_ab <", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchLessThanOrEqualTo(Byte value) {
-            addCriterion("auto_switch <=", value, "autoSwitch");
+        public Criteria andResultAbLessThanOrEqualTo(Integer value) {
+            addCriterion("result_ab <=", value, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchIn(List<Byte> values) {
-            addCriterion("auto_switch in", values, "autoSwitch");
+        public Criteria andResultAbIn(List<Integer> values) {
+            addCriterion("result_ab in", values, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchNotIn(List<Byte> values) {
-            addCriterion("auto_switch not in", values, "autoSwitch");
+        public Criteria andResultAbNotIn(List<Integer> values) {
+            addCriterion("result_ab not in", values, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchBetween(Byte value1, Byte value2) {
-            addCriterion("auto_switch between", value1, value2, "autoSwitch");
+        public Criteria andResultAbBetween(Integer value1, Integer value2) {
+            addCriterion("result_ab between", value1, value2, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAutoSwitchNotBetween(Byte value1, Byte value2) {
-            addCriterion("auto_switch not between", value1, value2, "autoSwitch");
+        public Criteria andResultAbNotBetween(Integer value1, Integer value2) {
+            addCriterion("result_ab not between", value1, value2, "resultAb");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestIsNull() {
-            addCriterion("ab_test is null");
+        public Criteria andEndTimeIsNull() {
+            addCriterion("end_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestIsNotNull() {
-            addCriterion("ab_test is not null");
+        public Criteria andEndTimeIsNotNull() {
+            addCriterion("end_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestEqualTo(Byte value) {
-            addCriterion("ab_test =", value, "abTest");
+        public Criteria andEndTimeEqualTo(Date value) {
+            addCriterion("end_time =", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestNotEqualTo(Byte value) {
-            addCriterion("ab_test <>", value, "abTest");
+        public Criteria andEndTimeNotEqualTo(Date value) {
+            addCriterion("end_time <>", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestGreaterThan(Byte value) {
-            addCriterion("ab_test >", value, "abTest");
+        public Criteria andEndTimeGreaterThan(Date value) {
+            addCriterion("end_time >", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestGreaterThanOrEqualTo(Byte value) {
-            addCriterion("ab_test >=", value, "abTest");
+        public Criteria andEndTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("end_time >=", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestLessThan(Byte value) {
-            addCriterion("ab_test <", value, "abTest");
+        public Criteria andEndTimeLessThan(Date value) {
+            addCriterion("end_time <", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestLessThanOrEqualTo(Byte value) {
-            addCriterion("ab_test <=", value, "abTest");
+        public Criteria andEndTimeLessThanOrEqualTo(Date value) {
+            addCriterion("end_time <=", value, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestIn(List<Byte> values) {
-            addCriterion("ab_test in", values, "abTest");
+        public Criteria andEndTimeIn(List<Date> values) {
+            addCriterion("end_time in", values, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestNotIn(List<Byte> values) {
-            addCriterion("ab_test not in", values, "abTest");
+        public Criteria andEndTimeNotIn(List<Date> values) {
+            addCriterion("end_time not in", values, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestBetween(Byte value1, Byte value2) {
-            addCriterion("ab_test between", value1, value2, "abTest");
+        public Criteria andEndTimeBetween(Date value1, Date value2) {
+            addCriterion("end_time between", value1, value2, "endTime");
             return (Criteria) this;
         }
 
-        public Criteria andAbTestNotBetween(Byte value1, Byte value2) {
-            addCriterion("ab_test not between", value1, value2, "abTest");
+        public Criteria andEndTimeNotBetween(Date value1, Date value2) {
+            addCriterion("end_time not between", value1, value2, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfIsNull() {
+            addCriterion("rule_conf is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfIsNotNull() {
+            addCriterion("rule_conf is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfEqualTo(Object value) {
+            addCriterion("rule_conf =", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfNotEqualTo(Object value) {
+            addCriterion("rule_conf <>", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfGreaterThan(Object value) {
+            addCriterion("rule_conf >", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfGreaterThanOrEqualTo(Object value) {
+            addCriterion("rule_conf >=", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfLessThan(Object value) {
+            addCriterion("rule_conf <", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfLessThanOrEqualTo(Object value) {
+            addCriterion("rule_conf <=", value, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfIn(List<Object> values) {
+            addCriterion("rule_conf in", values, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfNotIn(List<Object> values) {
+            addCriterion("rule_conf not in", values, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfBetween(Object value1, Object value2) {
+            addCriterion("rule_conf between", value1, value2, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andRuleConfNotBetween(Object value1, Object value2) {
+            addCriterion("rule_conf not between", value1, value2, "ruleConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfIsNull() {
+            addCriterion("instance_conf is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfIsNotNull() {
+            addCriterion("instance_conf is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfEqualTo(Object value) {
+            addCriterion("instance_conf =", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfNotEqualTo(Object value) {
+            addCriterion("instance_conf <>", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfGreaterThan(Object value) {
+            addCriterion("instance_conf >", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfGreaterThanOrEqualTo(Object value) {
+            addCriterion("instance_conf >=", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfLessThan(Object value) {
+            addCriterion("instance_conf <", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfLessThanOrEqualTo(Object value) {
+            addCriterion("instance_conf <=", value, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfIn(List<Object> values) {
+            addCriterion("instance_conf in", values, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfNotIn(List<Object> values) {
+            addCriterion("instance_conf not in", values, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfBetween(Object value1, Object value2) {
+            addCriterion("instance_conf between", value1, value2, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andInstanceConfNotBetween(Object value1, Object value2) {
+            addCriterion("instance_conf not between", value1, value2, "instanceConf");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportIsNull() {
+            addCriterion("report is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportIsNotNull() {
+            addCriterion("report is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportEqualTo(Object value) {
+            addCriterion("report =", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportNotEqualTo(Object value) {
+            addCriterion("report <>", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportGreaterThan(Object value) {
+            addCriterion("report >", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportGreaterThanOrEqualTo(Object value) {
+            addCriterion("report >=", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportLessThan(Object value) {
+            addCriterion("report <", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportLessThanOrEqualTo(Object value) {
+            addCriterion("report <=", value, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportIn(List<Object> values) {
+            addCriterion("report in", values, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportNotIn(List<Object> values) {
+            addCriterion("report not in", values, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportBetween(Object value1, Object value2) {
+            addCriterion("report between", value1, value2, "report");
+            return (Criteria) this;
+        }
+
+        public Criteria andReportNotBetween(Object value1, Object value2) {
+            addCriterion("report not between", value1, value2, "report");
             return (Criteria) this;
         }
 

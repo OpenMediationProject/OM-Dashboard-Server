@@ -174,7 +174,7 @@ public class CrossBidService extends BaseService {
     }
 
     private void fillPlacementPubAppId(List<CpCampaignTargeting> placementTargetingList) {
-        if (CollectionUtils.isEmpty(placementTargetingList)){
+        if (CollectionUtils.isEmpty(placementTargetingList)) {
             return;
         }
         List<Integer> placementIds = new ArrayList<>();
@@ -230,9 +230,9 @@ public class CrossBidService extends BaseService {
             throw new RuntimeException("Create campaign failed!" + JSONObject.toJSON(campaign));
         }
 
-        if (campaign.getOpenType() != null && campaign.getOpenType() > 0){
+        if (campaign.getOpenType() != null && campaign.getOpenType() > 0) {
             OmAppWithBLOBs promoteApp = campaign.getPromoteApp();
-            if (promoteApp != null){
+            if (promoteApp != null) {
                 OmAppCriteria appCriteria = new OmAppCriteria();
                 OmAppCriteria.Criteria criteria = appCriteria.createCriteria();
                 criteria.andAppIdEqualTo(promoteApp.getAppId());

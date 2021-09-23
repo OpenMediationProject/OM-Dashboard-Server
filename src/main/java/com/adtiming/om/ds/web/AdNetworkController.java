@@ -11,7 +11,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -162,7 +161,7 @@ public class AdNetworkController extends BaseController {
                             log.error("Adn id {} is not existed!", instanceWithBLOBs.getAdnId());
                         }
                         List<JSONObject> instanceCountries = instanceCountriesMap.get(instanceWithBLOBs.getId());
-                        if (!CollectionUtils.isEmpty(instanceCountries)){
+                        if (!CollectionUtils.isEmpty(instanceCountries)) {
                             resultInstance.put("instanceCountries", instanceCountries);
                         } else {
                             resultInstance.put("instanceCountries", new ArrayList<>());
