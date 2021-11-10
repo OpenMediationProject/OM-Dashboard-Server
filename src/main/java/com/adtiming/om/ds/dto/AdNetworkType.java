@@ -25,6 +25,8 @@ public enum AdNetworkType {
     KuaiShou(21),
     Ogury(22),
     PubNative(23),
+    InMobi(26),
+    SHAREit(27),
     Fyber(30);
 
     private int value;
@@ -81,6 +83,10 @@ public enum AdNetworkType {
                 return SigMob;
             case 23:
                 return PubNative;
+            case 26:
+                return InMobi;
+            case 27:
+                return SHAREit;
             case 30:
                 return Fyber;
             default:

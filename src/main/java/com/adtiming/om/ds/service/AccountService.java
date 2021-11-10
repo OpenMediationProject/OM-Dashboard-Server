@@ -74,7 +74,10 @@ public class AccountService extends BaseService {
             criteria.andAdnIdEqualTo(adnId);
         }
         criteria.andIdIn(accountIds);
-        criteria.andAdnIdNotEqualTo(AdNetworkType.Facebook.ordinal());
+        List<Integer> adns = new ArrayList<>();
+        adns.add(AdNetworkType.Facebook.getValue());
+        adns.add(AdNetworkType.SHAREit.getValue());
+        criteria.andAdnIdNotIn(adns);
         criteria.andStatusLessThan((byte) NormalStatus.Deleted.ordinal());
         return this.reportAdnetworkAccountMapper.select(accountCriteria);
     }
@@ -180,6 +183,7 @@ public class AccountService extends BaseService {
                 primaryKey = account.getAdnAppToken();
                 break;
             }
+            case SHAREit:
             case Facebook: {
                 criteria.andAdnAppIdEqualTo(account.getAdnAppId());
                 criteria.andPublisherIdNotEqualTo(account.getPublisherId());
@@ -191,6 +195,11 @@ public class AccountService extends BaseService {
                 criteria.andAdnAppIdEqualTo(account.getAdnApiKey());
                 criteria.andUserSignatureEqualTo(account.getUserSignature());
                 primaryKey = account.getUserId() + "_" + account.getAdnApiKey() + "_" + account.getUserSignature();
+                break;
+            }
+            case InMobi: {
+                criteria.andUserSignatureEqualTo(account.getUserSignature());
+                primaryKey = account.getUserSignature();
                 break;
             }
             default:
@@ -207,14 +216,14 @@ public class AccountService extends BaseService {
 
     @Transactional
     public Response createAccount(ReportAdnetworkAccount account) {
-        if (account.getAdnId() == AdNetworkType.AdMob.ordinal() && account.getAuthType() == 2) {
+        if (account.getAdnId() == AdNetworkType.AdMob.getValue() && account.getAuthType() == 2) {
             Response response = admobService.getAdmobPublisherId(account.getAdnApiKey(),
                     account.getUserSignature(), account.getAdnAppToken());
             if (response.getCode() != Response.SUCCESS_CODE) {
                 return response;
             }
             account.setUserId(response.getData().toString());
-        } else if (account.getAdnId() == AdNetworkType.AdMob.ordinal() && account.getAuthType() == 4) {
+        } else if (account.getAdnId() == AdNetworkType.AdMob.getValue() && account.getAuthType() == 4) {
             Response response = admobService.getAdmobPublisherIdByAdMob(account.getAdnApiKey(),
                     account.getUserSignature(), account.getAdnAppToken());
             if (response.getCode() != Response.SUCCESS_CODE) {
@@ -243,7 +252,7 @@ public class AccountService extends BaseService {
         if (account.getPublisherId() == null) {
             account.setPublisherId(publisherId);
         }
-        if (account.getAdnId() == AdNetworkType.AdMob.ordinal()) {
+        if (account.getAdnId() == AdNetworkType.AdMob.getValue()) {
             account.setAuthKey(UUID.randomUUID().toString().replaceAll("-", ""));
             account.setCredentialPath("/credential/" + account.getAuthKey());
         }
@@ -480,6 +489,15 @@ public class AccountService extends BaseService {
                 }
                 break;
             }
+            case SHAREit: {
+                if (StringUtils.isBlank(account.getAdnAppId())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "SHAREit's [App ID] must be not null");
+                }
+                if (StringUtils.isBlank(account.getAdnAppToken())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "SHAREit's [System User Access Token] must be not null");
+                }
+                break;
+            }
             case Facebook: {
                 if (StringUtils.isBlank(account.getAdnAppId())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "Facebook's [App ID] must be not null");
@@ -513,6 +531,15 @@ public class AccountService extends BaseService {
                 }
                 if (StringUtils.isBlank(account.getUserSignature())) {
                     return Response.failure(Response.CODE_PARAMETER_NULL, "SigMob's [Secret Key] must be not null");
+                }
+                break;
+            }
+            case InMobi: {
+                if (StringUtils.isBlank(account.getUserId())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "InMobi's [User Name] must be not null");
+                }
+                if (StringUtils.isBlank(account.getUserSignature())) {
+                    return Response.failure(Response.CODE_PARAMETER_NULL, "InMobi's [API Key] must be not null");
                 }
                 break;
             }

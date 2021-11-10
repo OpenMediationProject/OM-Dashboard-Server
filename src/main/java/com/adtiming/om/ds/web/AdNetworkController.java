@@ -221,7 +221,8 @@ public class AdNetworkController extends BaseController {
             if (omAdnetworkApp.getAdnId() == null || omAdnetworkApp.getPubAppId() == null) {
                 return Response.RES_PARAMETER_ERROR;
             }
-            if (omAdnetworkApp.getAdnId() != AdNetworkType.Facebook.ordinal()
+            if (omAdnetworkApp.getAdnId() != AdNetworkType.Facebook.getValue()
+                    && omAdnetworkApp.getAdnId() != AdNetworkType.SHAREit.getValue()
                     && omAdnetworkApp.getReportAccountId() == null) {
                 log.warn("Create adNetworkApp parameters ReportAccountId must not null");
                 return Response.RES_PARAMETER_ERROR;

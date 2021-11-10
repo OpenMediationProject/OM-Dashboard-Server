@@ -210,7 +210,7 @@ public class InstanceController extends BaseController {
                 log.error("It must have valid id");
                 return Response.RES_PARAMETER_ERROR;
             }
-            if (instance.getAdnId() != null && instance.getAdnId() != AdNetworkType.CrossPromotion.ordinal()
+            if (instance.getAdnId() != null && instance.getAdnId() != AdNetworkType.CrossPromotion.getValue()
                     && StringUtils.isBlank(instance.getPlacementKey())) {
                 log.warn("Placement key can not empty");
                 return Response.RES_PARAMETER_ERROR;

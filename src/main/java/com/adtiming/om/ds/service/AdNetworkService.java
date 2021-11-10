@@ -98,7 +98,7 @@ public class AdNetworkService extends BaseService {
                     resultAdNetwork.put("accountStatus", account.getStatus());
                     resultAdNetwork.put("reason", account.getReason());
                 }
-                if (AdNetworkType.AdMob.ordinal() == adNetwork.getId() && account != null) {
+                if (AdNetworkType.AdMob.getValue() == adNetwork.getId() && account != null) {
                     msdkPublisherApp.setRedirectUrl("/api/report/callback/admob/" + account.getAuthKey());
                 }
                 resultAdNetwork.put("adNetworkApp", msdkPublisherApp);
@@ -239,7 +239,7 @@ public class AdNetworkService extends BaseService {
             omAdnetworkApp.setReportapiStatus((byte) SwitchStatus.ON.ordinal());
         }
 
-        if (omAdnetworkApp.getAdnId() == AdNetworkType.Mopub.ordinal()) {
+        if (omAdnetworkApp.getAdnId() == AdNetworkType.Mopub.getValue()) {
             omAdnetworkApp.setAdnAppKey(adNetworkAccount.getAdnApiKey());
         }
 
@@ -257,8 +257,8 @@ public class AdNetworkService extends BaseService {
             }
         }
 
-        if (omAdnetworkApp.getAdnId() == AdNetworkType.Facebook.ordinal()) {
-            this.addFacebookAccount(omAdnetworkApp);
+        if (omAdnetworkApp.getAdnId() == AdNetworkType.Facebook.getValue() || omAdnetworkApp.getAdnId() == AdNetworkType.SHAREit.getValue()) {
+            this.addAppLevelAccount(omAdnetworkApp);
         }
         log.info("Create AppAdNetwork {} success", omAdnetworkApp.getId());
         return Response.buildSuccess(omAdnetworkApp);
@@ -280,13 +280,13 @@ public class AdNetworkService extends BaseService {
         if (result <= 0) {
             throw new RuntimeException("Update AdNetworks app " + JSONObject.toJSON(omAdnetworkApp) + " failed");
         }
-        if (AdNetworkType.Facebook.ordinal() == omAdnetworkApp.getAdnId()) {
+        if (AdNetworkType.Facebook.getValue() == omAdnetworkApp.getAdnId() || AdNetworkType.SHAREit.getValue() == omAdnetworkApp.getAdnId()) {
             if (omAdnetworkApp.getAdnAppKey() == null || omAdnetworkApp.getRefreshToken() == null) {
                 throw new RuntimeException("App ID or System User Access Token must not null when create facebook account");
             }
             if (!omAdnetworkApp.getAdnAppKey().equals(dbAdnApp.getAdnAppKey()) || !omAdnetworkApp.getRefreshToken().equals(dbAdnApp.getRefreshToken())) {
                 if (!omAdnetworkApp.getAdnAppKey().equals(dbAdnApp.getAdnAppKey())) {
-                    this.addFacebookAccount(omAdnetworkApp);
+                    this.addAppLevelAccount(omAdnetworkApp);
                     if (!org.springframework.util.StringUtils.isEmpty(dbAdnApp.getAdnAppKey())) {
                         OmAdnetworkAppChange appChange = new OmAdnetworkAppChange();
                         PropertyUtils.copyProperties(appChange, dbAdnApp);
@@ -333,8 +333,8 @@ public class AdNetworkService extends BaseService {
     }
 
     @Transactional
-    private void addFacebookAccount(OmAdnetworkApp omAdnetworkApp) {
-        List<ReportAdnetworkAccount> accounts = this.accountService.getPublisherAccounts(AdNetworkType.Facebook.ordinal(),
+    private void addAppLevelAccount(OmAdnetworkApp omAdnetworkApp) {
+        List<ReportAdnetworkAccount> accounts = this.accountService.getPublisherAccounts(omAdnetworkApp.getAdnId(),
                 this.getCurrentUser().getPublisherId(), NormalStatus.Active, omAdnetworkApp.getAdnAppKey());
         ReportAdnetworkAccount account;
         if (CollectionUtils.isEmpty(accounts)) {
@@ -374,7 +374,7 @@ public class AdNetworkService extends BaseService {
      */
     @Transactional
     public Response updateAdNetworkAppStatus(Integer adNetworkAppId, Byte status, Integer cpAdnId, Integer pubAppId) {
-        if (adNetworkAppId == null && cpAdnId != null && AdNetworkType.CrossPromotion.ordinal() == cpAdnId
+        if (adNetworkAppId == null && cpAdnId != null && AdNetworkType.CrossPromotion.getValue() == cpAdnId
                 && status == NormalStatus.Active.ordinal() && pubAppId != null) {
             adNetworkAppId = this.initCrossPromotion(pubAppId);
         }
@@ -400,7 +400,7 @@ public class AdNetworkService extends BaseService {
     @Transactional
     private Integer initCrossPromotion(Integer pubAppId) {
         Byte status = (byte) NormalStatus.Active.ordinal();
-        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId, AdNetworkType.CrossPromotion.ordinal(), null);
+        List<OmAdnetworkApp> omAdNetworkApps = this.getAdNetWorkApps(pubAppId, AdNetworkType.CrossPromotion.getValue(), null);
         if (!CollectionUtils.isEmpty(omAdNetworkApps)) {
             OmAdnetworkApp omAdNetworkApp = omAdNetworkApps.get(0);
             omAdNetworkApp.setStatus(status);
@@ -411,7 +411,7 @@ public class AdNetworkService extends BaseService {
             return omAdNetworkApp.getId();
         }
         OmAdnetworkApp adtPublisherApp = new OmAdnetworkApp();
-        adtPublisherApp.setAdnId(AdNetworkType.CrossPromotion.ordinal());
+        adtPublisherApp.setAdnId(AdNetworkType.CrossPromotion.getValue());
         adtPublisherApp.setReportapiStatus(status);
         adtPublisherApp.setPubAppId(pubAppId);
         adtPublisherApp.setStatus(status);

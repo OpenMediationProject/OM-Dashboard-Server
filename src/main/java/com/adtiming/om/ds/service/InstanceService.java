@@ -95,7 +95,7 @@ public class InstanceService extends BaseService {
             return false;
         }
 
-        if (instance.getAdnId() == AdNetworkType.CrossPromotion.ordinal()) {
+        if (instance.getAdnId() == AdNetworkType.CrossPromotion.getValue()) {
             return false;
         }
 
@@ -439,10 +439,10 @@ public class InstanceService extends BaseService {
         OmInstanceWithBLOBs instance = new OmInstanceWithBLOBs();
         instance.setName("cross_biding");
         instance.setPlacementId(placement.getId());
-        instance.setAdnId(AdNetworkType.CrossPromotion.ordinal());
+        instance.setAdnId(AdNetworkType.CrossPromotion.getValue());
 
         List<OmInstanceWithBLOBs> instances = this.getInstances(placement.getPubAppId(),
-                AdNetworkType.CrossPromotion.ordinal(), null, placement.getId());
+                AdNetworkType.CrossPromotion.getValue(), null, placement.getId());
         if (!CollectionUtils.isEmpty(instances)) {
             log.info("Cross promotion instance existed for placement {}", placement.getId());
             return;
@@ -554,7 +554,7 @@ public class InstanceService extends BaseService {
             return Response.RES_DATA_EXISTED;
         }
         if (NormalStatus.Active.equals(status)) {
-            if (StringUtils.isBlank(instance.getPlacementKey()) && instance.getAdnId() != AdNetworkType.CrossPromotion.ordinal()) {
+            if (StringUtils.isBlank(instance.getPlacementKey()) && instance.getAdnId() != AdNetworkType.CrossPromotion.getValue()) {
                 log.warn("PlacementKey is null instance {}", JSONObject.toJSON(instance));
                 return Response.failure(Response.CODE_DATA_INCOMPLETE, "Placement key must not null");
             }
